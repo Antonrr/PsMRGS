@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--GearVR plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<!-- init section is always evaluated once per architecture -->
+	<trace enable="true"/>
+	<init>
+		<log text="MRGService Android init"/>			
+<!-- 		<deleteFiles filespec="/src/com/android/vending/billing/IInAppBillingService.aidl"/> -->
+
+		<log text="Google Play SDK Android init"/>
+		<setStringFromProperty result="ClientId" ini="Engine" section="OnlineSubsystemGooglePlay" property="ClientId" default="0"/>
+		<setStringFromProperty result="ServerClientId" ini="Engine" section="OnlineSubsystemGooglePlay" property="ServerClientId" default="0"/>
+		<dumpvars/>
+	</init>
+
+  <androidManifestUpdates>
+    <addElements tag="manifest">
+  		<permission android:name="com.my.awa.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
+    </addElements>
+
+    <setElement result="SignInHubActivity" value="activity" />
+	<addAttribute tag="$SignInHubActivity" name="android:name" value="com.google.android.gms.auth.api.signin.internal.SignInHubActivity" />
+	<addAttribute tag="$SignInHubActivity" name="android:excludeFromRecents" value="true" />
+	<addAttribute tag="$SignInHubActivity" name="android:exported" value="false" />
+	<addElement tag="application" name="SignInHubActivity" />
+
+  </androidManifestUpdates>
+  
+
+	<!-- optional additions to proguard -->
+	<proguardAdditions>
+		<insert>
+	
+		-keep class ru.mail.mrgservice.** {*;}
+		-keep class android.app.** {*;}
+
+		-keepclassmembers class com.epicgames.ue4.GameActivity {
+   			public *;
+		}
+
+		-keep class ru.mail.mrgservice.MRGServiceCpp {
+   			public *;
+   		}
+
+   		-keepclassmembers class ru.mail.mrgservice.MRGServiceCpp  {
+   			public *;
+		}
+
+
+		-dontwarn android.app.Activity
+
+		-dontoptimize
+		-dontshrink
+		-dontusemixedcaseclassnames
+		-dontskipnonpubliclibraryclasses
+		-dontpreverify
+		-verbose
+	
+		</insert>
+	</proguardAdditions>
+
+	<baseBuildGradleAdditions>
+		<insert>
+		allprojects 
+		{
+    		repositories 
+    		{
+        		//jcenter()
+        		//maven { url "https://maven.google.com" }
+    		}
+		}
+		</insert>
+	</baseBuildGradleAdditions>
+
+	<prebuildCopies> 
+		<!-- <forceDeleteFile dst="/src/com/android/vending/billing/IInAppBillingService.aidl"/>	 -->
+	</prebuildCopies>
+	
+	<!-- optional files or directories to copy to Intermediate/Android/APK -->
+ 	<resourceCopies>	
+ 		<log text="MRGService delete file 1"/>	
+ 		
+ 		<!-- try to delete proguard -->
+ 		<!-- START IMPORTANT NOTE: This is custom commands from Pushkin Studio that avaialable only on Custom UE!!!11 -->
+ 		<forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
+		<!-- <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>-->
+		<forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="minifyEnabled"/>
+		<forceDeleteFile dst="$S(BuildDir)/src/com/android/vending/billing/IInAppBillingService.aidl"/>
+		<!-- END IMPORTANT NOTE -->
+
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTarget.jar" dst="$S(BuildDir)/libs/myTarget.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/AF-Android-SDK.jar" dst="$S(BuildDir)/libs/AF-Android-SDK.jar" />
+<!--		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/android-support-v4.jar" dst="$S(BuildDir)/libs/android-support-v4.jar" />-->
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/flurryAds_6.8.0.jar" dst="$S(BuildDir)/libs/flurryAds_6.8.0.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/GoogleConversionTrackingSdk-2.2.4.jar" dst="$S(BuildDir)/libs/GoogleConversionTrackingSdk-2.2.4.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/httpmime-4.1.2.jar" dst="$S(BuildDir)/libs/httpmime-4.1.2.jar" />
+ 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/libs/in-app-purchasing-2.0.61.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MobileAppTracker.jar" dst="$S(BuildDir)/libs/MobileAppTracker.jar" />
+	
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGService.jar" dst="$S(BuildDir)/libs/MRGService.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTracker.jar" dst="$S(BuildDir)/libs/myTracker.jar" />
+
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGService.xml" dst="$S(BuildDir)/assets/MRGService.xml" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />
+		<copyFile src="$S(PluginDir)/../../../../Content/Json/Editor/google-services.json" dst="$S(BuildDir)/assets/google-services.json" />
+	</resourceCopies>
+
+	<!-- optional additions to the GameActivity imports in GameActivity.java -->
+	<gameActivityImportAdditions>
+		<insert>
+			import android.os.Bundle;
+			import ru.mail.mrgservice.*;
+			import android.util.Log;
+			import java.util.ArrayList;
+			import java.util.List;
+			import java.util.Map;
+			
+			import java.io.ByteArrayOutputStream;
+			import java.io.ByteArrayInputStream;
+			import java.io.DataInputStream;
+			import java.io.DataOutputStream;
+			import java.io.File;
+			import java.io.FileInputStream;
+			import java.io.FileOutputStream;
+			import java.io.IOException;
+			import java.io.RandomAccessFile;
+			
+			import android.app.backup.BackupAgent;
+			import android.app.backup.BackupDataInput;
+			import android.app.backup.BackupDataOutput;
+			import android.app.backup.BackupAgentHelper;
+			import android.app.backup.BackupManager;
+			import android.app.backup.RestoreObserver;
+			import android.os.ParcelFileDescriptor;
+		</insert>
+	</gameActivityImportAdditions>
+	
+
+	<!-- optional additions to the GameActivity class in GameActivity.java -->
+	<gameActivityClassAdditions>
+		<insert>
+
+		public void runOnNecessaryThread(final Runnable callback) 
+		{
+			runOnUiThread(callback);
+		}
+
+		public void AndroidThunkJava_MRGService_initUserWithId(String userId)
+		{
+			MRGServiceCpp.initUser(userId);
+		}
+
+		public void AndroidThunkJava_MRGService_admanLoadData(String type)
+		{
+			MRGServiceCpp.admanLoadData(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanOpen(final int type)
+		{
+			MRGServiceCpp.admanOpen(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanClose(final int type)
+		{
+			MRGServiceCpp.admanClose(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanRelease(final int type)
+		{
+			MRGServiceCpp.admanRelease(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanSetTitle(final String title)
+		{
+			MRGServiceCpp.admanSetTitle(title);
+		}
+
+		public void AndroidThunkJava_MRGService_showSupport(final String secretKey)
+		{
+			MRGServiceCpp.showSupport(secretKey);
+		}
+
+		public void AndroidThunkJava_MRGService_flurryEvent(final String event)
+		{
+			MRGServiceCpp.flurryEvent(event);
+		}
+
+		public void AndroidThunkJava_MRGService_sendGAEvent(final String category, final String action, final String label, final String value) 
+		{
+			MRGServiceCpp.sendGAEvent(category, action, label, value);
+		}
+
+		public void AndroidThunkJava_MRGService_sendGAScreen(final String screenName)
+		{
+			MRGServiceCpp.sendGAScreen(screenName);
+		}
+
+		public void AndroidThunkJava_MRGService_sendAFEvent(final String eventName, final String value) 
+		{
+			MRGServiceCpp.sendAFEvent(eventName, value);
+		}
+
+		public void AndroidThunkJava_MRGService_getProductsInfo(final String skuList)
+		{
+			MRGServiceCpp.getProductsInfo(skuList);
+		}
+
+		public void AndroidThunkJava_MRGService_buyItem(final String sku)
+		{
+			MRGServiceCpp.buyItem(sku);
+		}
+		
+		public void AndroidThunkJava_MRGService_addMetric(final String metric)
+		{
+			MRGServiceCpp.addMetric(metric);
+		}
+
+		private void handleSignInResult(GoogleSignInResult result) 
+		{
+			if (result != null)
+			{
+				if (result.isSuccess()) 
+				{
+					Log.debug("handleSignInResult: result is success");
+					GoogleSignInAccount acct = result.getSignInAccount();
+					nativeGoogleClientConnectCompleted(true, acct.getServerAuthCode());
+				} 
+				else 
+				{
+					Status myStatus = result.getStatus();
+					Log.debug("handleSignInResult: result is NOT success");
+					Log.debug("Status code:" + GoogleSignInStatusCodes.getStatusCodeString(myStatus.getStatusCode()));
+					Log.debug("Status message:" + myStatus.getStatusMessage());
+					nativeGoogleClientConnectCompleted(false, "");
+				}
+			}
+			else
+			{
+				Log.debug("handleSignInResult: result is null");
+			}
+		}
+		
+		</insert>
+		
+	</gameActivityClassAdditions>
+	
+	<!-- optional additions to GameActivity onCreate metadata reading in GameActivity.java -->
+	<gameActivityReadMetadataAdditions>
+		<insertValue value="serverClientId = &quot;$S(ServerClientId)&quot;;"/>
+		<insertNewline/>
+	</gameActivityReadMetadataAdditions>
+	
+	<!-- optional additions to GameActivity onCreate in GameActivity.java -->
+	<gameActivityOnCreateAdditions>
+		<insert>
+			MRGServiceCpp.appContext = getApplicationContext();
+			MRGService.setAppContext(getApplicationContext());
+			<!-- MRGServiceCpp.threadHelper = this; -->
+			MRGServiceCpp.initWithAppidAndSecret("228", "ZGv@_UzS3uoVwCr3RFjYop317QjhOblO");
+	<!-- 		MRGServiceCpp.initPush();
+			MRGServiceCpp.initLocalPush(); -->
+			<!-- MRGServiceCpp.threadHelper = threadHelper; -->
+		</insert>
+	</gameActivityOnCreateAdditions>
+
+	<!-- optional additions to GameActivity onDestroy in GameActivity.java -->
+	<gameActivityOnDestroyAdditions>
+
+	</gameActivityOnDestroyAdditions>
+	
+	
+	<!-- optional additions to GameActivity onStart in GameActivity.java -->
+	<gameActivityOnStartAdditions>
+		<insert>
+			MRGService.setAppContext(getApplicationContext());
+			MRGService.instance().onStart(this);
+		</insert>
+	</gameActivityOnStartAdditions>
+
+	<!-- optional additions to GameActivity onStop in GameActivity.java -->
+	<gameActivityOnStopAdditions>
+		<insert>
+			MRGService.instance().onStop(this);
+		</insert>
+	</gameActivityOnStopAdditions>
+	
+
+	<!-- optional additions to GameActivity onPause in GameActivity.java	-->
+	<gameActivityOnPauseAdditions>
+
+	</gameActivityOnPauseAdditions>
+
+
+	<!-- optional additions to GameActivity onResume in GameActivity.java	-->
+	<gameActivityOnResumeAdditions>
+	</gameActivityOnResumeAdditions>
+
+
+	<!-- optional additions to GameActivity onActivityResult in GameActivity.java -->
+	<gameActivityOnActivityResultAdditions>
+		<insert>
+		// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+		if (requestCode == REQUEST_SIGN_IN) 
+		{
+			Log.debug("[pushkin] onActivityResult: " + requestCode + " result: " + resultCode);
+			Log.debug("[pushkin] onActivityResult REQUEST_SIGN_IN");
+			if (resultCode == RESULT_OK)
+			{
+				Log.debug("[pushkin] signing in");
+			}
+
+			Log.debug("[pushkin] data: " + ((data != null) ? data.toString() : "null"));
+
+			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+			if (result != null)
+			{
+				handleSignInResult(result);
+			}
+			else
+			{
+				Log.debug("[pushkin] onActivityResult result is null");
+			}
+		}
+		</insert>
+	</gameActivityOnActivityResultAdditions>
+	
+
+	<!-- optional libraries to load in GameActivity.java before libUE4.so -->
+	<soLoadLibrary>
+	</soLoadLibrary>
+</root>
