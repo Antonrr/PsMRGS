@@ -2,6 +2,7 @@
 #pragma once
 
 #if PLATFORM_ANDROID
+#include <string>
 #include <jni.h>
 #include "Runtime/Launch/Public/Android/AndroidJNI.h"
 #include "AndroidApplication.h"
@@ -100,14 +101,8 @@ public:
 	
 protected:
 	
-	/** Main mrgs delegate */
-	PsMRGSDelegate* Delegate;
-	
 	/** Mrgs initialization successfully complete */
 	bool bInitComplete;
-	
-	/** Max mrgs users count */
-	int32 MaxUsersSlots;
 	
 #endif
 };

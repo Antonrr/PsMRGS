@@ -1,6 +1,8 @@
 // Copyright 2018 Pushkin Studio. All Rights Reserved.
 
 #include "PsMRGSProxyAndroid.h"
+#include "PsMRGSSettings.h"
+#include "PsMRGSCommon.h"
 
 UPsMRGSProxyAndroid::UPsMRGSProxyAndroid(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
@@ -11,15 +13,16 @@ UPsMRGSProxyAndroid::UPsMRGSProxyAndroid(const FObjectInitializer& ObjectInitial
 
 FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 {
-	if (jstr == NULL) {
-		return "";
+	if (jstr == NULL)
+	{
+		return FString(TEXT(""));
 	}
 	
 	JNIEnv *env = 0;
 	env = FAndroidApplication::GetJavaEnv(true);
 	if (!env)
 	{
-		return 0;
+		return FString(TEXT(""));
 	}
 	
 	const jclass stringClass = env->GetObjectClass(jstr);
@@ -34,7 +37,7 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 	
 	env->DeleteLocalRef(stringJbytes);
 	env->DeleteLocalRef(stringClass);
-	return FString(ret);
+	return FString(ret.c_str());
 }
 
 void UPsMRGSProxyAndroid::InitModule()
@@ -138,7 +141,7 @@ void UPsMRGSProxyAndroid::BuyProduct(const FString& ProductId, const FString& Pa
 		return;
 	}
 
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true)
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
 		static jmethodID BuyItem = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_buyItem", "(Ljava/lang/String;)V", false);
@@ -170,7 +173,7 @@ void UPsMRGSProxyAndroid::SendGAEvent(const FString& InCategory, const FString& 
 		return;
 	}
 	
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true)
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
 		static jmethodID SendGAEvent = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_sendGAEvent", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", false);
@@ -223,8 +226,9 @@ void UPsMRGSProxyAndroid::AddMetric(int32 MetricId)
 	if (Env)
 	{
 		FString MetricString;
+		MetricString.AppendInt(MetricId);
 		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetric", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricString.AppendInt(MetricId))));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricString)));
 	}
 }
 
@@ -237,12 +241,12 @@ void UPsMRGSProxyAndroid::ShowMyTargetShowcase()
 	}
 	
 	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanShowcase))
+	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanShowcase));
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
 		static jmethodID AdmanLoadShowcaseData = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanLoadData", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanLoadData, Env->NewStringUTF(TCHAR_TO_UTF8(*AdType)));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanLoadShowcaseData, Env->NewStringUTF(TCHAR_TO_UTF8(*AdType)));
 	}
 }
 
@@ -255,7 +259,7 @@ void UPsMRGSProxyAndroid::ShowMyTargetFullscreen()
 	}
 	
 	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanFullscreenBanner))
+	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanFullscreenBanner));
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -273,7 +277,7 @@ void UPsMRGSProxyAndroid::ShowMyTargetInterstitialSlider()
 	}
 	
 	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanInterstitialSlider))
+	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanInterstitialSlider));
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -538,11 +542,11 @@ extern "C"
 	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
 	{
 		jclass ListClass = env->GetObjectClass(jItems);
-		jmethodID Mid = env->GetMethodID(ListClass, "size", "()I");
+		jmethodID mid = env->GetMethodID(ListClass, "size", "()I");
 		int Size = (int)env->CallIntMethod(jItems, mid);
 		
 		TArray<FPsMRGSPurchaseInfo> Items;
-		mid = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
+		mid = env->GetMethodID(ListClass, "get", "(I)Ljava/lang/Object;");
 		
 		for (int i = 0; i < Size; i++)
 		{
