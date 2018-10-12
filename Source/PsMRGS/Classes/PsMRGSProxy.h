@@ -159,6 +159,12 @@ public:
 	
 	/** Error while processing purchase on store */
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer);
+	
+	/** Dispatch success user auth */
+	virtual void OnUserAuthSuccess();
+	
+	/** Dispatch failed user auth */
+	virtual void OnUserAuthError();
 
 	
 protected:

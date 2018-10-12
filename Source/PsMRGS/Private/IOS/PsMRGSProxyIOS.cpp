@@ -554,13 +554,7 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 			{
 				[[MRGSUsers sharedInstance] authorizationUserWithId:TempUserId];
 				UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user %s founded in previous sessions and authorized"), *PS_FUNC_LINE, *FString(TempUserId));
-				AsyncTask(ENamedThreads::GameThread, [this]()
-				{
-					if(MRGSDelegate.IsBound())
-					{
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
-					}
-				});
+				OnUserAuthSuccess();
 				return;
 			}
 			
@@ -577,25 +571,13 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 	if (Err)
 	{
 		UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user registration error: %s"), *PS_FUNC_LINE, *FString(Err.localizedDescription));
-		AsyncTask(ENamedThreads::GameThread, [this]()
-		{
-			if(MRGSDelegate.IsBound())
-			{
-				MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
-			}
-		});
+		OnUserAuthError();
 		return;
 	}
 	
 	[[MRGSUsers sharedInstance] authorizationUserWithId:RealUserId];
 	UE_LOG(LogMRGS, Log, TEXT("%s: MRGService  %s registred and authorized"), *PS_FUNC_LINE, *FString(RealUserId));
-	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-		  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
-		}
-	});
+	OnUserAuthSuccess();
 }
 
 void UPsMRGSProxyIOS::LoadStoreProducts(const TArray<FString>& ProductsList)
@@ -781,6 +763,29 @@ void UPsMRGSProxyIOS::OnSupportClosed()
 		if(MRGSDelegate.IsBound())
 		{
 			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED));
+		}
+	});
+}
+
+
+void UPsMRGSProxyIOS::OnUserAuthSuccess()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
+		}
+	});
+}
+
+void UPsMRGSProxyIOS::OnUserAuthError()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
 		}
 	});
 }

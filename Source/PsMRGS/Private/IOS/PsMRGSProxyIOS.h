@@ -87,6 +87,10 @@ public:
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload) override;
 	
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer) override;
+
+	virtual void OnUserAuthSuccess();
+
+	virtual void OnUserAuthError();
 	
 protected:
 	

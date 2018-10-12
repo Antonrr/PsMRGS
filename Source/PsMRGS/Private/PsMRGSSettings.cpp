@@ -16,7 +16,9 @@ void UPsMRGSSettings::ReadFromConfig()
 	const FString ConfigSection = FString("/Script/PsMRGS.PsMRGSSettings");
 	
 	// Android Basic Settings
-	GConfig->GetString(*ConfigSection, TEXT("AndroidSupportSecretKey"), AndroidSupportSecretKey, GEngineIni);
+	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsSupportSecretKey"), AndroidMrgsSupportSecretKey, GEngineIni);
+	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsAppId"), AndroidMrgsAppId, GEngineIni);
+	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsSecret"), AndroidMrgsSecret, GEngineIni);
 	
 	// iOS Basic Settings
 	GConfig->GetInt(*ConfigSection, TEXT("iOsMrgsAppId"), iOSMrgsAppId, GEngineIni);
