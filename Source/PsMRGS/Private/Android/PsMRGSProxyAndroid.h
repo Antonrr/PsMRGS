@@ -17,7 +17,7 @@ class MRGSJniHelper
 {
 	public:
 	
-		static FString jstring2string(jstring str);
+		static FString JavaStringToFstring(jstring str);
 };
 
 enum MRGSAdmanEntityType : uint8

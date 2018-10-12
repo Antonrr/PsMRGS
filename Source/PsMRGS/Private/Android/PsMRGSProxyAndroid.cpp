@@ -9,7 +9,7 @@ UPsMRGSProxyAndroid::UPsMRGSProxyAndroid(const FObjectInitializer& ObjectInitial
 
 #if PLATFORM_ANDROID
 
-FString MRGSJniHelper::jstring2string(jstring jstr)
+FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 {
 	if (jstr == NULL) {
 		return "";
@@ -497,7 +497,7 @@ extern "C"
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
 		{
-			Proxy->OnSupportReceivedError(MRGSJniHelper::jstring2string(error));
+			Proxy->OnSupportReceivedError(MRGSJniHelper::JavaStringToFstring(error));
 		}
 	}
 
@@ -516,23 +516,23 @@ extern "C"
 		
 		jfieldID fid = env->GetFieldID(itemClass, "sku", "Ljava/lang/String;");
 		jstring jsku = (jstring)env->GetObjectField(jitem, fid);
-		item.Sku = MRGSJniHelper::jstring2string(jsku);
+		item.Sku = MRGSJniHelper::JavaStringToFstring(jsku);
 		
 		fid = env->GetFieldID(itemClass, "price", "Ljava/lang/String;");
 		jstring jprice = (jstring)env->GetObjectField(jitem, fid);
-		item.Price = MRGSJniHelper::jstring2string(jprice);
+		item.Price = MRGSJniHelper::JavaStringToFstring(jprice);
 		
 		fid = env->GetFieldID(itemClass, "title", "Ljava/lang/String;");
 		jstring jtitle = (jstring)env->GetObjectField(jitem, fid);
-		item.Title = MRGSJniHelper::jstring2string(jtitle);
+		item.Title = MRGSJniHelper::JavaStringToFstring(jtitle);
 		
 		fid = env->GetFieldID(itemClass, "type", "Ljava/lang/String;");
 		jstring jtype = (jstring)env->GetObjectField(jitem, fid);
-		item.Type = MRGSJniHelper::jstring2string(jtype);
+		item.Type = MRGSJniHelper::JavaStringToFstring(jtype);
 		
 		fid = env->GetFieldID(itemClass, "description", "Ljava/lang/String;");
 		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
-		item.Description = MRGSJniHelper::jstring2string(jdescription);
+		item.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 	}
 
 	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
@@ -566,7 +566,7 @@ extern "C"
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
 		{
-			Proxy->OnPurchaseComplete(MRGSJniHelper::jstring2string(sku), MRGSJniHelper::jstring2string(transactionId), MRGSJniHelper::jstring2string(answer));
+			Proxy->OnPurchaseComplete(MRGSJniHelper::JavaStringToFstring(sku), MRGSJniHelper::JavaStringToFstring(transactionId), MRGSJniHelper::JavaStringToFstring(answer));
 		}
 	}
 
@@ -575,7 +575,7 @@ extern "C"
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
 		{
-			Proxy->OnPurchaseFailed(MRGSJniHelper::jstring2string(sku), MRGSJniHelper::jstring2string(answer));
+			Proxy->OnPurchaseFailed(MRGSJniHelper::JavaStringToFstring(sku), MRGSJniHelper::JavaStringToFstring(answer));
 		}
 	}
 
