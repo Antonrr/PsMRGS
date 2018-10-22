@@ -62,7 +62,6 @@ void UPsMRGSProxyAndroid::InitModule()
 	}
 }
 
-
 void UPsMRGSProxyAndroid::InitUser(const FString& UserId)
 {
 	if (bInitComplete == false)
@@ -178,7 +177,6 @@ void UPsMRGSProxyAndroid::SendGAEvent(const FString& InCategory, const FString& 
 	{
 		static jmethodID SendGAEvent = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_sendGAEvent", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", false);
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SendGAEvent, Env->NewStringUTF(TCHAR_TO_UTF8(*InCategory)), Env->NewStringUTF(TCHAR_TO_UTF8(*InAction)), Env->NewStringUTF(TCHAR_TO_UTF8(*InLabel)));
-		
 	}
 }
 
@@ -451,7 +449,6 @@ void UPsMRGSProxyAndroid::OnUserAuthError()
 	});
 }
 
-
 void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
@@ -476,6 +473,30 @@ void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FStri
 
 extern "C"
 {
+	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& item)
+	{
+		jclass itemClass = env->GetObjectClass(jitem);
+		
+		jfieldID fid = env->GetFieldID(itemClass, "sku", "Ljava/lang/String;");
+		jstring jsku = (jstring)env->GetObjectField(jitem, fid);
+		item.Sku = MRGSJniHelper::JavaStringToFstring(jsku);
+		
+		fid = env->GetFieldID(itemClass, "price", "Ljava/lang/String;");
+		jstring jprice = (jstring)env->GetObjectField(jitem, fid);
+		item.Price = MRGSJniHelper::JavaStringToFstring(jprice);
+		
+		fid = env->GetFieldID(itemClass, "title", "Ljava/lang/String;");
+		jstring jtitle = (jstring)env->GetObjectField(jitem, fid);
+		item.Title = MRGSJniHelper::JavaStringToFstring(jtitle);
+		
+		fid = env->GetFieldID(itemClass, "type", "Ljava/lang/String;");
+		jstring jtype = (jstring)env->GetObjectField(jitem, fid);
+		item.Type = MRGSJniHelper::JavaStringToFstring(jtype);
+		
+		fid = env->GetFieldID(itemClass, "description", "Ljava/lang/String;");
+		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
+		item.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
+	}
 	
 	void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
 	{
@@ -512,31 +533,6 @@ extern "C"
 		{
 			Proxy->OnSupportClosed();
 		}
-	}
-
-	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& item)
-	{
-		jclass itemClass = env->GetObjectClass(jitem);
-		
-		jfieldID fid = env->GetFieldID(itemClass, "sku", "Ljava/lang/String;");
-		jstring jsku = (jstring)env->GetObjectField(jitem, fid);
-		item.Sku = MRGSJniHelper::JavaStringToFstring(jsku);
-		
-		fid = env->GetFieldID(itemClass, "price", "Ljava/lang/String;");
-		jstring jprice = (jstring)env->GetObjectField(jitem, fid);
-		item.Price = MRGSJniHelper::JavaStringToFstring(jprice);
-		
-		fid = env->GetFieldID(itemClass, "title", "Ljava/lang/String;");
-		jstring jtitle = (jstring)env->GetObjectField(jitem, fid);
-		item.Title = MRGSJniHelper::JavaStringToFstring(jtitle);
-		
-		fid = env->GetFieldID(itemClass, "type", "Ljava/lang/String;");
-		jstring jtype = (jstring)env->GetObjectField(jitem, fid);
-		item.Type = MRGSJniHelper::JavaStringToFstring(jtype);
-		
-		fid = env->GetFieldID(itemClass, "description", "Ljava/lang/String;");
-		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
-		item.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 	}
 
 	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
