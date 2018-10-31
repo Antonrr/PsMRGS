@@ -17,7 +17,7 @@
 		{
 			"Name": "PsMRGS",
 			"Type": "Runtime",
-			"LoadingPhase": "PreDefault"
+			"LoadingPhase": "Default"
 		}
 	]
 }
