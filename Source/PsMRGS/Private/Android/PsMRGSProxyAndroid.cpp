@@ -500,7 +500,7 @@ extern "C"
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
 	{
-		UE_LOG(LogMRGS, Warning, TEXT("%s"), *PS_FUNC_LINE);
+		UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
 		{
