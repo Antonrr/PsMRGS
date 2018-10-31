@@ -12,6 +12,5 @@ class PSMRGS_API UPsMRGSLibrary : public UBlueprintFunctionLibrary
 	
 	/** Get MRGS proxy object */
 	UFUNCTION(BlueprintCallable, Category = MRGS, BlueprintPure)
-	static UPsMRGSProxy* GetMRGSProxy();
-	
+	static UPsMRGSProxy* GetMRGSProxy();	
 };

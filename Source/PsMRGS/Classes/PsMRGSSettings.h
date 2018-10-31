@@ -70,5 +70,14 @@ class UPsMRGSSettings : public UObject
 	
 	/** Android support secret key */
 	UPROPERTY(Config, EditAnywhere)
-	FString AndroidSupportSecretKey;
+	FString AndroidMrgsSupportSecretKey;
+	
+	/** Android mrgs app id */
+	UPROPERTY(Config, EditAnywhere)
+	FString AndroidMrgsAppId;
+	
+	/** Android mrgs secret key */
+	UPROPERTY(Config, EditAnywhere)
+	FString AndroidMrgsSecret;
+
 };
