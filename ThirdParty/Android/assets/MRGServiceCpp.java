@@ -234,7 +234,6 @@ public class MRGServiceCpp {
 
 		GameActivity.Get().OnMrgsInitComplete();
 		onInitComplete();
-		onUserAuthError();
 	}
 
 	public static void initPush() {

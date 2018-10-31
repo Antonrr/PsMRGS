@@ -498,8 +498,9 @@ extern "C"
 		item.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
 	{
+		UE_LOG(LogMRGS, Warning, TEXT("%s"), *PS_FUNC_LINE);
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
 		{
@@ -507,17 +508,17 @@ extern "C"
 		}
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadServerDataDidFinished(JNIEnv* env, jobject obj, jstring json)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadServerDataDidFinished(JNIEnv* env, jobject obj, jstring json)
 	{
 		UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadPromoBannersDidFinished(JNIEnv* env, jobject obj, jstring json)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadPromoBannersDidFinished(JNIEnv* env, jobject obj, jstring json)
 	{
 		UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComSupportHasError(JNIEnv* env, jobject obj, jstring error)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComSupportHasError(JNIEnv* env, jobject obj, jstring error)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -526,7 +527,7 @@ extern "C"
 		}
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComHasSupportDidClose(JNIEnv* env, jobject obj)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComHasSupportDidClose(JNIEnv* env, jobject obj)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -535,7 +536,7 @@ extern "C"
 		}
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
 	{
 		jclass ListClass = env->GetObjectClass(jItems);
 		jmethodID mid = env->GetMethodID(ListClass, "size", "()I");
@@ -561,7 +562,7 @@ extern "C"
 	}
 
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseComplete(JNIEnv* env, jobject obj, jstring sku, jstring transactionId, jstring answer)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseComplete(JNIEnv* env, jobject obj, jstring sku, jstring transactionId, jstring answer)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -570,7 +571,7 @@ extern "C"
 		}
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseFail(JNIEnv* env, jobject obj, jstring sku, jstring answer)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseFail(JNIEnv* env, jobject obj, jstring sku, jstring answer)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -579,7 +580,7 @@ extern "C"
 		}
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanLoadComplete(JNIEnv* env, jobject obj, jint jtype, jboolean jnotification)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanLoadComplete(JNIEnv* env, jobject obj, jint jtype, jboolean jnotification)
 	{
 		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 		if (Env)
@@ -589,7 +590,7 @@ extern "C"
 		}
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanHasNoAdd(JNIEnv* env, jobject obj)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanHasNoAdd(JNIEnv* env, jobject obj)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -598,7 +599,7 @@ extern "C"
 		}
 	}
 
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanViewComplete(JNIEnv* env, jobject obj, jint jtype)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanViewComplete(JNIEnv* env, jobject obj, jint jtype)
 	{
 		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 		if (Env)
@@ -634,7 +635,7 @@ extern "C"
 		}
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_onUserAuthSuccess(JNIEnv* env, jobject obj)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onUserAuthSuccess(JNIEnv* env, jobject obj)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)
@@ -643,7 +644,7 @@ extern "C"
 		}
 	}
 	
-	void Java_ru_mail_mrgservice_MRGServiceCpp_OnUserAuthError(JNIEnv* env, jobject obj)
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onUserAuthError(JNIEnv* env, jobject obj)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 		if (Proxy)

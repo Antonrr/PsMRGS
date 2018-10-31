@@ -156,7 +156,6 @@
 
    		-keepclassmembers class ru.mail.mrgservice.MRGServiceCpp  {
    			public *;
-   			private *;
 		}
 
 		-dontwarn android.app.Activity
@@ -170,6 +169,11 @@
 	
 		</insert>
 	</proguardAdditions>
+
+  <AARImports>
+	<insertValue value="repositories $S(PluginDir)/../../ThirdParty/Android/Dependencies"/>
+	<insertNewline/>
+  </AARImports>
 	
 	<!-- optional files or directories to copy to Intermediate/Android/APK -->
  	<resourceCopies>	
@@ -185,9 +189,9 @@
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />\
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/httpmime-4.1.2.jar" dst="$S(BuildDir)/libs/httpmime-4.1.2.jar" />
 
-		<!-- <forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/> -->
-		<!-- <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>-->
-		<!-- <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="minifyEnabled"/> -->
+<!-- 		<forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
+		 <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>
+		<forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="minifyEnabled"/> -->
 
 		<!-- If using jars instead aar - uncomment -->
 		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTarget.jar" dst="$S(BuildDir)/libs/myTarget.jar" /> -->
@@ -243,7 +247,7 @@
 		public void OnMrgsInitComplete()
 		{
 			bInitialized = true;
-	<!-- 		if (bWaitForInitializeToCallStop)
+			if (bWaitForInitializeToCallStop)
 			{
 				bWaitForInitializeToCallStop = false;
 				MRGServiceCpp.appContext = getApplicationContext();
@@ -256,7 +260,7 @@
 				MRGServiceCpp.appContext = getApplicationContext();
 				MRGService.setAppContext(getApplicationContext());
 				MRGService.instance().onStart(this);
-			} -->
+			}
 		}
 
 		public void runOnNecessaryThread(final Runnable callback) 
@@ -361,32 +365,32 @@
 	<!-- optional additions to GameActivity onStart in GameActivity.java -->
 	<gameActivityOnStartAdditions>
 		<insert>
-<!-- 			if (bInitialized == true)
+			if (bInitialized == true)
 			{
-				MRGServiceCpp.appContext = getApplicationContext(); -->
+				MRGServiceCpp.appContext = getApplicationContext();
 				MRGService.setAppContext(getApplicationContext());
 				MRGService.instance().onStart(this);
-<!-- 			}
+			}
 			else
 			{
 				bWaitForInitialize = true;
-			} -->
+			}
 		</insert>
 	</gameActivityOnStartAdditions>
 
 	<!-- optional additions to GameActivity onStop in GameActivity.java -->
 	<gameActivityOnStopAdditions>
 		<insert>
-<!-- 			if (bInitialized == true)
+ 			if (bInitialized == true)
 			{
-				MRGServiceCpp.appContext = getApplicationContext();-->
+				MRGServiceCpp.appContext = getApplicationContext();
 				MRGService.setAppContext(getApplicationContext()); 
 				MRGService.instance().onStop(this);
-<!-- 			}
+			}
 			else
 			{
 				bWaitForInitializeToCallStop = true;
-			} -->
+			}
 		</insert>
 	</gameActivityOnStopAdditions>
 	
