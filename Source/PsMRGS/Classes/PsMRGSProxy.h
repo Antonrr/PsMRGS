@@ -118,8 +118,12 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	virtual void ShowSupport();
 	
 	/** MRGS initialize complete */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual const bool IsReady() const;
+	
+	/** MRGS user auth complete */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
+	virtual const bool UserLoggedIn() const;
 	
 public:
 	
@@ -176,6 +180,9 @@ protected:
 	
 	/** MRGS initialize complete */
 	bool bInitComplete;
+	
+	/** MRGS auth complete */
+	bool bUserLoggedin;
 	
 public:
 	

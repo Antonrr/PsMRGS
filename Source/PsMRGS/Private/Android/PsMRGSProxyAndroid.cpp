@@ -8,6 +8,7 @@ UPsMRGSProxyAndroid::UPsMRGSProxyAndroid(const FObjectInitializer& ObjectInitial
 : Super(ObjectInitializer)
 {
 	bInitComplete = false;
+	bUserLoggedin = false;
 }
 
 #if PLATFORM_ANDROID
@@ -319,6 +320,11 @@ const bool UPsMRGSProxyAndroid::IsReady() const
 	return bInitComplete;
 }
 
+const bool UPsMRGSProxyAndroid::UserLoggedIn() const
+{
+	return bUserLoggedin;
+}
+
 void UPsMRGSProxyAndroid::OnInitComplete()
 {
 	bInitComplete = true;
@@ -398,7 +404,6 @@ void UPsMRGSProxyAndroid::OnShowCaseDataHasNoAds()
 			  });
 }
 
-
 void UPsMRGSProxyAndroid::OnSupportClosed()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
@@ -409,7 +414,6 @@ void UPsMRGSProxyAndroid::OnSupportClosed()
 				  }
 			  });
 }
-
 
 void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
 {
@@ -435,6 +439,8 @@ void UPsMRGSProxyAndroid::OnSupportTicketsFailWithError(const FString& Error)
 
 void UPsMRGSProxyAndroid::OnUserAuthSuccess()
 {
+	bUserLoggedin = true;
+	
 	AsyncTask(ENamedThreads::GameThread, [this]()
 			  {
 				  if(MRGSDelegate.IsBound())

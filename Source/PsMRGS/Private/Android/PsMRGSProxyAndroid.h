@@ -69,6 +69,8 @@ public:
 	
 	virtual const bool IsReady() const override;
 	
+	virtual const bool UserLoggedIn() const;
+	
 public:
 	
 	virtual void OnInitComplete() override;

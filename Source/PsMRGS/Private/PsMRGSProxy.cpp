@@ -86,6 +86,12 @@ const bool UPsMRGSProxy::IsReady() const
 	return false;
 }
 
+const bool UPsMRGSProxy::UserLoggedIn() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return false;
+}
+
 void UPsMRGSProxy::OnInitComplete()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);

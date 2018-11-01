@@ -9,6 +9,7 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
 	bInitComplete = false;
+	bUserLoggedin = false;
 	MaxUsersSlots = 10;
 }
 
@@ -409,6 +410,11 @@ void UPsMRGSProxyIOS::InitModule()
 const bool UPsMRGSProxyIOS::IsReady() const
 {
 	return bInitComplete;
+}
+
+const bool UPsMRGSProxyIOS::UserLoggedIn() const
+{
+	return bUserLoggedin;
 }
 
 void UPsMRGSProxyIOS::OnInitComplete()
