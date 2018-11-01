@@ -124,7 +124,7 @@ void UPsMRGSProxyAndroid::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InL
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
 				  }
 			  });
 }
@@ -333,7 +333,7 @@ void UPsMRGSProxyAndroid::OnInitComplete()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE);
 				  }
 			  });
 }
@@ -344,7 +344,7 @@ void UPsMRGSProxyAndroid::OnFullscreenClosed()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED);
 				  }
 			  });
 }
@@ -355,7 +355,7 @@ void UPsMRGSProxyAndroid::OnInterstitialSliderClosed()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED);
 				  }
 			  });
 }
@@ -366,7 +366,7 @@ void UPsMRGSProxyAndroid::OnInterstitialDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR);
 				  }
 			  });
 }
@@ -377,7 +377,7 @@ void UPsMRGSProxyAndroid::OnFullscreenDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR);
 				  }
 			  });
 }
@@ -388,7 +388,7 @@ void UPsMRGSProxyAndroid::OnShowcaseDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR);
 				  }
 			  });
 }
@@ -399,7 +399,7 @@ void UPsMRGSProxyAndroid::OnShowCaseDataHasNoAds()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY);
 				  }
 			  });
 }
@@ -410,7 +410,7 @@ void UPsMRGSProxyAndroid::OnSupportClosed()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
 				  }
 			  });
 }
@@ -421,7 +421,7 @@ void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
 				  }
 			  });
 }
@@ -432,7 +432,7 @@ void UPsMRGSProxyAndroid::OnSupportTicketsFailWithError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
 				  }
 			  });
 }
@@ -445,7 +445,7 @@ void UPsMRGSProxyAndroid::OnUserAuthSuccess()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
 				  }
 			  });
 }
@@ -456,7 +456,7 @@ void UPsMRGSProxyAndroid::OnUserAuthError()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
 				  }
 			  });
 }
@@ -467,7 +467,7 @@ void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FSt
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
 				  }
 			  });
 }
@@ -478,7 +478,7 @@ void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FStri
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
 				  }
 			  });
 }
@@ -667,3 +667,5 @@ extern "C"
 }
 
 #endif
+
+

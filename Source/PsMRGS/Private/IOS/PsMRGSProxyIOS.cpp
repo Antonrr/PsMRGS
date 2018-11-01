@@ -441,7 +441,7 @@ void UPsMRGSProxyIOS::OnInitComplete()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE);
 				  }
 			  });
 }
@@ -452,7 +452,7 @@ void UPsMRGSProxyIOS::OnFullscreenClosed()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED);
 				  }
 			  });
 }
@@ -463,7 +463,7 @@ void UPsMRGSProxyIOS::OnInterstitialSliderClosed()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED);
 				  }
 			  });
 }
@@ -474,7 +474,7 @@ void UPsMRGSProxyIOS::OnInterstitialDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR);
 				  }
 			  });
 }
@@ -485,7 +485,7 @@ void UPsMRGSProxyIOS::OnFullscreenDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR);
 				  }
 			  });
 }
@@ -496,7 +496,7 @@ void UPsMRGSProxyIOS::OnShowcaseDataRecieveError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR);
 				  }
 			  });
 }
@@ -507,7 +507,7 @@ void UPsMRGSProxyIOS::OnShowCaseDataHasNoAds()
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY);
 				  }
 			  });
 }
@@ -518,7 +518,7 @@ void UPsMRGSProxyIOS::OnSupportReceivedError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
 				  }
 			  });
 }
@@ -529,7 +529,7 @@ void UPsMRGSProxyIOS::OnSupportTicketsFailWithError(const FString& Error)
 			  {
 				  if (MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
 				  }
 			  });
 }
@@ -616,7 +616,7 @@ void UPsMRGSProxyIOS::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InLoade
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
 				  }
 			  });
 }
@@ -643,7 +643,7 @@ void UPsMRGSProxyIOS::OnPurchaseComplete(const FString& PaymentId, const FString
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
 				  }
 			  });
 }
@@ -654,7 +654,7 @@ void UPsMRGSProxyIOS::OnPurchaseFailed(const FString& ProductId, const FString& 
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
 				  }
 			  });
 }
@@ -773,7 +773,7 @@ void UPsMRGSProxyIOS::OnSupportClosed()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
 				  }
 			  });
 }
@@ -785,7 +785,7 @@ void UPsMRGSProxyIOS::OnUserAuthSuccess()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
 				  }
 			  });
 }
@@ -796,7 +796,7 @@ void UPsMRGSProxyIOS::OnUserAuthError()
 			  {
 				  if(MRGSDelegate.IsBound())
 				  {
-					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
+					  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
 				  }
 			  });
 }
