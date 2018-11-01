@@ -4,8 +4,6 @@
 
 #include "PsMRGSProxy.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, uint8, MyEventName);
-
 UENUM(BlueprintType)
 enum class EPsMRGSEventsTypes:uint8
 {
@@ -23,10 +21,10 @@ enum class EPsMRGSEventsTypes:uint8
 	MRGS_SHOWCASE_DATA_ERROR,
 	MRGS_SHOWCASE_DATA_EMPTY,
 	MRGS_USERINIT_COMPLETE,
-	MRGS_USERINIT_ERROR,
-	MRGS_LOGIN_COMPLETE,
-	MRGS_LOGIN_ERROR
+	MRGS_USERINIT_ERROR
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, EPsMRGSEventsTypes, MyEventName);
 
 USTRUCT(BlueprintType)
 struct FPsMRGSPurchaseInfo
@@ -62,11 +60,11 @@ UCLASS()
 class PSMRGS_API UPsMRGSProxy : public UObject
 {
 	GENERATED_UCLASS_BODY()
-
+	
 	/** Start mrgs initialization */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitModule();
-
+	
 	/** Login or register user in mrgs */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitUser(const FString& UserId);
@@ -119,6 +117,10 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
 	virtual void ShowSupport();
 	
+	/** MRGS initialize complete */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
+	virtual const bool IsReady() const;
+	
 public:
 	
 	/** Mrgs initialization complete  */
@@ -165,12 +167,15 @@ public:
 	
 	/** Dispatch failed user auth */
 	virtual void OnUserAuthError();
-
+	
 	
 protected:
 	
 	/** Loaded products from store */
 	TArray<FPsMRGSPurchaseInfo> LoadedProducts;
+	
+	/** MRGS initialize complete */
+	bool bInitComplete;
 	
 public:
 	

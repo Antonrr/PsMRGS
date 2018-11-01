@@ -51,17 +51,17 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 	UE_LOG(LogMRGS, Log, TEXT("%s: MyTarget has notifications: %d"), *PS_FUNC_LINE, int32(hasNotifications));
 	
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		mrgsMyTarget.showcaseTitle = @"More games";
-		mrgsMyTarget.showcaseCloseButtonTitle = @"Close";
-		[mrgsMyTarget openShowcaseWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController
-										  onComplete:^{
-											  [mrgsMyTarget releaseShowcase];
-											  UE_LOG(LogMRGS, Log, TEXT("%s: Showcase closed"), *PS_FUNC_LINE);
-										  } onError:^(NSError *error) {
-											  UE_LOG(LogMRGS, Log, TEXT("%s: Showcase error"), *PS_FUNC_LINE);
-										  }];
-	});
+				   ^{
+					   mrgsMyTarget.showcaseTitle = @"More games";
+					   mrgsMyTarget.showcaseCloseButtonTitle = @"Close";
+					   [mrgsMyTarget openShowcaseWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+														 onComplete:^{
+															 [mrgsMyTarget releaseShowcase];
+															 UE_LOG(LogMRGS, Log, TEXT("%s: Showcase closed"), *PS_FUNC_LINE);
+														 } onError:^(NSError *error) {
+															 UE_LOG(LogMRGS, Log, TEXT("%s: Showcase error"), *PS_FUNC_LINE);
+														 }];
+				   });
 }
 
 - (void)mrgsMyTarget:(MRGSMyTarget *)mrgsAdman didNotReceiveShowcaseDataWithReason:(NSString *)reason
@@ -86,9 +86,9 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 {
 	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget open fullscreen"), *PS_FUNC_LINE);
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		[mrgsMyTarget openFullscreenBannerInViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
-	});
+				   ^{
+					   [mrgsMyTarget openFullscreenBannerInViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+				   });
 }
 
 - (void)mrgsMyTarget:(MRGSMyTarget *)mrgsMyTarget didNotReceiveFullscreenBannerDataWithReason:(NSString *)reason
@@ -138,23 +138,23 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 - (void)showAlertViewWithTitle:(NSString *)title andMessage:(NSString *)message
 {
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		UIAlertController* alert = [UIAlertController
-									 alertControllerWithTitle:title
-									 message:message
-									 preferredStyle:UIAlertControllerStyleAlert];
-		
-		UIAlertAction* yesButton = [UIAlertAction
-									actionWithTitle:@"Ok"
-									style:UIAlertActionStyleDefault
-									handler:^(UIAlertAction * action) {
-										
-									}];
-		
-		[alert addAction:yesButton];
-		
-		[[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
-   });
+				   ^{
+					   UIAlertController* alert = [UIAlertController
+												   alertControllerWithTitle:title
+												   message:message
+												   preferredStyle:UIAlertControllerStyleAlert];
+					   
+					   UIAlertAction* yesButton = [UIAlertAction
+												   actionWithTitle:@"Ok"
+												   style:UIAlertActionStyleDefault
+												   handler:^(UIAlertAction * action) {
+													   
+												   }];
+					   
+					   [alert addAction:yesButton];
+					   
+					   [[IOSAppDelegate GetDelegate].IOSController presentViewController:alert animated:YES completion:nil];
+				   });
 }
 
 /** MRGSMyComSupport delegate */
@@ -316,7 +316,7 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 		Skpvc.delegate = self;
 		NSDictionary* Dict = [NSDictionary dictionaryWithObject: urlToGo forKey: SKStoreProductParameterITunesItemIdentifier];
 		[Skpvc loadProductWithParameters: Dict completionBlock: nil];
-
+		
 		[[IOSAppDelegate GetDelegate].IOSController presentViewController:Skpvc animated:YES completion:nil];
 	}
 }
@@ -324,12 +324,12 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 - (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController
 {
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		if (viewController)
-		{
-			[[IOSAppDelegate GetDelegate].IOSController dismissViewControllerAnimated:YES completion:nil];
-		}
-	});
+				   ^{
+					   if (viewController)
+					   {
+						   [[IOSAppDelegate GetDelegate].IOSController dismissViewControllerAnimated:YES completion:nil];
+					   }
+				   });
 }
 
 @end
@@ -360,7 +360,7 @@ void UPsMRGSProxyIOS::InitModule()
 		
 		NSArray* Paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, bDebug);
 		MrgsParams.storePath = [[Paths objectAtIndex : 0] stringByAppendingPathComponent:@"/mrgsStore"];
-
+		
 		// Flurry
 		NSString* FlurryKey = MRGSSettings->iOSFlurryApiKey.GetNSString();
 		MRGSFlurryParams* FlurryParams = [[MRGSFlurryParams alloc] initWithAPIKey:FlurryKey];
@@ -406,6 +406,11 @@ void UPsMRGSProxyIOS::InitModule()
 	});
 }
 
+const bool UPsMRGSProxyIOS::IsReady() const
+{
+	return bInitComplete;
+}
+
 void UPsMRGSProxyIOS::OnInitComplete()
 {
 	bInitComplete = true;
@@ -427,100 +432,100 @@ void UPsMRGSProxyIOS::OnInitComplete()
 	[MRGSBank sharedInstance].delegate = Delegate;
 	
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnFullscreenClosed()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-		  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnInterstitialSliderClosed()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnInterstitialDataRecieveError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnFullscreenDataRecieveError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnShowcaseDataRecieveError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnShowCaseDataHasNoAds()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnSupportReceivedError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnSupportTicketsFailWithError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR));
-		}
-	});
+			  {
+				  if (MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::InitUser(const FString& UserId)
@@ -530,7 +535,7 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	NSString* RealUserId = UserId.GetNSString();
 	NSArray* Users = [[MRGSUsers sharedInstance] getAllUsers];
 	int Count = [Users count];
@@ -587,7 +592,7 @@ void UPsMRGSProxyIOS::LoadStoreProducts(const TArray<FString>& ProductsList)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	NSMutableArray* Objects = [[NSMutableArray alloc] init];
 	for (auto& Product : ProductsList)
 	{
@@ -602,12 +607,12 @@ void UPsMRGSProxyIOS::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InLoade
 {
 	LoadedProducts = InLoadedProducts;
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED));
+				  }
+			  });
 }
 
 const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxyIOS::GetProducts() const
@@ -622,30 +627,30 @@ void UPsMRGSProxyIOS::BuyProduct(const FString& ProductId, const FString& Payloa
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	[[MRGSBank sharedInstance] addPayment:ProductId.GetNSString() withDeveloperPayload:Payload.GetNSString()];
 }
 
 void UPsMRGSProxyIOS::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnPurchaseFailed(const FString& ProductId, const FString& Answer)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::SendGAScreen(const FString& InScreenName)
@@ -655,7 +660,7 @@ void UPsMRGSProxyIOS::SendGAScreen(const FString& InScreenName)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	[MRGSGoogleAnalytics setNewScreenName:InScreenName.GetNSString()];
 }
 
@@ -666,7 +671,7 @@ void UPsMRGSProxyIOS::SendGAEvent(const FString& InCategory, const FString& InAc
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	[MRGSGoogleAnalytics createEventWithCategory:InCategory.GetNSString() action:InAction.GetNSString() label:InLabel.GetNSString() value:[NSNumber numberWithInt:1]];
 }
 
@@ -677,7 +682,7 @@ void UPsMRGSProxyIOS::SendFlurryEvent(const FString& InAction)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	[MRGSFlurry logEvent:InAction.GetNSString() withParameters:nil];
 }
 
@@ -688,7 +693,7 @@ void UPsMRGSProxyIOS::SendAFEvent(const FString& InEventName, const FString& InV
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	[MRGSAppsFlyer trackEvent:InEventName.GetNSString() withValues:nil];
 }
 
@@ -710,7 +715,7 @@ void UPsMRGSProxyIOS::ShowMyTargetShowcase()
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-
+	
 	MRGSMyTarget* MyTarget = [MRGSMyTarget sharedInstance];
 	[MyTarget loadShowcaseData];
 }
@@ -749,45 +754,45 @@ void UPsMRGSProxyIOS::ShowSupport()
 	}
 	
 	dispatch_async(dispatch_get_main_queue(),
-	^{
-		UIView* ViewContainer = [UIApplication sharedApplication].keyWindow.rootViewController.view;
-		MRGSMyComSupport *support = [MRGSMyComSupport sharedInstance];
-		[support showSupportViewOnSuperview:ViewContainer];
-	});
+				   ^{
+					   UIView* ViewContainer = [UIApplication sharedApplication].keyWindow.rootViewController.view;
+					   MRGSMyComSupport *support = [MRGSMyComSupport sharedInstance];
+					   [support showSupportViewOnSuperview:ViewContainer];
+				   });
 }
 
 void UPsMRGSProxyIOS::OnSupportClosed()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED));
+				  }
+			  });
 }
 
 
 void UPsMRGSProxyIOS::OnUserAuthSuccess()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
+				  }
+			  });
 }
 
 void UPsMRGSProxyIOS::OnUserAuthError()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
-	{
-		if(MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
-		}
-	});
+			  {
+				  if(MRGSDelegate.IsBound())
+				  {
+					  MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
+				  }
+			  });
 }
 
 #endif //IOS

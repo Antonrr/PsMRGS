@@ -80,6 +80,11 @@ void UPsMRGSProxy::AddMetric(int32 MetricId)
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+const bool UPsMRGSProxy::IsReady() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
 void UPsMRGSProxy::OnInitComplete()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);

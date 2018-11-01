@@ -16,9 +16,9 @@
 
 class MRGSJniHelper
 {
-	public:
+public:
 	
-		static FString JavaStringToFstring(jstring str);
+	static FString JavaStringToFstring(jstring str);
 };
 
 enum MRGSAdmanEntityType : uint8
@@ -67,6 +67,8 @@ public:
 	
 	virtual void ShowSupport() override;
 	
+	virtual const bool IsReady() const override;
+	
 public:
 	
 	virtual void OnInitComplete() override;
@@ -98,11 +100,6 @@ public:
 	virtual void OnUserAuthSuccess();
 	
 	virtual void OnUserAuthError();
-	
-protected:
-	
-	/** Mrgs initialization successfully complete */
-	bool bInitComplete;
 	
 #endif
 };
