@@ -232,8 +232,17 @@ public class MRGServiceCpp {
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
 		MRGSBilling.instance().setDelegate(mBillingDelegate);
 
-		GameActivity.Get().OnMrgsInitComplete();
-		onInitComplete();
+		GameActivity activity = GameActivity.Get();
+		activity.OnMrgsInitComplete();
+		activity.runOnUiThread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				Log.v(LOG_TAG, String.format("MRGServiceCPP:init complete"));
+				onInitComplete();
+			}
+		});
 	}
 
 	public static void initPush() {
