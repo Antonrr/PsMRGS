@@ -66,7 +66,7 @@ public:
 	virtual void ShowMyTargetInterstitialSlider() override;
 	
 	virtual void ShowSupport() override;
-	
+
 	virtual const bool IsReady() const override;
 	
 	virtual const bool UserLoggedIn() const;
@@ -103,5 +103,10 @@ public:
 	
 	virtual void OnUserAuthError();
 	
+
+protected:
+	
+	/** Mrgs initialization successfully complete */
+	bool bInitComplete;
 #endif
 };

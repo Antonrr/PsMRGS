@@ -801,4 +801,27 @@ void UPsMRGSProxyIOS::OnUserAuthError()
 			  });
 }
 
+
+void UPsMRGSProxyIOS::OnUserAuthSuccess()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE));
+		}
+	});
+}
+
+void UPsMRGSProxyIOS::OnUserAuthError()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(uint8(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR));
+		}
+	});
+}
+
 #endif //IOS

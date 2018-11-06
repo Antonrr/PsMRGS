@@ -57,7 +57,7 @@ void UPsMRGSProxyAndroid::InitModule()
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
 		jstring Secret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSecret));
 		static jmethodID InitjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initWithAppIdAndSecret", "(Ljava/lang/String;Ljava/lang/String;)V", false);
-		
+
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitjMethod, AppId, Secret);
 		Env->DeleteLocalRef(AppId);
 		Env->DeleteLocalRef(Secret);
@@ -76,7 +76,7 @@ void UPsMRGSProxyAndroid::InitUser(const FString& UserId)
 	if (Env)
 	{
 		static jmethodID InitUserjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initUserWithId", "(Ljava/lang/String;)V", false);
-		
+
 		jstring jUid = Env->NewStringUTF(TCHAR_TO_UTF8(*UserId));
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitUserjMethod, jUid);
 		Env->DeleteLocalRef(jUid);
@@ -90,7 +90,7 @@ void UPsMRGSProxyAndroid::LoadStoreProducts(const TArray<FString>& ProductsList)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-	
+
 	if (ProductsList.Num() == 0)
 	{
 		UE_LOG(LogMRGS, Warning, TEXT("%s: trying to load empty list of products"), *PS_FUNC_LINE);
@@ -141,7 +141,7 @@ void UPsMRGSProxyAndroid::BuyProduct(const FString& ProductId, const FString& Pa
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-	
+
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -205,7 +205,7 @@ void UPsMRGSProxyAndroid::SendAFEvent(const FString& InEventName, const FString&
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-	
+
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -221,7 +221,7 @@ void UPsMRGSProxyAndroid::AddMetric(int32 MetricId)
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
 		return;
 	}
-	
+
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -426,6 +426,30 @@ void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
 			  });
 }
 
+
+void UPsMRGSProxyAndroid::OnSupportClosed()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
+		}
+	});
+}
+
+
+void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
+{
+	AsyncTask(ENamedThreads::GameThread, [this]()
+	{
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
+		}
+	});
+}
+
 void UPsMRGSProxyAndroid::OnSupportTicketsFailWithError(const FString& Error)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]()
@@ -529,7 +553,7 @@ extern "C"
 	{
 		UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComSupportHasError(JNIEnv* env, jobject obj, jstring error)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
@@ -538,7 +562,7 @@ extern "C"
 			Proxy->OnSupportReceivedError(MRGSJniHelper::JavaStringToFstring(error));
 		}
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onMyComHasSupportDidClose(JNIEnv* env, jobject obj)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
@@ -547,7 +571,7 @@ extern "C"
 			Proxy->OnSupportClosed();
 		}
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
 	{
 		jclass ListClass = env->GetObjectClass(jItems);
@@ -572,8 +596,7 @@ extern "C"
 			Proxy->OnStoreProductsLoaded(Items);
 		}
 	}
-	
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseComplete(JNIEnv* env, jobject obj, jstring sku, jstring transactionId, jstring answer)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
@@ -582,7 +605,7 @@ extern "C"
 			Proxy->OnPurchaseComplete(MRGSJniHelper::JavaStringToFstring(sku), MRGSJniHelper::JavaStringToFstring(transactionId), MRGSJniHelper::JavaStringToFstring(answer));
 		}
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseFail(JNIEnv* env, jobject obj, jstring sku, jstring answer)
 	{
 		auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
@@ -591,7 +614,7 @@ extern "C"
 			Proxy->OnPurchaseFailed(MRGSJniHelper::JavaStringToFstring(sku), MRGSJniHelper::JavaStringToFstring(answer));
 		}
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanLoadComplete(JNIEnv* env, jobject obj, jint jtype, jboolean jnotification)
 	{
 		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
@@ -610,7 +633,7 @@ extern "C"
 			Proxy->OnShowCaseDataHasNoAds();
 		}
 	}
-	
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanViewComplete(JNIEnv* env, jobject obj, jint jtype)
 	{
 		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);

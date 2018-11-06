@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--GearVR plugin additions-->
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<trace enable="true"/>
+
+  <androidManifestUpdates>
+
+	<addPermission android:name="com.my.awa.permission.C2D_MESSAGE"/>
+	<addPermission android:name="android.permission.INTERNET"/>
+	<addPermission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<addPermission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<addPermission android:name="com.android.vending.BILLING"/>
+	<addPermission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+	<addPermission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+<!-- If using jars instead aar - uncomment -->
+<!--
+	<addElements tag="application">
+
+		<receiver android:name="ru.mail.mrgservice.MRGSGCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">    
+			<intent-filter>       
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		 		<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+		 		<category android:name="ru.mail.mrgservice" />
+			</intent-filter>
+		</receiver>
+
+		<service android:name="com.my.android.adman.services.AdmanService" android:enabled="true" />
+
+		<receiver android:name="ru.mail.mrgservice.MRGSBroadcastReceiver" android:exported="true">
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+
+		<service android:name="com.google.analytics.tracking.android.CampaignTrackingService" />
+
+		<activity android:name="ru.mail.mrgservice.MRGSSendFeedbackActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" />
+		<activity android:name="ru.mail.mrgservice.MRGSGCMActivity" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"/>
+
+		<service android:name="com.my.tracker.campaign.CampaignService"/>
+
+		<receiver android:name="ru.mail.mrgservice.MRGSPackageRemoveReceiver"> 
+			<intent-filter>
+				<action android:name="android.intent.action.PACKAGE_REMOVED"/>
+				<data android:scheme="package"/>
+			</intent-filter>
+		</receiver>
+
+	</addElements>
+-->
+
+  </androidManifestUpdates> 
+
+  <!-- Gradle -->
+  <buildGradleAdditions>
+	<insert>
+	  repositories {
+		mavenCentral()
+
+		maven {
+			url 'https://maven.google.com'
+		}
+		<!-- Set path for local repository to search at -->
+      flatDir {
+        dirs '../../libs'
+      }
+
+	}
+
+	  dependencies {
+		 compile(name: 'MRGServiceDependencies', ext:'aar')
+		 compile(name: 'MRGService', ext:'aar')
+		 compile 'com.my.tracker:mytracker-sdk:1.5.3'
+		 compile 'com.my.target:mytarget-sdk:4.6.19'
+		 compile 'com.android.support:appcompat-v7:25.3.1'
+
+		 <!-- don't work with this version, that's why using jar-->
+		 <!-- compile 'org.apache.httpcomponents:httpmime:4.1.2' -->
+
+		 <!-- If using jars instead aar - uncomment -->
+		 <!-- compile fileTree(dir: '../../libs', include: ['*.jar']) -->
+	  }
+
+	</insert>
+  </buildGradleAdditions>
+
+	<!-- optional additions to proguard -->
+	<proguardAdditions>
+		<insert>
+	
+		-keep class ru.mail.mrgservice.** {*;}
+
+		-keep class ru.mail.mrgservice.MRGSGCMBroadcastReceiver
+		-keep class android.app.** {*;}
+		-keep class ru.mail.mrgservice.MRGSMap { *; }
+		-keep class ru.mail.mrgservice.MRGSList { *; }
+		-keep public class org.apache.http.entity.mime.** { *;}
+		-keep class com.google.ads.conversiontracking.** { *; }
+		-keep class com.google.android.finsky.** { *; }
+		-keep class com.google.android.exoplayer2.** { *; }
+		-keep class com.google.android.gms.analytics.** { *; }
+		-keep class com.google.android.gms.gcm.** { *; }
+		-dontwarn com.google.android.gms.**
+		-keep class com.google.firebase.FirebaseApp { *; }
+		-keep class com.google.firebase.iid.FirebaseInstanceId { *; }
+		-keep class com.google.firebase.messaging.** { *; }
+		-dontwarn com.google.firebase.**
+		-keep class com.sec.android.iap.** { *; }
+		-keep class com.android.installreferrer.** { *; }
+		-keep class com.android.vending.billing.** { *; }
+		-keep class com.android.billingclient.api.** { *; }
+		-keep class com.flurry.android.** { *; }
+		-keep class com.flurry.sdk.** { *; }
+		-dontwarn com.flurry.sdk.**
+		-keep class com.appsflyer.AppsFlyerLib { *; }
+		-keep class com.appsflyer.SingleInstallBroadcastReceiver { *; }
+		-keep class com.appsflyer.AppsFlyerProperties { *; }
+		-keep class com.chartboost.sdk.Chartboost { *; }
+		-keep class com.chartboost.sdk.Tracking.CBAnalytics { *; }
+		-keep class com.amazon.device.** { *; }
+		-dontwarn com.amazon.device.**
+		-dontnote com.appsflyer.**
+		-dontnote com.flurry.**
+		-dontnote com.mobileapptracker.**
+		-dontnote com.google.ads.**
+		-dontnote org.apache.http.**
+		-dontnote android.app.**
+		-dontnote com.oculus.**
+		-dontnote org.apache.**
+		-dontnote android.net.**
+		-dontnote com.google.**
+		-dontwarn org.apache.**
+		-dontwarn ru.mail.mrgservice.**
+		-dontnote com.chartboost.**
+		-dontnote ru.mail.**
+		-dontnote com.my.**
+		-dontwarn com.epicgames.**
+		-dontwarn com.appsflyer.**
+		-dontnote com.epicgames.**
+		-keep class java.lang.** { *; }
+		-dontnote java.lang.**
+
+		-keep class * extends java.util.ListResourceBundle { 
+    		protected java.lang.Object[][] getContents(); 
+		}
+
+		-keepclassmembers class com.epicgames.ue4.GameActivity {
+   			public *;
+   			private *;
+		}
+
+		-keep class ru.mail.mrgservice.MRGServiceCpp {
+   			public *;
+   		}
+
+   		-keepclassmembers class ru.mail.mrgservice.MRGServiceCpp  {
+   			public *;
+		}
+
+		-dontwarn android.app.Activity
+
+		-dontoptimize
+		-dontshrink
+		-dontusemixedcaseclassnames
+		-dontskipnonpubliclibraryclasses
+		-dontpreverify
+		-verbose
+	
+		</insert>
+	</proguardAdditions>
+
+	<!-- optional files or directories to copy to Intermediate/Android/APK -->
+ 	<resourceCopies>	
+ 		<log text="PsMRGS delete file"/>	
+
+		<deleteFiles filespec="src/com/android/vending/billing/IInAppBillingService.aidl" />
+		
+		<!-- <forceDeleteFile dst="$S(BuildDir)/src/com/android/vending/billing/IInAppBillingService.aidl"/> -->
+
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/Dependencies/MRGServiceDependencies.aar" dst="$S(BuildDir)/libs/MRGServiceDependencies.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/Dependencies/MRGService.aar" dst="$S(BuildDir)/libs/MRGService.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGService.xml" dst="$S(BuildDir)/assets/MRGService.xml" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />\
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/httpmime-4.1.2.jar" dst="$S(BuildDir)/libs/httpmime-4.1.2.jar" />
+
+<!-- 		<forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
+		 <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>
+		<forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="minifyEnabled"/> -->
+
+		<!-- If using jars instead aar - uncomment -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTarget.jar" dst="$S(BuildDir)/libs/myTarget.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/AF-Android-SDK.jar" dst="$S(BuildDir)/libs/AF-Android-SDK.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/flurryAds_6.8.0.jar" dst="$S(BuildDir)/libs/flurryAds_6.8.0.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/GoogleConversionTrackingSdk-2.2.4.jar" dst="$S(BuildDir)/libs/GoogleConversionTrackingSdk-2.2.4.jar" /> -->
+ 		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/libs/in-app-purchasing-2.0.61.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/MobileAppTracker.jar" dst="$S(BuildDir)/libs/MobileAppTracker.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGService.jar" dst="$S(BuildDir)/libs/MRGService.jar" /> -->
+		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTracker.jar" dst="$S(BuildDir)/libs/myTracker.jar" /> -->
+	</resourceCopies>
+
+	<!-- optional additions to the GameActivity imports in GameActivity.java -->
+	<gameActivityImportAdditions>
+		<insert>
+			import android.os.Bundle;
+			import ru.mail.mrgservice.*;
+			import ru.mail.mrgservice.MRGServiceCpp;
+			import android.util.Log;
+			import java.util.ArrayList;
+			import java.util.List;
+			import java.util.Map;
+			
+			import java.io.ByteArrayOutputStream;
+			import java.io.ByteArrayInputStream;
+			import java.io.DataInputStream;
+			import java.io.DataOutputStream;
+			import java.io.File;
+			import java.io.FileInputStream;
+			import java.io.FileOutputStream;
+			import java.io.IOException;
+			import java.io.RandomAccessFile;
+			
+			import android.app.backup.BackupAgent;
+			import android.app.backup.BackupDataInput;
+			import android.app.backup.BackupDataOutput;
+			import android.app.backup.BackupAgentHelper;
+			import android.app.backup.BackupManager;
+			import android.app.backup.RestoreObserver;
+			import android.os.ParcelFileDescriptor;
+		</insert>
+	</gameActivityImportAdditions>
+	
+
+	<!-- optional additions to the GameActivity class in GameActivity.java -->
+	<gameActivityClassAdditions>
+		<insert>
+
+		private boolean bInitialized = false;
+		private boolean bWaitForInitialize = false;
+		private boolean bWaitForInitializeToCallStop = false;
+	
+		public void OnMrgsInitComplete()
+		{
+			bInitialized = true;
+			if (bWaitForInitializeToCallStop)
+			{
+				bWaitForInitializeToCallStop = false;
+				MRGServiceCpp.appContext = getApplicationContext();
+				MRGService.setAppContext(getApplicationContext());
+				MRGService.instance().onStop(this);
+			}
+			if (bWaitForInitialize)
+			{
+				bWaitForInitialize = false;
+				MRGServiceCpp.appContext = getApplicationContext();
+				MRGService.setAppContext(getApplicationContext());
+				MRGService.instance().onStart(this);
+			}
+		}
+
+		public void runOnNecessaryThread(final Runnable callback) 
+		{
+			runOnUiThread(callback);
+		}
+
+		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret)
+		{
+			MRGServiceCpp.appContext = getApplicationContext();
+			MRGService.setAppContext(getApplicationContext());
+			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret);
+		}
+
+		public void AndroidThunkJava_MRGService_initUserWithId(String userId)
+		{
+			MRGServiceCpp.initUser(userId);
+		}
+
+		public void AndroidThunkJava_MRGService_admanLoadData(String type)
+		{
+			MRGServiceCpp.admanLoadData(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanOpen(final int type)
+		{
+			MRGServiceCpp.admanOpen(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanClose(final int type)
+		{
+			MRGServiceCpp.admanClose(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanRelease(final int type)
+		{
+			MRGServiceCpp.admanRelease(type);
+		}
+
+		public void AndroidThunkJava_MRGService_admanSetTitle(final String title)
+		{
+			MRGServiceCpp.admanSetTitle(title);
+		}
+
+		public void AndroidThunkJava_MRGService_showSupport(final String secretKey)
+		{
+			MRGServiceCpp.showSupport(secretKey);
+		}
+
+		public void AndroidThunkJava_MRGService_flurryEvent(final String event)
+		{
+			MRGServiceCpp.flurryEvent(event);
+		}
+
+		public void AndroidThunkJava_MRGService_sendGAEvent(final String category, final String action, final String label) 
+		{
+			MRGServiceCpp.sendGAEvent(category, action, label);
+		}
+
+		public void AndroidThunkJava_MRGService_sendGAScreen(final String screenName)
+		{
+			MRGServiceCpp.sendGAScreen(screenName);
+		}
+
+		public void AndroidThunkJava_MRGService_sendAFEvent(final String eventName, final String value) 
+		{
+			MRGServiceCpp.sendAFEvent(eventName, value);
+		}
+
+		public void AndroidThunkJava_MRGService_getProductsInfo(final String skuList)
+		{
+			MRGServiceCpp.getProductsInfo(skuList);
+		}
+
+		public void AndroidThunkJava_MRGService_buyItem(final String sku)
+		{
+			MRGServiceCpp.buyItem(sku);
+		}
+		
+		public void AndroidThunkJava_MRGService_addMetric(final String metric)
+		{
+			MRGServiceCpp.addMetric(metric);
+		}
+		
+		</insert>
+		
+	</gameActivityClassAdditions>
+	
+	<!-- optional additions to GameActivity onCreate metadata reading in GameActivity.java -->
+	<gameActivityReadMetadataAdditions>
+	</gameActivityReadMetadataAdditions>
+	
+	<!-- optional additions to GameActivity onCreate in GameActivity.java -->
+	<gameActivityOnCreateAdditions>
+	</gameActivityOnCreateAdditions>
+
+	<!-- optional additions to GameActivity onDestroy in GameActivity.java -->
+	<gameActivityOnDestroyAdditions>
+	</gameActivityOnDestroyAdditions>
+	
+	
+	<!-- optional additions to GameActivity onStart in GameActivity.java -->
+	<gameActivityOnStartAdditions>
+		<insert>
+			if (bInitialized == true)
+			{
+				MRGServiceCpp.appContext = getApplicationContext();
+				MRGService.setAppContext(getApplicationContext());
+				MRGService.instance().onStart(this);
+			}
+			else
+			{
+				bWaitForInitialize = true;
+			}
+		</insert>
+	</gameActivityOnStartAdditions>
+
+	<!-- optional additions to GameActivity onStop in GameActivity.java -->
+	<gameActivityOnStopAdditions>
+		<insert>
+ 			if (bInitialized == true)
+			{
+				MRGServiceCpp.appContext = getApplicationContext();
+				MRGService.setAppContext(getApplicationContext()); 
+				MRGService.instance().onStop(this);
+			}
+			else
+			{
+				bWaitForInitializeToCallStop = true;
+			}
+		</insert>
+	</gameActivityOnStopAdditions>
+	
+
+	<!-- optional additions to GameActivity onPause in GameActivity.java	-->
+	<gameActivityOnPauseAdditions>
+	</gameActivityOnPauseAdditions>
+
+
+	<!-- optional additions to GameActivity onResume in GameActivity.java	-->
+	<gameActivityOnResumeAdditions>
+	</gameActivityOnResumeAdditions>
+
+
+	<!-- optional additions to GameActivity onActivityResult in GameActivity.java -->
+	<gameActivityOnActivityResultAdditions>
+	</gameActivityOnActivityResultAdditions>
+	
+
+	<!-- optional libraries to load in GameActivity.java before libUE4.so -->
+	<soLoadLibrary>
+	</soLoadLibrary>
+</root>

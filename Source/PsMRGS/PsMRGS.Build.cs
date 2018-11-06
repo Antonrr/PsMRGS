@@ -1,6 +1,8 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using System;
+using System.IO;
 
 public class PsMRGS : ModuleRules
 {
@@ -72,6 +74,12 @@ public class PsMRGS : ModuleRules
 			}
 			);
 
+
+		if (Target.Platform == UnrealTargetPlatform.Android)
+		{
+			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "PsMRGS_APL.xml"));
+		}
 
 		if (Target.Platform == UnrealTargetPlatform.IOS)
 		{

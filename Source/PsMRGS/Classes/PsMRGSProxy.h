@@ -172,7 +172,6 @@ public:
 	/** Dispatch failed user auth */
 	virtual void OnUserAuthError();
 	
-	
 protected:
 	
 	/** Loaded products from store */
