@@ -6,14 +6,15 @@
 	<Options>
 		<debug>true</debug>                                   
 		<testDevice>true</testDevice>                         
-		<crashReports>true</crashReports>                    
-		<localPushNotifications>true</localPushNotifications>
+		<crashReports>false</crashReports>                    
+		<localPushNotifications>false</localPushNotifications>
 		
 		<billing>google</billing>
 		<utmSource>test-utm-source</utmSource>
 	</Options>
 
 	<ExternalSDK>
+
 		<GoogleAnalytics
 			enable="false"
 			trackingId="UA-45510902-42"
@@ -26,7 +27,6 @@
 			debug="true"
 			app_key="3XsrYegKtjUaWeihepYiqK"
 			/>
-
 
 		<Flurry
 			enable="false"

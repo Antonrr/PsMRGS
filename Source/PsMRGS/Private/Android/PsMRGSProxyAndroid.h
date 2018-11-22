@@ -66,7 +66,7 @@ public:
 	virtual void ShowMyTargetInterstitialSlider() override;
 	
 	virtual void ShowSupport() override;
-
+	
 	virtual const bool IsReady() const override;
 	
 	virtual const bool UserLoggedIn() const;
@@ -93,7 +93,7 @@ public:
 	
 	virtual void OnSupportClosed() override;
 	
-	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InLoadedProducts) override;
+	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts) override;
 	
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload) override;
 	
@@ -103,10 +103,5 @@ public:
 	
 	virtual void OnUserAuthError();
 	
-
-protected:
-	
-	/** Mrgs initialization successfully complete */
-	bool bInitComplete;
 #endif
 };

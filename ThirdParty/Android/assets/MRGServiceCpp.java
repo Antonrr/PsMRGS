@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,16 +43,16 @@ public class MRGServiceCpp {
 	private static native void onMyComSupportHasError(final String error);
 	private static native void onMyComHasSupportDidClose();
 
-	private static native void onLoadProductsDidFinished(final List<MRGSPurchaseItem> items);
+	public static native void onLoadProductsDidFinished(final List<MRGSPurchaseItem> items);
 	private static native void onPurchaseComplete(final String sku, final String transactionId, final String answer);
 	private static native void onPurchaseFail(final String sku, final String answer);
 
 	private static native void onReceivedNotification(final int notificationId, final String title, final String message, final boolean isLocal);
 	private static native void onClickOnNotification(final int notificationId, final String title, final String message, final boolean isLocal);
 
-	private static native void onAdmanLoadComplete(int type, boolean notification);
-	private static native void onAdmanViewComplete(int type);
-	private static native void onAdmanHasNoAdd(int type);
+	public static native void onAdmanLoadComplete(int type, boolean notification);
+	public static native void onAdmanViewComplete(int type);
+	public static native void onAdmanHasNoAdd(int type);
 
 
 	/**
@@ -234,7 +235,7 @@ public class MRGServiceCpp {
 
 		GameActivity activity = GameActivity.Get();
 		activity.OnMrgsInitComplete();
-		activity.runOnUiThread(new Runnable() 
+		threadHelper.runOnNecessaryThread(new Runnable() 
 		{
 			@Override
 			public void run() 
@@ -263,7 +264,14 @@ public class MRGServiceCpp {
 
 	public static void getProductsInfo(final String skuList) {
 		Log.v(LOG_TAG, String.format("getProductsInfo(%s)", skuList));
-		MRGSBilling.instance().getProductsInfo(new ArrayList(Arrays.asList(skuList.split(","))));
+
+		ArrayList<String> skuListTemp = new ArrayList(Arrays.asList(skuList.split(",")));
+		ArrayList<Pair<String,String>> skuListToLoad = new ArrayList<>();
+		for (int i = 0; i < skuListTemp.size(); i++)
+		{
+			skuListToLoad.add(Pair.create(skuListTemp.get(i), "cons"));
+		}
+		MRGSBilling.instance().getProductsInfoWithTypes(skuListToLoad);
 	}
 
 	public static void buyItem(final String sku) {
@@ -577,7 +585,12 @@ public class MRGServiceCpp {
 					type = ADMAN_INTERSTITIAL;
 					break;
 			}
-			onAdmanLoadComplete(type, notification);
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onAdmanLoadComplete(type, notification);
+				}
+			});
 		}
 
 		public void onViewComplete(final MRGSAdvertising.AdvertisingType advertisingType) {

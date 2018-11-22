@@ -142,7 +142,7 @@ void UPsMRGSProxy::OnSupportClosed()
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
-void UPsMRGSProxy::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InLoadedProducts)
+void UPsMRGSProxy::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }

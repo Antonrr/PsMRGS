@@ -158,7 +158,7 @@ public:
 	virtual void OnSupportClosed();
 	
 	/** Productrs successfully loaded from store */
-	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo>& InLoadedProducts);
+	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts);
 	
 	/** Purchase successfully complete on store */
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload);
