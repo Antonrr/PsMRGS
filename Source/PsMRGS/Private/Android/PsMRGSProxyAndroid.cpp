@@ -28,19 +28,12 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 		return FString(TEXT(""));
 	}
 	
-	const jclass stringClass = env->GetObjectClass(jstr);
-	const jmethodID getBytes = env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
-	const jbyteArray stringJbytes = (jbyteArray) env->CallObjectMethod(jstr, getBytes, env->NewStringUTF("UTF-8"));
+	FString ConvertedString;
+	const char* chars = env->GetStringUTFChars(jstr, 0);
+	ConvertedString = FString(UTF8_TO_TCHAR(chars));
+	jenv->ReleaseStringUTFChars(jstr, chars);
 	
-	size_t length = (size_t) env->GetArrayLength(stringJbytes);
-	jbyte* pBytes = env->GetByteArrayElements(stringJbytes, NULL);
-	
-	std::string ret = std::string((char *)pBytes, length);
-	env->ReleaseByteArrayElements(stringJbytes, pBytes, JNI_ABORT);
-	
-	env->DeleteLocalRef(stringJbytes);
-	env->DeleteLocalRef(stringClass);
-	return FString(ret.c_str());
+	return ConvertedString;
 }
 
 void UPsMRGSProxyAndroid::InitModule()
@@ -99,15 +92,13 @@ void UPsMRGSProxyAndroid::LoadStoreProducts(const TArray<FString>& ProductsList)
 	}
 	
 	FString ResultList;
-	int32 Index = 0;
-	for (auto ListItem : ProductsList)
+	for (int32 i = 0; i < ProductsList.Num(); ++i)
 	{
-		ResultList += ListItem;
-		if(Index < ProductsList.Num() - 1)
+		ResultList += ProductsList[i];
+		if(i < ProductsList.Num() - 1)
 		{
-			ResultList += ",";
+			ResultList += TEXT(",");
 		}
-		Index++;
 	}
 	
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
@@ -242,12 +233,7 @@ void UPsMRGSProxyAndroid::ShowMyTargetShowcase()
 	
 	FString AdType;
 	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanShowcase));
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID AdmanLoadShowcaseData = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanLoadData", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanLoadShowcaseData, Env->NewStringUTF(TCHAR_TO_UTF8(*AdType)));
-	}
+	ProcessAdmanCase(AdType);
 }
 
 void UPsMRGSProxyAndroid::ShowMyTargetFullscreen()
@@ -260,12 +246,7 @@ void UPsMRGSProxyAndroid::ShowMyTargetFullscreen()
 	
 	FString AdType;
 	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanFullscreenBanner));
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID AdmanLoadFullscreenData = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanLoadData", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanLoadFullscreenData, Env->NewStringUTF(TCHAR_TO_UTF8(*AdType)));
-	}
+	ProcessAdmanCase(AdType);
 }
 
 void UPsMRGSProxyAndroid::ShowMyTargetInterstitialSlider()
@@ -278,6 +259,11 @@ void UPsMRGSProxyAndroid::ShowMyTargetInterstitialSlider()
 	
 	FString AdType;
 	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanInterstitialSlider));
+	ProcessAdmanCase(AdType);
+}
+
+void UPsMRGSProxyAndroid::ProcessAdmanCase(FString AdType);
+{
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
@@ -471,29 +457,34 @@ void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FStri
 
 extern "C"
 {
-	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& item)
+	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& OutItem)
 	{
+		if (!env)
+		{
+			return;
+		}
+		
 		jclass itemClass = env->GetObjectClass(jitem);
 		
 		jfieldID fid = env->GetFieldID(itemClass, "sku", "Ljava/lang/String;");
 		jstring jsku = (jstring)env->GetObjectField(jitem, fid);
-		item.Sku = MRGSJniHelper::JavaStringToFstring(jsku);
+		OutItem.Sku = MRGSJniHelper::JavaStringToFstring(jsku);
 		
 		fid = env->GetFieldID(itemClass, "price", "Ljava/lang/String;");
 		jstring jprice = (jstring)env->GetObjectField(jitem, fid);
-		item.Price = MRGSJniHelper::JavaStringToFstring(jprice);
+		OutItem.Price = MRGSJniHelper::JavaStringToFstring(jprice);
 		
 		fid = env->GetFieldID(itemClass, "title", "Ljava/lang/String;");
 		jstring jtitle = (jstring)env->GetObjectField(jitem, fid);
-		item.Title = MRGSJniHelper::JavaStringToFstring(jtitle);
+		OutItem.Title = MRGSJniHelper::JavaStringToFstring(jtitle);
 		
 		fid = env->GetFieldID(itemClass, "type", "Ljava/lang/String;");
 		jstring jtype = (jstring)env->GetObjectField(jitem, fid);
-		item.Type = MRGSJniHelper::JavaStringToFstring(jtype);
+		OutItem.Type = MRGSJniHelper::JavaStringToFstring(jtype);
 		
 		fid = env->GetFieldID(itemClass, "description", "Ljava/lang/String;");
 		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
-		item.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
+		OutItem.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 	}
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
@@ -547,6 +538,11 @@ extern "C"
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadProductsDidFinished(JNIEnv* env, jobject obj, jobject jItems)
 	{
+		if (!env)
+		{
+			return;
+		}
+		
 		jclass ListClass = env->GetObjectClass(jItems);
 		jmethodID mid = env->GetMethodID(ListClass, "size", "()I");
 		int Size = (int)env->CallIntMethod(jItems, mid);
@@ -629,15 +625,14 @@ extern "C"
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanViewComplete(JNIEnv* env, jobject obj, jint jtype)
 	{
-		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-		if (Env)
+		if (env)
 		{
 			MRGSAdmanEntityType AdmanActionType = static_cast<MRGSAdmanEntityType>((int)jtype);
-			static jmethodID AdmanClose = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanClose", "(I)V", false);
-			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanClose, jtype);
+			static jmethodID AdmanClose = FJavaWrapper::FindMethod(env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanClose", "(I)V", false);
+			FJavaWrapper::CallVoidMethod(env, FJavaWrapper::GameActivityThis, AdmanClose, jtype);
 			
-			static jmethodID AdmanRelease = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanRelease", "(I)V", false);
-			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanRelease, jtype);
+			static jmethodID AdmanRelease = FJavaWrapper::FindMethod(env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanRelease", "(I)V", false);
+			FJavaWrapper::CallVoidMethod(env, FJavaWrapper::GameActivityThis, AdmanRelease, jtype);
 			
 			AsyncTask(ENamedThreads::GameThread, [AdmanActionType]() {
 				auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
@@ -651,14 +646,15 @@ extern "C"
 					  break;
 						
 				  case MRGSAdmanEntityType::MRGSAdmanInterstitialSlider:
-					  if (Proxy)
-					  {
-						  Proxy->OnInterstitialSliderClosed();
-					  }
-					  break;
+					if (Proxy)
+					{
+						Proxy->OnInterstitialSliderClosed();
+					}
+					break;
 						
 				  default:
-					  break;
+					UE_LOG(LogMRGS, Error, TEXT("%s: Unrecognized error"), *PS_FUNC_LINE);
+					break;
 				}
 			});
 		}

@@ -103,5 +103,10 @@ public:
 	
 	virtual void OnUserAuthError();
 	
+private:
+	
+	/** Process adman by type */
+	void ProcessAdmanCase(FString AdType);
+	
 #endif
 };
