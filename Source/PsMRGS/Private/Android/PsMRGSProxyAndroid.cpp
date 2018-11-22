@@ -31,7 +31,7 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 	FString ConvertedString;
 	const char* chars = env->GetStringUTFChars(jstr, 0);
 	ConvertedString = FString(UTF8_TO_TCHAR(chars));
-	jenv->ReleaseStringUTFChars(jstr, chars);
+	env->ReleaseStringUTFChars(jstr, chars);
 	
 	return ConvertedString;
 }
@@ -262,7 +262,7 @@ void UPsMRGSProxyAndroid::ShowMyTargetInterstitialSlider()
 	ProcessAdmanCase(AdType);
 }
 
-void UPsMRGSProxyAndroid::ProcessAdmanCase(FString AdType);
+void UPsMRGSProxyAndroid::ProcessAdmanCase(FString AdType)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
