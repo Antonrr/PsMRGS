@@ -3,6 +3,7 @@
 using UnrealBuildTool;
 using System;
 using System.IO;
+using System.Collections.Generic;
 
 public class PsMRGS : ModuleRules
 {
@@ -12,6 +13,25 @@ public class PsMRGS : ModuleRules
 		{
 			return System.IO.Path.GetFullPath(
 			System.IO.Path.Combine(ModuleDirectory, "../../")
+		);
+		}
+	}
+
+	public string PluginAndroidSettingsXml
+	{
+		get
+		{
+			return System.IO.Path.GetFullPath(
+			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/Assets/MRGService.xml";
+		}
+	}
+
+	public string ConfigPath
+	{
+		get
+		{
+			return System.IO.Path.GetFullPath(
+			System.IO.Path.Combine(ModuleDirectory, "../../../../Config/DefaultEngine.ini")
 		);
 		}
 	}
@@ -79,6 +99,105 @@ public class PsMRGS : ModuleRules
 		{
 			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
 			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "PsMRGS_APL.xml"));
+
+
+			/** Write settings from DefaultEngineIni of MRGS to MRGService.xml in Plugin dir */
+			
+			string AndroidGATrackingId = null;
+			string AndroidAppsFlyerDevKey = null;
+			string AndroidFlurryApiKey = null;
+			string AndroidMyTargetShowcaseSlotId = null;
+			string AndroidMyTargetFullscreenSlotId = null;
+			string AndroidMyTrackerAppId = null;
+
+			/** Opens DefaultEngine.ini to read values for variables */
+	        using (StreamReader sr = File.OpenText(ConfigPath))
+	        {
+	            string s = "";
+	            while ((s = sr.ReadLine()) != null)
+	            {
+	            	string[] tokens;
+	            	tokens = s.Split('=');
+	        		if (tokens.Length == 2)
+	        		{
+	        			if (tokens[0] == "AndroidGATrackingId")
+	            		{
+	            			AndroidGATrackingId = tokens[1];
+	            		}
+	            		else if (tokens[0] == "AndroidAppsFlyerDevKey")
+	            		{
+							AndroidAppsFlyerDevKey = tokens[1];
+	            		}
+	            		else if (tokens[0] == "AndroidFlurryApiKey")
+	            		{
+							AndroidFlurryApiKey = tokens[1];
+	            		}
+	            		else if (tokens[0] == "AndroidMyTargetShowcaseSlotId")
+	            		{
+							AndroidMyTargetShowcaseSlotId = tokens[1];
+	            		}
+	            		else if (tokens[0] == "AndroidMyTargetFullscreenSlotId")
+	            		{
+							AndroidMyTargetFullscreenSlotId = tokens[1];
+	            		}
+	            		else if (tokens[0] == "AndroidMyTrackerAppId")
+	            		{
+	            			AndroidMyTrackerAppId = tokens[1];
+	            		}
+	            	}
+	            }
+	        }
+
+			/** Saves temp contents of file separated to lines */
+	        List<string> lines = new List<string>();
+	        using (StreamReader sr = File.OpenText(PluginAndroidSettingsXml))
+	        {
+	            string s = "";
+	            while ((s = sr.ReadLine()) != null)
+	            {
+	            	lines.Add(s);
+	            }
+	        }
+
+	        /** Clear MRGService.xml to empty state */
+			System.IO.File.WriteAllText(PluginAndroidSettingsXml, string.Empty);
+
+	        for (int i = 0; i < lines.Count; i++)
+	        {
+	        	string s = lines[i];
+	        	if (s.Contains("trackingId"))
+	        	{
+					lines[i] = "trackingId=" + '"' + AndroidGATrackingId + '"';
+	        	}
+	        	if (s.Contains("app_key"))
+	        	{
+					lines[i] = "app_key=" + '"' + AndroidAppsFlyerDevKey + '"';
+	        	}
+	        	if (s.Contains("applicationKey"))
+	        	{
+					lines[i] = "applicationKey=" + '"' + AndroidFlurryApiKey + '"';
+	        	}
+	        	if (s.Contains("slotId"))
+	        	{
+					lines[i] = "slotId=" + '"' + AndroidMyTargetShowcaseSlotId + '"';
+	        	}
+	        	if (s.Contains("fullscreenSlotId"))
+	        	{
+					lines[i] = "fullscreenSlotId=" + '"' + AndroidMyTargetFullscreenSlotId + '"';
+	        	}
+	        	if (s.Contains("appId"))
+	        	{
+					lines[i] = "appId=" + '"' + AndroidMyTrackerAppId + '"';
+	        	}
+	        }
+
+	        /** Saves edited MRGService.xml back with parsed values from config*/
+			TextWriter tw = new StreamWriter(PluginAndroidSettingsXml);
+	        foreach (String s in lines)
+	        {
+	   			tw.WriteLine(s);
+	        }
+			tw.Close();
 		}
 
 		if (Target.Platform == UnrealTargetPlatform.IOS)
