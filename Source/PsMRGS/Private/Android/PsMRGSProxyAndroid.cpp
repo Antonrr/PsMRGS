@@ -38,6 +38,11 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 
 void UPsMRGSProxyAndroid::InitModule()
 {
+	if (IsReady())
+	{
+		return;
+	}
+	
 	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
 	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
 	{

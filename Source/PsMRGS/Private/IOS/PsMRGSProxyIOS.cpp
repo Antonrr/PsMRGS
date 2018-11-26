@@ -333,6 +333,11 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 
 void UPsMRGSProxyIOS::InitModule()
 {
+	if (IsReady())
+	{
+		return;
+	}
+	
 	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
 	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
 	{
