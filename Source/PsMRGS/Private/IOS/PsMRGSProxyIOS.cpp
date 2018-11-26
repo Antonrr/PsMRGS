@@ -420,6 +420,11 @@ const bool UPsMRGSProxyIOS::UserLoggedIn() const
 
 void UPsMRGSProxyIOS::OnInitComplete()
 {
+	if (IsReady())
+	{
+		return;
+	}
+	
 	bInitComplete = true;
 	
 	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
