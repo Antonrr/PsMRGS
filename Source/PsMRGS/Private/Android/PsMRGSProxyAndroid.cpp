@@ -490,6 +490,13 @@ extern "C"
 		fid = env->GetFieldID(itemClass, "description", "Ljava/lang/String;");
 		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
 		OutItem.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
+		
+		Env->DeleteLocalRef(jsku);
+		Env->DeleteLocalRef(jprice);
+		Env->DeleteLocalRef(jtitle);
+		Env->DeleteLocalRef(jtype);
+		Env->DeleteLocalRef(jdescription);
+		Env->DeleteLocalRef(itemClass);
 	}
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
@@ -563,6 +570,8 @@ extern "C"
 			Items.Add(Item);
 			env->DeleteLocalRef(jitem);
 		}
+		
+		env->DeleteLocalRef(ListClass);
 		
 		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
 			FSimpleDelegateGraphTask::FDelegate::CreateLambda([Items]() {
