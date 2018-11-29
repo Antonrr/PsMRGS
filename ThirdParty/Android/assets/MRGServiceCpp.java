@@ -45,6 +45,7 @@ public class MRGServiceCpp {
 
 	public static native void onLoadProductsDidFinished(final List<MRGSPurchaseItem> items);
 	private static native void onPurchaseComplete(final String sku, final String transactionId, final String answer);
+	private static native void onPurchaseCancel(final String sku, final String transactionId, final String answer);
 	private static native void onPurchaseFail(final String sku, final String answer);
 
 	private static native void onReceivedNotification(final int notificationId, final String title, final String message, final boolean isLocal);
@@ -110,12 +111,24 @@ public class MRGServiceCpp {
 		@Override
 		public void purchaseComplete(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
 			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseComplete(%s, %s, %s)", MRGSBilling.getBillingName(), item, answer));
-			threadHelper.runOnNecessaryThread(new Runnable() {
-				@Override
-				public void run() {
-					onPurchaseComplete(item.sku, item.transactionId, answer);
-				}
-			});
+			if (item.resultCode != BILLING_RESPONSE_RESULT_USER_CANCELED)
+			{
+				threadHelper.runOnNecessaryThread(new Runnable() {
+					@Override
+					public void run() {
+						onPurchaseComplete(item.sku, item.transactionId, answer);
+					}
+				});
+			}
+			else
+			{
+				threadHelper.runOnNecessaryThread(new Runnable() {
+					@Override
+					public void run() {
+						onPurchaseCancel(item.sku, item.transactionId, answer);
+					}
+				})
+			}
 		}
 
 		@Override

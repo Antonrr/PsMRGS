@@ -294,7 +294,14 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 	
 	if (self.Proxy)
 	{
-		self.Proxy->OnPurchaseFailed(PaymentId, Answer);
+		if (error.code != SKErrorPaymentCancelled)
+		{
+			self.Proxy->OnPurchaseFailed(PaymentId, Answer);
+		}
+		else
+		{
+			self.Proxy->OnPurchaseCanceled(PaymentId, Answer);
+		}
 	}
 }
 
@@ -649,6 +656,16 @@ void UPsMRGSProxyIOS::OnPurchaseFailed(const FString& ProductId, const FString& 
 		if(MRGSDelegate.IsBound())
 		{
 		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
+		}
+	});
+}
+
+void UPsMRGSProxyIOS::OnPurchaseCanceled(const FString& ProductId, const FString& Answer)
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_CANCELED);
 		}
 	});
 }

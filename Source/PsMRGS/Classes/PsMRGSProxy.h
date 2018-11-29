@@ -11,6 +11,7 @@ enum class EPsMRGSEventsTypes:uint8
 	MRGS_PRODUCTS_LOADED,
 	MRGS_PURCHASE_COMPLETE,
 	MRGS_PURCHASE_FAILED,
+	MRGS_PURCHASE_CANCELED,
 	MRGS_SUPPORT_CLOSED,
 	MRGS_SUPPORT_ERROR,
 	MRGS_SUPPORT_TICKETS_ERROR,
@@ -165,6 +166,9 @@ public:
 	
 	/** Error while processing purchase on store */
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer);
+	
+	/** Canceled while processing purchase on store */
+	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer);
 	
 	/** Dispatch success user auth */
 	virtual void OnUserAuthSuccess();

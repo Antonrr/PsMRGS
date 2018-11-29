@@ -92,6 +92,8 @@ public:
 	
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer) override;
 	
+	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
+	
 	virtual void OnUserAuthSuccess();
 	
 	virtual void OnUserAuthError();

@@ -460,6 +460,16 @@ void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FStri
 	});
 }
 
+void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FString& Answer)
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if(MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_CANCELED);
+		}
+	});
+}
+
 extern "C"
 {
 	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& OutItem)
@@ -612,6 +622,20 @@ extern "C"
 			if (Proxy)
 			{
 				Proxy->OnPurchaseFailed(Sku, Answer);
+			}
+		});
+	}
+	
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseCancel(JNIEnv* env, jobject obj, jstring sku, jstring answer)
+	{
+		FString Sku = MRGSJniHelper::JavaStringToFstring(sku);
+		FString Answer = MRGSJniHelper::JavaStringToFstring(answer);
+		
+		AsyncTask(ENamedThreads::GameThread, [Sku, Answer]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnPurchaseCanceled(Sku, Answer);
 			}
 		});
 	}

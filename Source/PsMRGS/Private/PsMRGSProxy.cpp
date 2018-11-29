@@ -157,6 +157,11 @@ void UPsMRGSProxy::OnPurchaseFailed(const FString& ProductId, const FString& Ans
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+void UPsMRGSProxy::OnPurchaseCanceled(const FString& ProductId, const FString& Answer)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
 void UPsMRGSProxy::OnUserAuthSuccess()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
