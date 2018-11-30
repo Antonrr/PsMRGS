@@ -111,7 +111,7 @@ public class MRGServiceCpp {
 		@Override
 		public void purchaseComplete(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
 			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseComplete(%s, %s, %s)", MRGSBilling.getBillingName(), item, answer));
-			if (item.resultCode != BILLING_RESPONSE_RESULT_USER_CANCELED)
+			if (item.resultCode != 1) // BILLING_RESPONSE_RESULT_USER_CANCELED = 1
 			{
 				threadHelper.runOnNecessaryThread(new Runnable() {
 					@Override
@@ -127,7 +127,7 @@ public class MRGServiceCpp {
 					public void run() {
 						onPurchaseCancel(item.sku, item.transactionId, answer);
 					}
-				})
+				});
 			}
 		}
 

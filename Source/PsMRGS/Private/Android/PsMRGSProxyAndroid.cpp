@@ -501,12 +501,12 @@ extern "C"
 		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
 		OutItem.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 		
-		Env->DeleteLocalRef(jsku);
-		Env->DeleteLocalRef(jprice);
-		Env->DeleteLocalRef(jtitle);
-		Env->DeleteLocalRef(jtype);
-		Env->DeleteLocalRef(jdescription);
-		Env->DeleteLocalRef(itemClass);
+		env->DeleteLocalRef(jsku);
+		env->DeleteLocalRef(jprice);
+		env->DeleteLocalRef(jtitle);
+		env->DeleteLocalRef(jtype);
+		env->DeleteLocalRef(jdescription);
+		env->DeleteLocalRef(itemClass);
 	}
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
