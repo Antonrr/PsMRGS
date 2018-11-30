@@ -120,7 +120,7 @@ void UPsMRGSProxyAndroid::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLo
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
 		}
 	});
 }
@@ -323,7 +323,7 @@ void UPsMRGSProxyAndroid::OnInitComplete()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE);
 		}
 	});
 }
@@ -333,7 +333,7 @@ void UPsMRGSProxyAndroid::OnFullscreenClosed()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_CLOSED);
 		}
 	});
 }
@@ -343,7 +343,7 @@ void UPsMRGSProxyAndroid::OnInterstitialSliderClosed()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_SLIDER_CLOSED);
 		}
 	});
 }
@@ -353,7 +353,7 @@ void UPsMRGSProxyAndroid::OnInterstitialDataRecieveError(const FString& Error)
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INTERSTITIAL_DATA_ERROR);
 		}
 	});
 }
@@ -363,7 +363,7 @@ void UPsMRGSProxyAndroid::OnFullscreenDataRecieveError(const FString& Error)
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_FULLSCREEN_DATA_ERROR);
 		}
 	});
 }
@@ -373,7 +373,7 @@ void UPsMRGSProxyAndroid::OnShowcaseDataRecieveError(const FString& Error)
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_ERROR);
 		}
 	});
 }
@@ -383,7 +383,7 @@ void UPsMRGSProxyAndroid::OnShowCaseDataHasNoAds()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_DATA_EMPTY);
 		}
 	});
 }
@@ -393,7 +393,7 @@ void UPsMRGSProxyAndroid::OnSupportClosed()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
 		}
 	});
 }
@@ -403,7 +403,7 @@ void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
 		}
 	});
 }
@@ -413,7 +413,7 @@ void UPsMRGSProxyAndroid::OnSupportTicketsFailWithError(const FString& Error)
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
 		}
 	});
 }
@@ -425,7 +425,7 @@ void UPsMRGSProxyAndroid::OnUserAuthSuccess()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
 		}
 	});
 }
@@ -435,7 +435,7 @@ void UPsMRGSProxyAndroid::OnUserAuthError()
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
 		}
 	});
 }
@@ -445,7 +445,7 @@ void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FSt
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
 		}
 	});
 }
@@ -455,7 +455,7 @@ void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FStri
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
-		  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
 		}
 	});
 }
@@ -521,18 +521,13 @@ extern "C"
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)
 	{
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([=]() {
+		AsyncTask(ENamedThreads::GameThread, []() {
 			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 			if (Proxy)
 			{
 				Proxy->OnInitComplete();
 			}
-		}),
-		TStatId(),
-		nullptr,
-		ENamedThreads::GameThread
-		);
+		});
 	}
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onLoadServerDataDidFinished(JNIEnv* env, jobject obj, jstring json)
@@ -552,7 +547,7 @@ extern "C"
 			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 			if (Proxy)
 			{
-			  Proxy->OnSupportReceivedError(Error);
+				Proxy->OnSupportReceivedError(Error);
 			}
 		});
 	}
@@ -563,7 +558,7 @@ extern "C"
 			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 			if (Proxy)
 			{
-			  Proxy->OnSupportClosed();
+				Proxy->OnSupportClosed();
 			}
 		});
 	}
@@ -593,18 +588,13 @@ extern "C"
 		
 		env->DeleteLocalRef(ListClass);
 		
-		FSimpleDelegateGraphTask::CreateAndDispatchWhenReady(
-			FSimpleDelegateGraphTask::FDelegate::CreateLambda([Items]() {
+		AsyncTask(ENamedThreads::GameThread, []() {
 			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 			if (Proxy)
 			{
 				Proxy->OnStoreProductsLoaded(Items);
 			}
-		}),
-		TStatId(),
-		nullptr,
-		ENamedThreads::GameThread
-		);
+		});
 	}
 	
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseComplete(JNIEnv* env, jobject obj, jstring sku, jstring transactionId, jstring answer)
@@ -686,23 +676,23 @@ extern "C"
 				auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 				switch (AdmanActionType)
 				{
-				  case MRGSAdmanEntityType::MRGSAdmanFullscreenBanner:
-					  if (Proxy)
-					  {
-						  Proxy->OnFullscreenClosed();
-					  }
-					  break;
+					case MRGSAdmanEntityType::MRGSAdmanFullscreenBanner:
+						if (Proxy)
+						{
+							Proxy->OnFullscreenClosed();
+						}
+						break;
 						
-				  case MRGSAdmanEntityType::MRGSAdmanInterstitialSlider:
-					if (Proxy)
-					{
-						Proxy->OnInterstitialSliderClosed();
-					}
-					break;
+					case MRGSAdmanEntityType::MRGSAdmanInterstitialSlider:
+						if (Proxy)
+						{
+							Proxy->OnInterstitialSliderClosed();
+						}
+						break;
 						
-				  default:
-					UE_LOG(LogMRGS, Error, TEXT("%s: Unrecognized error"), *PS_FUNC_LINE);
-					break;
+					default:
+						UE_LOG(LogMRGS, Error, TEXT("%s: Unrecognized error"), *PS_FUNC_LINE);
+						break;
 				}
 			});
 		}
