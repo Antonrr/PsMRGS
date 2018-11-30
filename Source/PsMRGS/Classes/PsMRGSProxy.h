@@ -192,4 +192,14 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
 	FPsMRGSDelegate MRGSDelegate;
 	
+public:
+	
+	/** Get platform */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual FString GetDevicePlatform() const;
+	
+	/** Get OpenUDID */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual FString GetOpenUDID() const;
+	
 };

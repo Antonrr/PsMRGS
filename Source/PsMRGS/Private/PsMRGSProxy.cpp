@@ -171,3 +171,15 @@ void UPsMRGSProxy::OnUserAuthError()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
+
+FString UPsMRGSProxy::GetDevicePlatform() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return FString(TEXT(""));
+}
+
+FString UPsMRGSProxy::GetOpenUDID() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return FString(TEXT(""));
+}

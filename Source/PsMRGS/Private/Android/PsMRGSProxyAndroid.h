@@ -110,5 +110,11 @@ private:
 	/** Process adman by type */
 	void ProcessAdmanCase(FString AdType);
 	
+public:
+	
+	virtual FString GetDevicePlatform() const override;
+	
+	virtual FString GetOpenUDID() const override;
+	
 #endif
 };

@@ -106,5 +106,11 @@ protected:
 	/** Max mrgs users count */
 	int32 MaxUsersSlots;
 	
+public:
+	
+	virtual FString GetDevicePlatform() const override;
+	
+	virtual FString GetOpenUDID() const override;
+	
 #endif
 };

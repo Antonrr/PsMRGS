@@ -470,6 +470,16 @@ void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FSt
 	});
 }
 
+FString UPsMRGSProxyAndroid::GetDevicePlatform() const
+{
+	return FString(TEXT(""));
+}
+
+FString UPsMRGSProxyAndroid::GetOpenUDID() const
+{
+	return FString(TEXT(""));
+}
+
 extern "C"
 {
 	void fillPurchaseItem(JNIEnv* env, jobject jitem, FPsMRGSPurchaseInfo& OutItem)

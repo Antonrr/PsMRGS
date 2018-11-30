@@ -808,4 +808,35 @@ void UPsMRGSProxyIOS::OnUserAuthError()
 	});
 }
 
+FString UPsMRGSProxyIOS::GetDevicePlatform() const
+{
+	MRGSDevice* Device = [[MRGSDevice alloc] init];
+	Result = FString([NSString stringWithFormat:@"%@ %@", Device.systemName, [MRGSDevice systemVersion]]);
+	return Result;
+}
+
+FString FMRGServiceModule::GetOpenUDID() const
+{
+	FString Result;
+	NSString* DeviceOpenUDID = [MRGSDevice openUDID];
+	if (DeviceOpenUDID)
+	{
+		Result = FString(DeviceOpenUDID);
+	}
+	else
+	{
+		MRGSDevice* Device = [[MRGSDevice alloc] init];
+		DeviceOpenUDID = [Device openUDID];
+		if (DeviceOpenUDID)
+		{
+			Result = FString(DeviceOpenUDID);
+		}
+		else
+		{
+			UE_LOG(LogAwmMrgs, Warning, TEXT("GetOpenUDID total error"));
+		}
+	}
+	return Result;
+}
+
 #endif //IOS
