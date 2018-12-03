@@ -588,7 +588,7 @@ extern "C"
 		
 		env->DeleteLocalRef(ListClass);
 		
-		AsyncTask(ENamedThreads::GameThread, []() {
+		AsyncTask(ENamedThreads::GameThread, [Items]() {
 			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
 			if (Proxy)
 			{
