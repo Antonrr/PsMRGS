@@ -833,7 +833,7 @@ FString FMRGServiceModule::GetOpenUDID() const
 		}
 		else
 		{
-			UE_LOG(LogAwmMrgs, Warning, TEXT("GetOpenUDID total error"));
+			UE_LOG(LogMRGS, Warning, TEXT("GetOpenUDID total error"));
 		}
 	}
 	return Result;
