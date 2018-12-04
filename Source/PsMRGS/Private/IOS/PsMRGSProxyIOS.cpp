@@ -815,7 +815,7 @@ FString UPsMRGSProxyIOS::GetDevicePlatform() const
 	return Result;
 }
 
-FString FMRGServiceModule::GetOpenUDID() const
+FString UPsMRGSProxyIOS::GetOpenUDID() const
 {
 	FString Result;
 	NSString* DeviceOpenUDID = [MRGSDevice openUDID];
