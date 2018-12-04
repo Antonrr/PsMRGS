@@ -811,7 +811,7 @@ void UPsMRGSProxyIOS::OnUserAuthError()
 FString UPsMRGSProxyIOS::GetDevicePlatform() const
 {
 	MRGSDevice* Device = [[MRGSDevice alloc] init];
-	Result = FString([NSString stringWithFormat:@"%@ %@", Device.systemName, [MRGSDevice systemVersion]]);
+	FString Result = FString([NSString stringWithFormat:@"%@ %@", Device.systemName, [MRGSDevice systemVersion]]);
 	return Result;
 }
 
