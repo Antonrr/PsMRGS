@@ -790,6 +790,8 @@ void UPsMRGSProxyIOS::OnSupportClosed()
 
 void UPsMRGSProxyIOS::OnUserAuthSuccess()
 {
+	bUserLoggedin = true;
+
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 	if(MRGSDelegate.IsBound())
 	{
@@ -800,6 +802,8 @@ void UPsMRGSProxyIOS::OnUserAuthSuccess()
 
 void UPsMRGSProxyIOS::OnUserAuthError()
 {
+	bUserLoggedin = false;
+
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
