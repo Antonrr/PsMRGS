@@ -210,32 +210,39 @@ public class MRGServiceCpp {
 	public static void initUser(final String userId) {
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId started"));
 		MRGSList users = MRGSUsers.instance().getAllUsers();
-		if (users.size() > 0) {
-			String tempUserId = ((MRGSMap) users.get(0)).objectForKey("userId").toString();
-			MRGSLog.vp("userID = " + tempUserId);
-			if(tempUserId == userId) {
-				boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
-				if (bResult == false)
-				{
-					onUserAuthError();
+		int count = users.size();
+		if (count > 0) {
+			for (int i = 0; i < count; i++) {
+				String tempUserId = ((MRGSMap) users.get(i)).objectForKey("userId").toString();
+				MRGSLog.vp("userID = " + tempUserId);
+				if(tempUserId.equals(userId)) {
+					boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
+					if (bResult == false) {
+						Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId found user but couldn't authorize %s", userId));
+						onUserAuthError();
+					}
+					else {
+						Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId found user and authorized %s", userId));
+						onUserAuthSuccess();
+					}
+					return;
 				}
-				return;
 			}
 		}
 
 		String RegistredUserId = MRGSUsers.instance().registerNewUser(userId);
-		if (RegistredUserId != userId)
-		{
+		if (RegistredUserId.equals(userId)) {
+			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result = %s", userId, RegistredUserId));
+		}
+
+		boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
+		if (bResult == false) {
+			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't authorize new user %s", userId));
 			onUserAuthError();
 			return;
 		}
 
-		boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
-		if (bResult == false)
-		{
-			onUserAuthError();
-			return;
-		}
+		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId registered and authorized new user %s", userId));
 		onUserAuthSuccess();
 	}
 
