@@ -231,7 +231,7 @@ public class MRGServiceCpp {
 		}
 
 		String RegistredUserId = MRGSUsers.instance().registerNewUser(userId);
-		if (RegistredUserId.equals(userId)) {
+		if (!RegistredUserId.equals(userId)) {
 			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result = %s", userId, RegistredUserId));
 		}
 
