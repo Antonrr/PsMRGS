@@ -790,6 +790,8 @@ void UPsMRGSProxyIOS::OnSupportClosed()
 
 void UPsMRGSProxyIOS::OnUserAuthSuccess()
 {
+	bUserLoggedin = true;
+
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 	if(MRGSDelegate.IsBound())
 	{
@@ -800,6 +802,8 @@ void UPsMRGSProxyIOS::OnUserAuthSuccess()
 
 void UPsMRGSProxyIOS::OnUserAuthError()
 {
+	bUserLoggedin = false;
+
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
@@ -811,11 +815,11 @@ void UPsMRGSProxyIOS::OnUserAuthError()
 FString UPsMRGSProxyIOS::GetDevicePlatform() const
 {
 	MRGSDevice* Device = [[MRGSDevice alloc] init];
-	Result = FString([NSString stringWithFormat:@"%@ %@", Device.systemName, [MRGSDevice systemVersion]]);
+	FString Result = FString([NSString stringWithFormat:@"%@ %@", Device.systemName, [MRGSDevice systemVersion]]);
 	return Result;
 }
 
-FString FMRGServiceModule::GetOpenUDID() const
+FString UPsMRGSProxyIOS::GetOpenUDID() const
 {
 	FString Result;
 	NSString* DeviceOpenUDID = [MRGSDevice openUDID];

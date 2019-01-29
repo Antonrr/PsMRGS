@@ -432,6 +432,8 @@ void UPsMRGSProxyAndroid::OnUserAuthSuccess()
 
 void UPsMRGSProxyAndroid::OnUserAuthError()
 {
+	bUserLoggedin = false;
+
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if(MRGSDelegate.IsBound())
 		{
