@@ -85,10 +85,14 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	/** Send applsflyer event */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendAFEvent(const FString& InEventName, const FString& InValue);
-	
-	/** Log metric on mrgs */
+
+	/** Log metric on mrgs with numeric id */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void AddMetric(const FString& MetricCode, int32 Value = 1, int32 Level = 1, int32 ObjectId = 1);
+	virtual void AddMetricWithId(int32 MetricId);
+	
+	/** Log metric on mrgs with string code */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
+	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId);
 	
 	/** Show mytarget apps */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")

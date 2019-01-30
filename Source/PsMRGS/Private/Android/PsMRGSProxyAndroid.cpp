@@ -210,7 +210,23 @@ void UPsMRGSProxyAndroid::SendAFEvent(const FString& InEventName, const FString&
 	}
 }
 
-void UPsMRGSProxyAndroid::AddMetric(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
+void UPsMRGSProxyAndroid::AddMetricWithId(int32 MetricId)
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetricWithId", "(I)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, MetricId);
+	}
+}
+
+void UPsMRGSProxyAndroid::AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
 {
 	if (bInitComplete == false)
 	{
@@ -221,7 +237,7 @@ void UPsMRGSProxyAndroid::AddMetric(const FString& MetricCode, int32 Value, int3
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
-		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetric", "(Ljava/lang/String;III)V", false);
+		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetricWithCode", "(Ljava/lang/String;III)V", false);
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricCode)), Value, Level, ObjectId);
 	}
 }

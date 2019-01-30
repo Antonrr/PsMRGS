@@ -187,6 +187,10 @@ public class MRGServiceCpp {
 		});
 	}
 
+	public static void addMetric(int metricId){
+		MRGSMetrics.addMetric(metricId);
+	}
+
 	public static void addMetric(String metricCode, int value, int level, int objectId){
 		MRGSMetrics.addMetric(metricCode, value, level, objectId);
 	}
