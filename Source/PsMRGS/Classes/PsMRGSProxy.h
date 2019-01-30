@@ -88,7 +88,7 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	
 	/** Log metric on mrgs */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void AddMetric(int32 MetricId);
+	virtual void AddMetric(const FString& MetricCode, int32 Value = 1, int32 Level = 1, int32 ObjectId = 1);
 	
 	/** Show mytarget apps */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")

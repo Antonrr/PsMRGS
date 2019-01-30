@@ -187,8 +187,8 @@ public class MRGServiceCpp {
 		});
 	}
 
-	public static void addMetric(final String metricd) {
-		MRGSMetrics.addMetric(Integer.parseInt(metricd));
+	public static void addMetric(String metricCode, int value, int level, int objectId){
+		MRGSMetrics.addMetric(metricCode, value, level, objectId);
 	}
 
 	public static void initWithAppidAndSecret(final String appId, final String appSecret) {
@@ -231,7 +231,7 @@ public class MRGServiceCpp {
 		}
 
 		String RegistredUserId = MRGSUsers.instance().registerNewUser(userId);
-		if (!RegistredUserId.equals(userId)) {
+		if (RegistredUserId.equals(userId)) {
 			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result = %s", userId, RegistredUserId));
 		}
 

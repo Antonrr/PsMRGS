@@ -57,7 +57,7 @@ public:
 	
 	virtual void SendAFEvent(const FString& EventName, const FString& Value) override;
 	
-	virtual void AddMetric(int32 MetricId) override;
+	virtual void AddMetric(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
 	
 	virtual void ShowMyTargetShowcase() override;
 	

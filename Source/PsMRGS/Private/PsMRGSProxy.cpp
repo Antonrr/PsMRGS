@@ -75,7 +75,7 @@ const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxy::GetProducts() const
 	return LoadedProducts;
 }
 
-void UPsMRGSProxy::AddMetric(int32 MetricId)
+void UPsMRGSProxy::AddMetric(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }

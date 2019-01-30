@@ -210,7 +210,7 @@ void UPsMRGSProxyAndroid::SendAFEvent(const FString& InEventName, const FString&
 	}
 }
 
-void UPsMRGSProxyAndroid::AddMetric(int32 MetricId)
+void UPsMRGSProxyAndroid::AddMetric(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
 {
 	if (bInitComplete == false)
 	{
@@ -221,10 +221,8 @@ void UPsMRGSProxyAndroid::AddMetric(int32 MetricId)
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
-		FString MetricString;
-		MetricString.AppendInt(MetricId);
-		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetric", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricString)));
+		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetric", "(Ljava/lang/String;III)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricCode)), Value, Level, ObjectId);
 	}
 }
 
