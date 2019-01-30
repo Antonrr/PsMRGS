@@ -5,7 +5,7 @@
 #include "PsMRGSProxy.generated.h"
 
 UENUM(BlueprintType)
-enum class EPsMRGSEventsTypes:uint8
+enum class EPsMRGSEventsTypes : uint8
 {
 	MRGS_INIT_COMPLETE = 0,
 	MRGS_PRODUCTS_LOADED,
@@ -31,27 +31,27 @@ USTRUCT(BlueprintType)
 struct FPsMRGSPurchaseInfo
 {
 	GENERATED_USTRUCT_BODY()
-	
+
 	/** Product bundle id */
 	UPROPERTY(BlueprintReadOnly)
 	FString Sku;
-	
+
 	/** Product price from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Price;
-	
+
 	/** Price formatted */
 	UPROPERTY(BlueprintReadOnly)
 	FString FormattedPrice;
-	
+
 	/** Procudt title from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Title;
-	
+
 	/** Product type from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Type;
-	
+
 	/** Product description from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Description;
@@ -61,27 +61,27 @@ UCLASS()
 class PSMRGS_API UPsMRGSProxy : public UObject
 {
 	GENERATED_UCLASS_BODY()
-	
+
 	/** Start mrgs initialization */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitModule();
-	
+
 	/** Login or register user in mrgs */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitUser(const FString& UserId);
-	
+
 	/** Send google analytics screen */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendGAScreen(const FString& InScreenName);
-	
+
 	/** Send google analytics event */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel);
-	
+
 	/** Send flurry event */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendFlurryEvent(const FString& InAction);
-	
+
 	/** Send applsflyer event */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendAFEvent(const FString& InEventName, const FString& InValue);
@@ -89,121 +89,116 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	/** Log metric on mrgs with numeric id */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithId(int32 MetricId);
-	
+
 	/** Log metric on mrgs with string code */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId);
-	
+
 	/** Show mytarget apps */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetShowcase();
-	
+
 	/** Show mytarget banner */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetFullscreen();
-	
+
 	/** Show mytarget interstitial slider */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetInterstitialSlider();
-	
+
 	/** Load products from store */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual void LoadStoreProducts(const TArray<FString>& ProductsList);
-	
+
 	/** Buy product in store */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual void BuyProduct(const FString& ProductId, const FString& Payload);
-	
+
 	/** Get loaded products */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual const TArray<FPsMRGSPurchaseInfo>& GetProducts() const;
-	
+
 	/** Show support screen */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
 	virtual void ShowSupport();
-	
+
 	/** MRGS initialize complete */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual const bool IsReady() const;
-	
+
 	/** MRGS user auth complete */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual const bool UserLoggedIn() const;
-	
+
 public:
-	
 	/** Mrgs initialization complete  */
 	virtual void OnInitComplete();
-	
+
 	/** Fullscreen closed */
 	virtual void OnFullscreenClosed();
-	
+
 	/** Interstitial slider closed */
 	virtual void OnInterstitialSliderClosed();
-	
+
 	/** Interstitial data receive error */
 	virtual void OnInterstitialDataRecieveError(const FString& Error);
-	
+
 	/** Fullscreen data receive error */
 	virtual void OnFullscreenDataRecieveError(const FString& Error);
-	
+
 	/** Showcase data receive error */
 	virtual void OnShowcaseDataRecieveError(const FString& Error);
-	
+
 	/** Showcase data is empty */
 	virtual void OnShowCaseDataHasNoAds();
-	
+
 	/** Support received error */
 	virtual void OnSupportReceivedError(const FString& Error);
-	
+
 	/** Support tickets update fail with error */
 	virtual void OnSupportTicketsFailWithError(const FString& Error);
-	
+
 	/** Support closed */
 	virtual void OnSupportClosed();
-	
+
 	/** Productrs successfully loaded from store */
 	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts);
-	
+
 	/** Purchase successfully complete on store */
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload);
-	
+
 	/** Error while processing purchase on store */
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer);
-	
+
 	/** Canceled while processing purchase on store */
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer);
-	
+
 	/** Dispatch success user auth */
 	virtual void OnUserAuthSuccess();
-	
+
 	/** Dispatch failed user auth */
 	virtual void OnUserAuthError();
-	
+
 protected:
-	
 	/** Loaded products from store */
 	TArray<FPsMRGSPurchaseInfo> LoadedProducts;
-	
+
 	/** MRGS initialize complete */
 	bool bInitComplete;
-	
+
 	/** MRGS auth complete */
 	bool bUserLoggedin;
-	
+
 public:
-	
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
 	FPsMRGSDelegate MRGSDelegate;
-	
+
 public:
-	
 	/** Get platform */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetDevicePlatform() const;
-	
+
 	/** Get OpenUDID */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetOpenUDID() const;
-	
 };
