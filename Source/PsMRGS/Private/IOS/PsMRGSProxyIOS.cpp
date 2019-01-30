@@ -714,7 +714,18 @@ void UPsMRGSProxyIOS::SendAFEvent(const FString& InEventName, const FString& InV
 	[MRGSAppsFlyer trackEvent:InEventName.GetNSString() withValues:nil];
 }
 
-void UPsMRGSProxyIOS::AddMetric(int32 MetricId)
+void UPsMRGSProxyIOS::AddMetricWithId(int32 MetricId)
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	[MRGSMetrics addMetricWithId:MetricId];
+}
+
+void UPsMRGSProxyIOS::AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
 {
 	if (bInitComplete == false)
 	{
@@ -722,7 +733,7 @@ void UPsMRGSProxyIOS::AddMetric(int32 MetricId)
 		return;
 	}
 	
-	[MRGSMetrics addMetricWithId:MetricId];
+	[MRGSMetrics addMetricWithCode:MetricCode.GetNSString() andValue:Value andLevel:Level andObjectId:ObjectId];
 }
 
 void UPsMRGSProxyIOS::ShowMyTargetShowcase()

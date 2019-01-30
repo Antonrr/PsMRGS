@@ -308,10 +308,15 @@
 		{
 			MRGServiceCpp.buyItem(sku);
 		}
-		
-		public void AndroidThunkJava_MRGService_addMetric(final String metric)
+
+		public void AndroidThunkJava_MRGService_addMetricWithId(final int metricId)
 		{
-			MRGServiceCpp.addMetric(metric);
+			MRGServiceCpp.addMetric(metricId);
+		}
+		
+		public void AndroidThunkJava_MRGService_addMetricWithCode(final String metricCode, final int value, final int level, final int objectId)
+		{
+			MRGServiceCpp.addMetric(metricCode, value, level, objectId);
 		}
 		
 		</insert>
