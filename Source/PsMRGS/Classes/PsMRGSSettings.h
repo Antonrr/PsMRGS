@@ -12,13 +12,9 @@ class UPsMRGSSettings : public UObject
 	/** Reads settings from config. Used to read settings before UObject system is initialized */
 	void ReadFromConfig();
 
-	/** On/Off mrgs initialization*/
+	/** On/Off mrgs */
 	UPROPERTY(Config, EditAnywhere)
 	bool bEnableMRGS;
-
-	/** On/Off mrgs initialization*/
-	UPROPERTY(Config, EditAnywhere)
-	bool bInitMRGSONStart;
 
 	/** On/Off mrgs debug mode */
 	UPROPERTY(Config, EditAnywhere)

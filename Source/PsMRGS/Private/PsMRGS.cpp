@@ -13,8 +13,8 @@
 #include "PsMRGSProxyAndroid.h"
 #endif
 
-#include "UObject/Package.h"
 #include "Misc/ConfigCacheIni.h"
+#include "UObject/Package.h"
 
 #include "Developer/Settings/Public/ISettingsModule.h"
 
@@ -27,16 +27,15 @@ class FPsMRGS : public IPsMRGS
 		KitSettings = NewObject<UPsMRGSSettings>(GetTransientPackage(), "PsMRGSSettings", RF_Standalone);
 		KitSettings->AddToRoot();
 		KitSettings->ReadFromConfig();
-		
+
 		if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 		{
 			SettingsModule->RegisterSettings("Project", "Plugins", "PsMRGS",
-											 LOCTEXT("RuntimeSettingsName", "PsMRGS plugin"),
-											 LOCTEXT("RuntimeSettingsDescription", "Configure API keys for MRGS"),
-											 KitSettings
-											 );
+				LOCTEXT("RuntimeSettingsName", "PsMRGS plugin"),
+				LOCTEXT("RuntimeSettingsDescription", "Configure API keys for MRGS"),
+				KitSettings);
 		}
-		
+
 		// Proxy class depends on platform
 		UClass* KitPlatformClass = UPsMRGSProxy::StaticClass();
 		if (KitSettings->bEnableMRGS)
@@ -44,28 +43,23 @@ class FPsMRGS : public IPsMRGS
 #if PLATFORM_IOS
 			KitPlatformClass = UPsMRGSProxyIOS::StaticClass();
 #endif
-			
+
 #if PLATFORM_ANDROID
 			KitPlatformClass = UPsMRGSProxyAndroid::StaticClass();
 #endif
 			MRGSProxy = NewObject<UPsMRGSProxy>(GetTransientPackage(), KitPlatformClass);
 			MRGSProxy->SetFlags(RF_Standalone);
 			MRGSProxy->AddToRoot();
-
-			if (KitSettings->bInitMRGSONStart)
-			{
-				MRGSProxy->InitModule();
-			}
 		}
 	}
-	
+
 	virtual void ShutdownModule() override
 	{
 		if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 		{
 			SettingsModule->UnregisterSettings("Project", "Plugins", "PsMRGS");
 		}
-		
+
 		if (!GExitPurge)
 		{
 			// If we're in exit purge, this object has already been destroyed
@@ -78,13 +72,11 @@ class FPsMRGS : public IPsMRGS
 			KitSettings = nullptr;
 		}
 	}
-	
+
 private:
-	
 	/** Holds the kit settings */
 	UPROPERTY()
 	UPsMRGSSettings* KitSettings;
-	
 };
 
 IMPLEMENT_MODULE(FPsMRGS, PsMRGS)
