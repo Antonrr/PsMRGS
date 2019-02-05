@@ -153,7 +153,8 @@
 
 		<deleteFiles filespec="src/com/android/vending/billing/IInAppBillingService.aidl" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGService.xml" dst="$S(BuildDir)/assets/MRGService.xml" />
-		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />\
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />
+		<copyFile src="$S(PluginDir)/../../../../Content/gdpr/gdpr.html" dst="$S(BuildDir)/assets/gdpr/gdpr.html" />
 
 		<!-- To remove proguadr - uncomment -->
 		<!-- <forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
@@ -235,6 +236,31 @@
 		public void runOnNecessaryThread(final Runnable callback) 
 		{
 			runOnUiThread(callback);
+		}
+
+		public void AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising)
+		{
+			MRGServiceCpp.ShowDefaultGDPRAgreement(appId, bOnlyEU, bWithAdvertising);
+		}
+
+		public void AndroidThunkJava_MRGService_ShowGDPRAgreement(final String appId, final int AgreementVersion, final boolean bOnlyEU, final boolean bWithAdvertising)
+		{
+			MRGServiceCpp.ShowGDPRAgreement(appId, AgreementVersion, bOnlyEU, bWithAdvertising);
+		}
+
+		public int AndroidThunkJava_MRGService_GetGDPRAcceptedVersion()
+		{
+			return MRGServiceCpp.GetGDPRAcceptedVersion();
+		}
+
+		public void AndroidThunkJava_MRGService_SetAgreementVersion(final int Version)
+		{
+			MRGServiceCpp.SetAgreementVersion(Version);
+		}
+
+		public int AndroidThunkJava_MRGService_GetAgreementVersion()
+		{
+			return MRGServiceCpp.GetAgreementVersion();
 		}
 
 		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret)

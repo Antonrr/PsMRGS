@@ -17,7 +17,7 @@
 
 		<GoogleAnalytics
 			enable="false"
-trackingId="UA-130495482-1"
+trackingId="12345"
 			exceptionHandler="false"
 			logLevel="3"
 			/>
@@ -25,26 +25,26 @@ trackingId="UA-130495482-1"
 		<AppsFlyer
 			enable="true"
 			debug="true"
-app_key="3XsrYegKtjUaWeihepYiqK"
+app_key="12345"
 			/>
 
 		<Flurry
 			enable="false"
-applicationKey=""
+applicationKey="12345"
 			/>
 
 
 		<Adman
 			enable="true"
 			debug="true"
-slotId=""
-fullscreenSlotId=""
+slotId="12345"
+fullscreenSlotId="12345"
 			/>
 
 		<MyTracker
 			enable="true"
 			debug="true"
-appId="84199909155832598568"
+appId="12345"
 			/>
 	</ExternalSDK>
 

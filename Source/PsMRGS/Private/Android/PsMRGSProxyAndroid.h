@@ -35,8 +35,29 @@ class UPsMRGSProxyAndroid : public UPsMRGSProxy
 	GENERATED_UCLASS_BODY()
 
 #if PLATFORM_ANDROID
+public:
+	//////////////////////////////////////////////////////////////////////////
+	// GDPR
 
 public:
+	/** Show MRGS built-in GDPR agreement */
+	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising) override;
+
+	/** Show specified GDPR agreement */
+	virtual void ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising) override;
+
+	/** Get accepted version of the agreement */
+	virtual int32 GetGDPRAcceptedVersion() override;
+
+	/** Set current version of the agreement */
+	virtual void SetGDPRAgreementVersion(int32 Version) override;
+
+	/** Get current version of the agreement */
+	virtual int32 GetGDPRAgreementVersion() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// MRGS
+
 	virtual void InitModule() override;
 
 	virtual void InitUser(const FString& UserId) override;
@@ -67,11 +88,17 @@ public:
 
 	virtual void ShowSupport() override;
 
-	virtual const bool IsReady() const override;
+	virtual bool IsReady() const override;
 
-	virtual const bool UserLoggedIn() const;
+	virtual bool UserLoggedIn() const;
 
 public:
+	/** GDPR agreement accepted */
+	virtual void OnGDPRAccepted(bool bWithAdvertising) override;
+
+	/** GDPR error */
+	virtual void OnGDPRError() override;
+
 	virtual void OnInitComplete() override;
 
 	virtual void OnFullscreenClosed() override;

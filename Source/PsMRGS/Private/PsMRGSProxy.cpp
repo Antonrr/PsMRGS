@@ -9,6 +9,39 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GDPR
+
+void UPsMRGSProxy::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+void UPsMRGSProxy::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+int32 UPsMRGSProxy::GetGDPRAcceptedVersion()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return -1;
+}
+
+void UPsMRGSProxy::SetGDPRAgreementVersion(int32 Version)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+int32 UPsMRGSProxy::GetGDPRAgreementVersion()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Setup
+
 void UPsMRGSProxy::InitModule()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
@@ -19,12 +52,22 @@ void UPsMRGSProxy::InitUser(const FString& UserId)
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
-void UPsMRGSProxy::SendGAScreen(const FString& InScreenName)
+bool UPsMRGSProxy::IsReady() const
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return false;
 }
 
-void UPsMRGSProxy::ShowSupport()
+bool UPsMRGSProxy::UserLoggedIn() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Events
+
+void UPsMRGSProxy::SendGAScreen(const FString& InScreenName)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
@@ -44,6 +87,19 @@ void UPsMRGSProxy::SendAFEvent(const FString& InEventName, const FString& InValu
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+void UPsMRGSProxy::AddMetricWithId(int32 MetricId)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+void UPsMRGSProxy::AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Ads
+
 void UPsMRGSProxy::ShowMyTargetShowcase()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
@@ -58,6 +114,9 @@ void UPsMRGSProxy::ShowMyTargetInterstitialSlider()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
+
+//////////////////////////////////////////////////////////////////////////
+// Store
 
 void UPsMRGSProxy::LoadStoreProducts(const TArray<FString>& ProductsList)
 {
@@ -75,26 +134,40 @@ const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxy::GetProducts() const
 	return LoadedProducts;
 }
 
-void UPsMRGSProxy::AddMetricWithId(int32 MetricId)
+//////////////////////////////////////////////////////////////////////////
+// Support
+
+void UPsMRGSProxy::ShowSupport()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
-void UPsMRGSProxy::AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
+//////////////////////////////////////////////////////////////////////////
+// Tools
+
+FString UPsMRGSProxy::GetDevicePlatform() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return FString();
+}
+
+FString UPsMRGSProxy::GetOpenUDID() const
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return FString();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Callbacks
+
+void UPsMRGSProxy::OnGDPRAccepted(bool bWithAdvertising)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
-const bool UPsMRGSProxy::IsReady() const
+void UPsMRGSProxy::OnGDPRError()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return false;
-}
-
-const bool UPsMRGSProxy::UserLoggedIn() const
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return false;
 }
 
 void UPsMRGSProxy::OnInitComplete()
@@ -175,16 +248,4 @@ void UPsMRGSProxy::OnUserAuthSuccess()
 void UPsMRGSProxy::OnUserAuthError()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-FString UPsMRGSProxy::GetDevicePlatform() const
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return FString(TEXT(""));
-}
-
-FString UPsMRGSProxy::GetOpenUDID() const
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return FString(TEXT(""));
 }

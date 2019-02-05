@@ -36,6 +36,107 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 	return ConvertedString;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// GDPR
+
+void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
+		if (MRGSSettings == nullptr)
+		{
+			UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSSettings"), *PS_FUNC_LINE);
+			return;
+		}
+
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement", "(Ljava/lang/String;ZZ)V", false);
+
+		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising);
+		Env->DeleteLocalRef(AppId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+	}
+}
+
+void UPsMRGSProxyAndroid::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
+		if (MRGSSettings == nullptr)
+		{
+			UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSSettings"), *PS_FUNC_LINE);
+			return;
+		}
+
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;IZZ)V", false);
+
+		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, AgreementVersion, bOnlyEU, bWithAdvertising);
+		Env->DeleteLocalRef(AppId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+	}
+}
+
+int32 UPsMRGSProxyAndroid::GetGDPRAcceptedVersion()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_GetGDPRAcceptedVersion", "()I", false);
+
+		return FJavaWrapper::CallIntMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+		return 0;
+	}
+}
+
+void UPsMRGSProxyAndroid::SetGDPRAgreementVersion(int32 Version)
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_SetAgreementVersion", "(I)V", false);
+
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, Version);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+	}
+}
+
+int32 UPsMRGSProxyAndroid::GetGDPRAgreementVersion()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_GetAgreementVersion", "()I", false);
+
+		return FJavaWrapper::CallIntMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+		return 0;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// MRGS
+
 void UPsMRGSProxyAndroid::InitModule()
 {
 	if (IsReady())
@@ -44,7 +145,7 @@ void UPsMRGSProxyAndroid::InitModule()
 	}
 
 	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
-	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
+	if (MRGSSettings == nullptr)
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
 		return;
@@ -300,7 +401,7 @@ void UPsMRGSProxyAndroid::ShowSupport()
 	}
 
 	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
-	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
+	if (MRGSSettings == nullptr)
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
 		return;
@@ -320,14 +421,41 @@ void UPsMRGSProxyAndroid::ShowSupport()
 	}
 }
 
-const bool UPsMRGSProxyAndroid::IsReady() const
+bool UPsMRGSProxyAndroid::IsReady() const
 {
 	return bInitComplete;
 }
 
-const bool UPsMRGSProxyAndroid::UserLoggedIn() const
+bool UPsMRGSProxyAndroid::UserLoggedIn() const
 {
 	return bUserLoggedin;
+}
+
+void UPsMRGSProxyAndroid::OnGDPRAccepted(bool bWithAdvertising)
+{
+	AsyncTask(ENamedThreads::GameThread, [this, bWithAdvertising]() {
+		if (MRGSDelegate.IsBound())
+		{
+			if (bWithAdvertising)
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITH_ADS);
+			}
+			else
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITHOUT_ADS);
+			}
+		}
+	});
+}
+
+void UPsMRGSProxyAndroid::OnGDPRError()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
+		}
+	});
 }
 
 void UPsMRGSProxyAndroid::OnInitComplete()
@@ -488,12 +616,12 @@ void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FSt
 
 FString UPsMRGSProxyAndroid::GetDevicePlatform() const
 {
-	return FString(TEXT(""));
+	return FString();
 }
 
 FString UPsMRGSProxyAndroid::GetOpenUDID() const
 {
-	return FString(TEXT(""));
+	return FString();
 }
 
 extern "C"
@@ -533,6 +661,28 @@ extern "C"
 		env->DeleteLocalRef(jtype);
 		env->DeleteLocalRef(jdescription);
 		env->DeleteLocalRef(itemClass);
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onUserHasAcceptedGDPR(JNIEnv* env, jboolean withAdvertising)
+	{
+		AsyncTask(ENamedThreads::GameThread, [withAdvertising]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnGDPRAccepted(withAdvertising);
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onErrorShowingAgreement(JNIEnv* env)
+	{
+		AsyncTask(ENamedThreads::GameThread, []() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnGDPRError();
+			}
+		});
 	}
 
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onInitComplete(JNIEnv* env, jobject obj)

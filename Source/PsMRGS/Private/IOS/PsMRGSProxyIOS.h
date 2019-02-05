@@ -11,94 +11,127 @@
 #include "PsMRGSProxyIOS.generated.h"
 
 #if PLATFORM_IOS
-@interface PsMRGSDelegate : NSObject <MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSMyTargetDelegate, MRGSBankDelegate, SKStoreProductViewControllerDelegate>
+@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSMyTargetDelegate, MRGSBankDelegate, SKStoreProductViewControllerDelegate>
 
 - (NSString *)getCurrencyCode:(SKProduct *)product;
 - (void)restorePurchase;
-- (void)openStoreUrl:(NSString* )urlToGo;
-
 
 @property (nonatomic) UPsMRGSProxy* Proxy;
 
 @end
-#endif
+#endif // PLATFORM_IOS
 
 UCLASS()
-class UPsMRGSProxyIOS : public UPsMRGSProxy
+class PSMRGS_API UPsMRGSProxyIOS : public UPsMRGSProxy
 {
 	GENERATED_UCLASS_BODY()
 	
 #if PLATFORM_IOS
+	
+	//////////////////////////////////////////////////////////////////////////
+	// GDPR
+	
 public:
+	/** Show MRGS built-in GDPR agreement */
+	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising) override;
+	
+	/** Show specified GDPR agreement */
+	virtual void ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising) override;
+	
+	/** Get accepted version of the agreement */
+	virtual int32 GetGDPRAcceptedVersion() override;
+	
+	/** Set current version of the agreement */
+	virtual void SetGDPRAgreementVersion(int32 Version) override;
+	
+	/** Get current version of the agreement */
+	virtual int32 GetGDPRAgreementVersion() override;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Setup
+	
 	/** Start mrgs initialization */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitModule() override;
 	
 	/** Login or register user in mrgs */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitUser(const FString& UserId) override;
 	
+	/** MRGS initialize complete */
+	virtual bool IsReady() const override;
+	
+	/** MRGS user auth complete */
+	virtual bool UserLoggedIn() const override;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Events
+	
 	/** Send google analytics screen */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendGAScreen(const FString& ScreenName) override;
+	virtual void SendGAScreen(const FString& InScreenName) override;
 	
 	/** Send google analytics event */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendGAEvent(const FString& Category, const FString& Action, const FString& Label) override;
+	virtual void SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel) override;
 	
 	/** Send flurry event */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendFlurryEvent(const FString& Action) override;
+	virtual void SendFlurryEvent(const FString& InAction) override;
 	
 	/** Send applsflyer event */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendAFEvent(const FString& EventName, const FString& Value) override;
-
+	virtual void SendAFEvent(const FString& InEventName, const FString& InValue) override;
+	
 	/** Log metric on mrgs with numeric id */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithId(int32 MetricId) override;
 	
 	/** Log metric on mrgs with string code */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
 	
+	//////////////////////////////////////////////////////////////////////////
+	// Ads
+	
 	/** Show mytarget apps */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetShowcase() override;
 	
 	/** Show mytarget banner */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetFullscreen() override;
 	
 	/** Show mytarget interstitial slider */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
 	virtual void ShowMyTargetInterstitialSlider() override;
 	
+	//////////////////////////////////////////////////////////////////////////
+	// Store
+	
 	/** Load products from store */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual void LoadStoreProducts(const TArray<FString>& ProductsList) override;
 	
 	/** Buy product in store */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual void BuyProduct(const FString& ProductId, const FString& Payload) override;
 	
 	/** Get loaded products */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual const TArray<FPsMRGSPurchaseInfo>& GetProducts() const override;
 	
+	//////////////////////////////////////////////////////////////////////////
+	// Support
+	
 	/** Show support screen */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
 	virtual void ShowSupport() override;
 	
-	/** MRGS initialize complete */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
-	virtual const bool IsReady() const override;
+	//////////////////////////////////////////////////////////////////////////
+	// Tools
 	
-	/** MRGS user auth complete */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
-	virtual const bool UserLoggedIn() const;
+	/** Get platform */
+	virtual FString GetDevicePlatform() const override;
+	
+	/** Get OpenUDID */
+	virtual FString GetOpenUDID() const override;
+	
+	//////////////////////////////////////////////////////////////////////////
+	// Callbacks
 	
 public:
+	/** GDPR agreement accepted */
+	virtual void OnGDPRAccepted(bool bWithAdvertising) override;
+	
+	/** GDPR error */
+	virtual void OnGDPRError() override;
+	
 	/** Mrgs initialization complete  */
 	virtual void OnInitComplete() override;
 	
@@ -142,10 +175,10 @@ public:
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
 	
 	/** Dispatch success user auth */
-	virtual void OnUserAuthSuccess();
+	virtual void OnUserAuthSuccess() override;
 	
 	/** Dispatch failed user auth */
-	virtual void OnUserAuthError();
+	virtual void OnUserAuthError() override;
 	
 protected:
 	/** Main mrgs delegate */
@@ -153,14 +186,5 @@ protected:
 	
 	/** Max mrgs users count */
 	int32 MaxUsersSlots;
-	
-public:
-	/** Get platform */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
-	virtual FString GetDevicePlatform() const override;
-	
-	/** Get OpenUDID */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
-	virtual FString GetOpenUDID() const override;
-#endif
+#endif // PLATFORM_IOS
 };

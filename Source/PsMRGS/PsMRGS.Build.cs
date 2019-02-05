@@ -55,16 +55,6 @@ public class PsMRGS : ModuleRules
 			}
 			);
 
-		if (Target.Platform == UnrealTargetPlatform.IOS)
-		{
-			PrivateIncludePaths.Add("PsMRGS/Private/IOS/");
-		}
-
-		else if (Target.Platform == UnrealTargetPlatform.Android)
-		{
-			PrivateIncludePaths.Add("PsMRGS/Private/Android/");
-		}
-
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
@@ -98,8 +88,9 @@ public class PsMRGS : ModuleRules
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
 			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
-			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "PsMRGS_APL.xml"));
+			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "PsMRGS_UPL_Android.xml"));
 
+			PrivateIncludePaths.Add("PsMRGS/Private/Android/");
 
 			/** Write settings from DefaultEngineIni of MRGS to MRGService.xml in Plugin dir */
 			
@@ -199,9 +190,13 @@ public class PsMRGS : ModuleRules
 	        }
 			tw.Close();
 		}
-
-		if (Target.Platform == UnrealTargetPlatform.IOS)
+		else if (Target.Platform == UnrealTargetPlatform.IOS)
 		{
+			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+			AdditionalPropertiesForReceipt.Add("IOSPlugin", Path.Combine(PluginPath, "PsMRGS_UPL_IOS.xml"));
+
+			PrivateIncludePaths.Add("PsMRGS/Private/IOS/");
+
 			PublicFrameworks.AddRange(
 			new string[]
 			{
@@ -237,7 +232,8 @@ public class PsMRGS : ModuleRules
 			PublicAdditionalFrameworks.Add(
 				new UEBuildFramework(
 				"MRGService",
-				"../../ThirdParty/IOS/MRGService.embeddedframework.zip"
+				"../../ThirdParty/IOS/MRGService.embeddedframework.zip",
+				"MRGServiceResources.bundle"
 				)
 			);
 

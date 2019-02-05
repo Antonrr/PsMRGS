@@ -5,17 +5,29 @@
 #include "PsMRGSCommon.h"
 #include "PsMRGSSettings.h"
 
-UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-	bInitComplete = false;
-	bUserLoggedin = false;
-	MaxUsersSlots = 10;
-}
-
 #if PLATFORM_IOS
 
 @implementation PsMRGSDelegate
+
+/** MRGSGDPRDelegate */
+
+- (void)userHasAcceptedGDPR:(MRGSGDPR*)gdpr withAdvertising:(BOOL)flag
+{
+	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
+	if (self.Proxy)
+	{
+		self.Proxy->OnGDPRAccepted(flag);
+	}
+}
+
+- (void)errorShowingAgreement:(MRGSGDPR*)gdpr
+{
+	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
+	if (self.Proxy)
+	{
+		self.Proxy->OnGDPRError();
+	}
+}
 
 /** MRGSServerDataDelegate */
 
@@ -37,7 +49,7 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 {
 	NSError* error;
 	NSData* jsonData = [NSJSONSerialization dataWithJSONObject:promoBanners
-													   options:NSJSONWritingPrettyPrinted // Pass 0 if you don't care about the readability of the generated string
+													   options:NSJSONWritingPrettyPrinted
 														 error:&error];
 	NSString* jsonString = nil;
 	if (!error)
@@ -315,19 +327,6 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 	return [CurrencyFormatter internationalCurrencySymbol];
 }
 
-- (void)openStoreUrl:(NSString*)urlToGo
-{
-	if ([SKStoreProductViewController class] != nil)
-	{
-		SKStoreProductViewController* Skpvc = [[SKStoreProductViewController alloc] init];
-		Skpvc.delegate = self;
-		NSDictionary* Dict = [NSDictionary dictionaryWithObject:urlToGo forKey:SKStoreProductParameterITunesItemIdentifier];
-		[Skpvc loadProductWithParameters:Dict completionBlock:nil];
-
-		[[IOSAppDelegate GetDelegate].IOSController presentViewController:Skpvc animated:YES completion:nil];
-	}
-}
-
 - (void)productViewControllerDidFinish:(SKStoreProductViewController*)viewController
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -339,6 +338,83 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 }
 
 @end
+
+//////////////////////////////////////////////////////////////////////////
+// UPsMRGSProxyIOS
+
+UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	bInitComplete = false;
+	bUserLoggedin = false;
+	MaxUsersSlots = 10;
+
+	Delegate = [[PsMRGSDelegate alloc] init];
+	Delegate.Proxy = this;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// GDPR
+
+void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
+	  if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
+	  {
+		  UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
+		  return;
+	  }
+
+	  MRGSGDPR* GDPRInstance = [MRGSGDPR sharedInstance];
+	  GDPRInstance.delegate = Delegate;
+	  GDPRInstance.onlyEU = bOnlyEU;
+	  GDPRInstance.withAdvertising = bWithAdvertising;
+	  [GDPRInstance showDefaultAgreementAtViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+												forAppId:MRGSSettings->iOSMrgsAppId];
+	});
+}
+
+void UPsMRGSProxyIOS::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
+	  if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
+	  {
+		  UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
+		  return;
+	  }
+
+	  MRGSGDPR* GDPRInstance = [MRGSGDPR sharedInstance];
+	  GDPRInstance.delegate = Delegate;
+	  GDPRInstance.onlyEU = bOnlyEU;
+	  GDPRInstance.withAdvertising = bWithAdvertising;
+	  [GDPRInstance showAgreementAtViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+										 forAppId:MRGSSettings->iOSMrgsAppId
+										 fromFile:[[NSBundle mainBundle] URLForResource:@"gdpr"
+																		  withExtension:@"html"
+																		   subdirectory:@"gdpr"]
+									  withVersion:AgreementVersion];
+	});
+}
+
+int32 UPsMRGSProxyIOS::GetGDPRAcceptedVersion()
+{
+	return [[MRGSGDPR sharedInstance] getAgreedVersion];
+}
+
+void UPsMRGSProxyIOS::SetGDPRAgreementVersion(int32 Version)
+{
+	[MRGSGDPR sharedInstance].agreementVersion = Version;
+}
+
+int32 UPsMRGSProxyIOS::GetGDPRAgreementVersion()
+{
+	return [MRGSGDPR sharedInstance].agreementVersion;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Setup
 
 void UPsMRGSProxyIOS::InitModule()
 {
@@ -355,10 +431,7 @@ void UPsMRGSProxyIOS::InitModule()
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-	  Delegate = [[PsMRGSDelegate alloc] init];
-	  Delegate.Proxy = this;
-
-	  int AppId = MRGSSettings->iOSMrgsAppId;
+	  int32 AppId = MRGSSettings->iOSMrgsAppId;
 	  bool bDebug = MRGSSettings->bDebugMode;
 	  NSString* Secret = MRGSSettings->iOSMrgsClientSecret.GetNSString();
 	  MRGServiceParams* MrgsParams = [[MRGServiceParams alloc] initWithAppId:AppId andSecret:Secret];
@@ -416,14 +489,41 @@ void UPsMRGSProxyIOS::InitModule()
 	});
 }
 
-const bool UPsMRGSProxyIOS::IsReady() const
+bool UPsMRGSProxyIOS::IsReady() const
 {
 	return bInitComplete;
 }
 
-const bool UPsMRGSProxyIOS::UserLoggedIn() const
+bool UPsMRGSProxyIOS::UserLoggedIn() const
 {
 	return bUserLoggedin;
+}
+
+void UPsMRGSProxyIOS::OnGDPRAccepted(bool bWithAdvertising)
+{
+	AsyncTask(ENamedThreads::GameThread, [this, bWithAdvertising]() {
+		if (MRGSDelegate.IsBound())
+		{
+			if (bWithAdvertising)
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITH_ADS);
+			}
+			else
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITHOUT_ADS);
+			}
+		}
+	});
+}
+
+void UPsMRGSProxyIOS::OnGDPRError()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
+		}
+	});
 }
 
 void UPsMRGSProxyIOS::OnInitComplete()

@@ -22,7 +22,10 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_SHOWCASE_DATA_ERROR,
 	MRGS_SHOWCASE_DATA_EMPTY,
 	MRGS_USERINIT_COMPLETE,
-	MRGS_USERINIT_ERROR
+	MRGS_USERINIT_ERROR,
+	MRGS_GDPR_ACCEPTED_WITH_ADS,
+	MRGS_GDPR_ACCEPTED_WITHOUT_ADS,
+	MRGS_GDPR_ERROR,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, EPsMRGSEventsTypes, MyEventName);
@@ -62,6 +65,33 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+	//////////////////////////////////////////////////////////////////////////
+	// GDPR
+
+public:
+	/** Show MRGS built-in GDPR agreement */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising);
+
+	/** Show specified GDPR agreement */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual void ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising);
+
+	/** Get accepted version of the agreement */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual int32 GetGDPRAcceptedVersion();
+
+	/** Set current version of the agreement */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual void SetGDPRAgreementVersion(int32 Version);
+
+	/** Get current version of the agreement */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual int32 GetGDPRAgreementVersion();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Setup
+
 	/** Start mrgs initialization */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitModule();
@@ -69,6 +99,17 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	/** Login or register user in mrgs */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitUser(const FString& UserId);
+
+	/** MRGS initialize complete */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
+	virtual bool IsReady() const;
+
+	/** MRGS user auth complete */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
+	virtual bool UserLoggedIn() const;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Events
 
 	/** Send google analytics screen */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
@@ -94,17 +135,23 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Ads
+
 	/** Show mytarget apps */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
 	virtual void ShowMyTargetShowcase();
 
 	/** Show mytarget banner */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
 	virtual void ShowMyTargetFullscreen();
 
 	/** Show mytarget interstitial slider */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Adds")
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
 	virtual void ShowMyTargetInterstitialSlider();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Store
 
 	/** Load products from store */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
@@ -118,19 +165,34 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual const TArray<FPsMRGSPurchaseInfo>& GetProducts() const;
 
+	//////////////////////////////////////////////////////////////////////////
+	// Support
+
 	/** Show support screen */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
 	virtual void ShowSupport();
 
-	/** MRGS initialize complete */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
-	virtual const bool IsReady() const;
+	//////////////////////////////////////////////////////////////////////////
+	// Tools
 
-	/** MRGS user auth complete */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
-	virtual const bool UserLoggedIn() const;
+	/** Get platform */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual FString GetDevicePlatform() const;
+
+	/** Get OpenUDID */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual FString GetOpenUDID() const;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Callbacks
 
 public:
+	/** GDPR agreement accepted */
+	virtual void OnGDPRAccepted(bool bWithAdvertising);
+
+	/** GDPR error */
+	virtual void OnGDPRError();
+
 	/** Mrgs initialization complete  */
 	virtual void OnInitComplete();
 
@@ -192,13 +254,4 @@ protected:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
 	FPsMRGSDelegate MRGSDelegate;
-
-public:
-	/** Get platform */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
-	virtual FString GetDevicePlatform() const;
-
-	/** Get OpenUDID */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
-	virtual FString GetOpenUDID() const;
 };

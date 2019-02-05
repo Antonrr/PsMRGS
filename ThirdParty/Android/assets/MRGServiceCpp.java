@@ -5,11 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
+import android.content.res.AssetManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
 import ru.mail.mrgservice.*;
 import com.epicgames.*;
 import com.epicgames.ue4.GameActivity;
@@ -19,8 +21,9 @@ import com.my.target.nativeads.banners.NativeAppwallBanner;
 import ru.mail.mrgservice.MRGSMetrics;
 
 /**
- * Вспомагательный класс для взаимодействия Java кода с C++ кодом
+ * Вспомогательный класс для взаимодействия Java кода с C++ кодом
  */
+
 @SuppressWarnings("unused")
 public class MRGServiceCpp {
 	private final static String LOG_TAG = "[JAVA] MRGServiceCpp.log";
@@ -31,6 +34,10 @@ public class MRGServiceCpp {
 	private final static int ADMAN_INTERSTITIAL = 3;
 
 	public static Context appContext;
+
+	private static MRGSGDPR mGDPR;
+	private static native void onUserHasAcceptedGDPR(final boolean withAdvertising);
+	private static native void onErrorShowingAgreement();
 
 	public static native void onInitComplete();
 
@@ -66,6 +73,30 @@ public class MRGServiceCpp {
 			//runOnUiThread(callback);
 			// callback.run();
 			GameActivity.Get().runOnNecessaryThread(callback);
+		}
+	};
+
+	private final static MRGSGDPR.MRGSGDPRDelegate mGDPRDelegate = new MRGSGDPR.MRGSGDPRDelegate() {
+		@Override
+		public void userHasAcceptedGDPR(boolean withAdvertising) {
+			Log.v(LOG_TAG, "userHasAcceptedGDPR");
+			final boolean finalWithAdvertising = withAdvertising;
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onUserHasAcceptedGDPR(finalWithAdvertising);
+				}
+			});
+		}
+
+		@Override
+		public void errorShowingAgreement() {
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onErrorShowingAgreement();
+				}
+			});
 		}
 	};
 
@@ -159,6 +190,61 @@ public class MRGServiceCpp {
 		}
 	};
 
+	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
+		GameActivity activity = GameActivity.Get();
+		activity.runOnUiThread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				GameActivity thisActivity = GameActivity.Get();
+				mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+				mGDPR.setDelegate(mGDPRDelegate);
+				mGDPR.onlyEU(bOnlyEU);
+				mGDPR.withAdvertising(bWithAdvertising);
+				mGDPR.showDefaultAgreementAtActivity(thisActivity, appId);
+			}
+		});
+	}
+
+	public static void ShowGDPRAgreement(final String appId, final int AgreementVersion, final boolean bOnlyEU, final boolean bWithAdvertising) {
+		GameActivity activity = GameActivity.Get();
+		activity.runOnUiThread(new Runnable() 
+		{
+			@Override
+			public void run() 
+			{
+				GameActivity thisActivity = GameActivity.Get();
+				AssetManager AssetManagerInstance = thisActivity.getAssets();
+
+				mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+				mGDPR.setDelegate(mGDPRDelegate);
+				mGDPR.onlyEU(bOnlyEU);
+				mGDPR.withAdvertising(bWithAdvertising);
+				mGDPR.showAgreementAtActivity(thisActivity,
+                             appId,
+                             "gdpr/gdpr.html",
+                             AgreementVersion);
+			}
+		});
+	}
+
+	public static int GetGDPRAcceptedVersion() {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		GameActivity activity = GameActivity.Get();
+		return mGDPR.getAgreedVersion(activity);
+	}
+
+	public static void SetAgreementVersion(int Version) {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		mGDPR.setAgreementVersion(Version);
+	}
+
+	public static int GetAgreementVersion() {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		return mGDPR.getAgreementVersion();
+	}
+
 	public static void showSupport(final String secretKey) {
 		Log.v(LOG_TAG, String.format("showSupport(%s)", secretKey));
 
@@ -179,8 +265,6 @@ public class MRGServiceCpp {
 					Log.v(LOG_TAG, "showSupportStart");			
 				}	
 				catch (Throwable e) {
-					Log.v(LOG_TAG, "catch error");	
-					Log.e(LOG_TAG, "showSupportStart error", e);
     				e.printStackTrace();
 				}
 			}
