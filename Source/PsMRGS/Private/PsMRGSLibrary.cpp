@@ -4,6 +4,8 @@
 
 #include "PsMRGS.h"
 
+class UPsMRGSProxy;
+
 UPsMRGSLibrary::UPsMRGSLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

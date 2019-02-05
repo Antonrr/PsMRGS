@@ -6,6 +6,8 @@
 
 #include "PsMRGSLibrary.generated.h"
 
+class UPsMRGSProxy;
+
 UCLASS()
 class PSMRGS_API UPsMRGSLibrary : public UBlueprintFunctionLibrary
 {
