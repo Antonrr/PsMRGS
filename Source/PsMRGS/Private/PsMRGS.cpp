@@ -1,6 +1,7 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGS.h"
+
 #include "PsMRGSCommon.h"
 #include "PsMRGSProxy.h"
 #include "PsMRGSSettings.h"
@@ -15,7 +16,6 @@
 
 #include "Misc/ConfigCacheIni.h"
 #include "UObject/Package.h"
-
 #include "Developer/Settings/Public/ISettingsModule.h"
 
 #define LOCTEXT_NAMESPACE "PsMRGS"

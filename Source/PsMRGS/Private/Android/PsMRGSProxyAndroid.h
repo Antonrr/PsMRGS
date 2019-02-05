@@ -1,5 +1,9 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
+
 #pragma once
+
+#include "PsMRGSLibrary.h"
+#include "PsMRGSProxy.h"
 
 #if PLATFORM_ANDROID
 #include "AndroidApplication.h"
@@ -8,8 +12,6 @@
 #include <string>
 #endif
 
-#include "PsMRGSLibrary.h"
-#include "PsMRGSProxy.h"
 #include "PsMRGSProxyAndroid.generated.h"
 
 #if PLATFORM_ANDROID

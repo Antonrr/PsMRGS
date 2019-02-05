@@ -1,4 +1,4 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSSettings.h"
 

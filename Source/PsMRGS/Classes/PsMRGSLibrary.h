@@ -1,8 +1,9 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #pragma once
 
 #include "Kismet/BlueprintFunctionLibrary.h"
+
 #include "PsMRGSLibrary.generated.h"
 
 UCLASS()

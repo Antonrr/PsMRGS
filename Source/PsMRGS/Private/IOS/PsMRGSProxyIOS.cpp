@@ -1,9 +1,11 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxyIOS.h"
-#include "Async.h"
+
 #include "PsMRGSCommon.h"
 #include "PsMRGSSettings.h"
+
+#include "Async.h"
 
 #if PLATFORM_IOS
 

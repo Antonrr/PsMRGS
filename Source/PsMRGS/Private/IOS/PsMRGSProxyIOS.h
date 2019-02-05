@@ -1,13 +1,16 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #pragma once
 
+#include "PsMRGSProxy.h"
+
 #if PLATFORM_IOS
+#import <MRGService/MRGService.h>
+
 #include "IOSAppDelegate.h"
 #import	<StoreKit/StoreKit.h>
-#import <MRGService/MRGService.h>
 #endif
-#include "PsMRGSProxy.h"
+
 #include "PsMRGSProxyIOS.generated.h"
 
 #if PLATFORM_IOS

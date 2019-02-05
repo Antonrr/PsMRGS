@@ -1,9 +1,11 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxyAndroid.h"
-#include "Async/TaskGraphInterfaces.h"
+
 #include "PsMRGSCommon.h"
 #include "PsMRGSSettings.h"
+
+#include "Async/TaskGraphInterfaces.h"
 
 UPsMRGSProxyAndroid::UPsMRGSProxyAndroid(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

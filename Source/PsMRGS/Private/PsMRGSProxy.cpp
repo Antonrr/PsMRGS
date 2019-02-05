@@ -1,6 +1,7 @@
-// Copyright 2018 Pushkin Studio. All Rights Reserved.
+// Copyright 2015-2019 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxy.h"
+
 #include "PsMRGSCommon.h"
 
 UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
