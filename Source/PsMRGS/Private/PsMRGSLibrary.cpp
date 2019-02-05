@@ -5,7 +5,7 @@
 #include "PsMRGS.h"
 
 UPsMRGSLibrary::UPsMRGSLibrary(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 }
 

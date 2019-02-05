@@ -14,9 +14,9 @@
 #include "PsMRGSProxyAndroid.h"
 #endif
 
+#include "Developer/Settings/Public/ISettingsModule.h"
 #include "Misc/ConfigCacheIni.h"
 #include "UObject/Package.h"
-#include "Developer/Settings/Public/ISettingsModule.h"
 
 #define LOCTEXT_NAMESPACE "PsMRGS"
 

@@ -5,9 +5,8 @@
 #include "PsMRGSCommon.h"
 
 UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	
 }
 
 //////////////////////////////////////////////////////////////////////////

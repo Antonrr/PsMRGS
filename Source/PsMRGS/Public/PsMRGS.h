@@ -11,9 +11,8 @@ class UPsMRGSProxy;
  */
 class IPsMRGS : public IModuleInterface
 {
-	
+
 public:
-	
 	/**
 	 * Singleton-like access to this module's interface.  This is just for convenience!
 	 * Beware of calling this during the shutdown phase, though.  Your module might have been unloaded already.
@@ -22,9 +21,9 @@ public:
 	 */
 	static inline IPsMRGS& Get()
 	{
-		return FModuleManager::LoadModuleChecked< IPsMRGS >("PsMRGS");
+		return FModuleManager::LoadModuleChecked<IPsMRGS>("PsMRGS");
 	}
-	
+
 	/**
 	 * Checks to see if this module is loaded and ready.  It is only valid to call Get() if IsAvailable() returns true.
 	 *
@@ -34,9 +33,8 @@ public:
 	{
 		return FModuleManager::Get().IsModuleLoaded("PsMRGS");
 	}
-	
-	
-public:
 
+public:
+	/** MRGS proxy instance */
 	UPsMRGSProxy* MRGSProxy;
 };

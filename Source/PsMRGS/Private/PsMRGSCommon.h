@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Runtime/Launch/Resources/Version.h"
 #include "Modules/ModuleManager.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #if ENGINE_MINOR_VERSION >= 15
 #include "CoreMinimal.h"
@@ -14,7 +14,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogMRGS, Log, All);
 
-#define PS_FUNC (FString(__FUNCTION__))								// Current Class Name + Function Name where this is called
-#define PS_LINE (FString::FromInt(__LINE__))						// Current Line Number in the code where this is called
-#define PS_FUNC_LINE (PS_FUNC + "(" + PS_LINE + ")")				// Current Class and Line Number where this is called!
-
+#define PS_FUNC (FString(__FUNCTION__))				 // Current Class Name + Function Name where this is called
+#define PS_LINE (FString::FromInt(__LINE__))		 // Current Line Number in the code where this is called
+#define PS_FUNC_LINE (PS_FUNC + "(" + PS_LINE + ")") // Current Class and Line Number where this is called!

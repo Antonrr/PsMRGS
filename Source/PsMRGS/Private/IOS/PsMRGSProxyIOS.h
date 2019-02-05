@@ -2,6 +2,8 @@
 
 #pragma once
 
+// clang-format off
+
 #include "PsMRGSProxy.h"
 
 #if PLATFORM_IOS
@@ -191,3 +193,5 @@ protected:
 	int32 MaxUsersSlots;
 #endif // PLATFORM_IOS
 };
+
+// clang-format on
