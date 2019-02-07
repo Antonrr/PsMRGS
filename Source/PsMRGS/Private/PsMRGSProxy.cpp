@@ -15,11 +15,13 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 void UPsMRGSProxy::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
 }
 
 void UPsMRGSProxy::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
 }
 
 int32 UPsMRGSProxy::GetGDPRAcceptedVersion()
