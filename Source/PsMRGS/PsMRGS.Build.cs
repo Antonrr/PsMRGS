@@ -17,6 +17,15 @@ public class PsMRGS : ModuleRules
 		}
 	}
 
+	public string PluginAndroidSettingsXmlDefault
+	{
+		get
+		{
+			return System.IO.Path.GetFullPath(
+			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/Assets/MRGService.xml.default";
+		}
+	}
+
 	public string PluginAndroidSettingsXml
 	{
 		get
@@ -141,7 +150,7 @@ public class PsMRGS : ModuleRules
 
 			/** Saves temp contents of file separated to lines */
 	        List<string> lines = new List<string>();
-	        using (StreamReader sr = File.OpenText(PluginAndroidSettingsXml))
+	        using (StreamReader sr = File.OpenText(PluginAndroidSettingsXmlDefault))
 	        {
 	            string s = "";
 	            while ((s = sr.ReadLine()) != null)
