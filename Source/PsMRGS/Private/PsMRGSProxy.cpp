@@ -47,6 +47,7 @@ int32 UPsMRGSProxy::GetGDPRAgreementVersion()
 void UPsMRGSProxy::InitModule()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
 }
 
 void UPsMRGSProxy::InitUser(const FString& UserId)
