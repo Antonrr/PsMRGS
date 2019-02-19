@@ -2,6 +2,8 @@
 
 #include "PsMRGSSettings.h"
 
+#include "Misc/ConfigCacheIni.h"
+
 UPsMRGSSettings::UPsMRGSSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
