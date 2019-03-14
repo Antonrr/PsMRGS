@@ -446,23 +446,37 @@ void UPsMRGSProxyIOS::InitModule()
 	  NSArray* Paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, bDebug);
 	  MrgsParams.storePath = [[Paths objectAtIndex:0] stringByAppendingPathComponent:@"/mrgsStore"];
 
+	  NSMutableArray* ExternalParams = [[NSMutableArray alloc] init];
+
 	  // Flurry
 	  NSString* FlurryKey = MRGSSettings->iOSFlurryApiKey.GetNSString();
-	  MRGSFlurryParams* FlurryParams = [[MRGSFlurryParams alloc] initWithAPIKey:FlurryKey];
-	  FlurryParams.crashReportEnabled = false;
-	  FlurryParams.debug = bDebug;
+	  if ([FlurryKey length] > 0)
+	  {
+		  MRGSFlurryParams* FlurryParams = [[MRGSFlurryParams alloc] initWithAPIKey:FlurryKey];
+		  FlurryParams.crashReportEnabled = false;
+		  FlurryParams.debug = bDebug;
+		  [ExternalParams addObject:FlurryParams];
+	  }
 
 	  // Google Analytics
 	  NSString* GaTrackingId = MRGSSettings->iOSGATrackingId.GetNSString();
-	  MRGSGoogleAnalyticsParams* GoogleAnalyticsParams = [[MRGSGoogleAnalyticsParams alloc] initWithTrackingId:GaTrackingId];
-	  GoogleAnalyticsParams.exceptionHandlerEnabled = bDebug;
-	  GoogleAnalyticsParams.logLevel = 4;
+	  if ([GaTrackingId length] > 0)
+	  {
+		  MRGSGoogleAnalyticsParams* GoogleAnalyticsParams = [[MRGSGoogleAnalyticsParams alloc] initWithTrackingId:GaTrackingId];
+		  GoogleAnalyticsParams.exceptionHandlerEnabled = bDebug;
+		  GoogleAnalyticsParams.logLevel = 4;
+		  [ExternalParams addObject:GoogleAnalyticsParams];
+	  }
 
 	  // AppsFlyer
 	  NSString* AppleAppId = MRGSSettings->iOSAppleAppId.GetNSString();
 	  NSString* AppsFlyerDevKey = MRGSSettings->iOSAppsFlyerDevKey.GetNSString();
-	  MRGSAppsFlyerParams* AppsFlyerParams = [[MRGSAppsFlyerParams alloc] initWithDevKey:AppsFlyerDevKey andAppleAppId:AppleAppId];
-	  AppsFlyerParams.debug = bDebug;
+	  if ([AppleAppId length] > 0 && [AppsFlyerDevKey length] > 0)
+	  {
+		  MRGSAppsFlyerParams* AppsFlyerParams = [[MRGSAppsFlyerParams alloc] initWithDevKey:AppsFlyerDevKey andAppleAppId:AppleAppId];
+		  AppsFlyerParams.debug = bDebug;
+		  [ExternalParams addObject:AppsFlyerParams];
+	  }
 
 	  // MyTarget
 	  int MyTargetShowcaseSlotId = MRGSSettings->iOSMyTargetShowcaseSlotId;
@@ -472,18 +486,14 @@ void UPsMRGSProxyIOS::InitModule()
 																	   fullscreenBannerSlotId:MyTargetFullscreenSlotId
 																		   interstitialSlotId:MyTargetInterstitialSlotId];
 	  MyTargetParams.debug = bDebug;
+	  [ExternalParams addObject:MyTargetParams];
 
 	  // MyTracker
 	  NSString* MyTrackerAppId = MRGSSettings->iOSMyTrackerAppId.GetNSString();
 	  MRGSMyTrackerParams* MyTrackerParams = [[MRGSMyTrackerParams alloc] initWithAppId:MyTrackerAppId];
 	  MyTrackerParams.forwardMetrics = YES;
 	  MyTrackerParams.enableLogging = bDebug;
-
-	  NSArray* ExternalParams = @[ FlurryParams,
-		  GoogleAnalyticsParams,
-		  AppsFlyerParams,
-		  MyTargetParams,
-		  MyTrackerParams ];
+	  [ExternalParams addObject:MyTrackerParams];
 
 	  [MRGServiceInit startWithServiceParams:MrgsParams
 						   externalSDKParams:ExternalParams
