@@ -18,7 +18,7 @@ class UPsMRGSSettings : public UObject
 
 	/** On/Off mrgs debug mode */
 	UPROPERTY(Config, EditAnywhere)
-	bool bDebugMode;
+	bool bDebugInDevelopment;
 
 	/** iOS Mrgs appid */
 	UPROPERTY(Config, EditAnywhere)

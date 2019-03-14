@@ -28,7 +28,7 @@ void UPsMRGSSettings::ReadFromConfig()
 	GConfig->GetString(*ConfigSection, TEXT("iOsAppsFlyerDevKey"), iOSAppsFlyerDevKey, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("iOsGATrackingId"), iOSGATrackingId, GEngineIni);
 	GConfig->GetBool(*ConfigSection, TEXT("bEnableMRGS"), bEnableMRGS, GEngineIni);
-	GConfig->GetBool(*ConfigSection, TEXT("bDebugMode"), bDebugMode, GEngineIni);
+	GConfig->GetBool(*ConfigSection, TEXT("bDebugInDevelopment"), bDebugInDevelopment, GEngineIni);
 
 	GConfig->GetInt(*ConfigSection, TEXT("iOsMyTargetShowcaseSlotId"), iOSMyTargetShowcaseSlotId, GEngineIni);
 	GConfig->GetInt(*ConfigSection, TEXT("iOsMyTargetFullscreenSlotId"), iOSMyTargetFullscreenSlotId, GEngineIni);

@@ -434,7 +434,11 @@ void UPsMRGSProxyIOS::InitModule()
 
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  int32 AppId = MRGSSettings->iOSMrgsAppId;
-	  bool bDebug = MRGSSettings->bDebugMode;
+#if !UE_BUILD_SHIPPING
+	  bool bDebug = MRGSSettings->bDebugInDevelopment;
+#else
+	  bool bDebug = false;
+#endif
 	  NSString* Secret = MRGSSettings->iOSMrgsClientSecret.GetNSString();
 	  MRGServiceParams* MrgsParams = [[MRGServiceParams alloc] initWithAppId:AppId andSecret:Secret];
 	  MrgsParams.debug = bDebug;
