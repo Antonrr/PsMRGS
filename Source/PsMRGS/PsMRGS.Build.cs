@@ -239,7 +239,7 @@ public class PsMRGS : ModuleRules
 			);
 
 			PublicAdditionalFrameworks.Add(
-				new UEBuildFramework(
+				new Framework(
 				"MRGService",
 				"../../ThirdParty/IOS/MRGService.embeddedframework.zip",
 				"MRGServiceResources.bundle"
@@ -247,21 +247,21 @@ public class PsMRGS : ModuleRules
 			);
 
 			PublicAdditionalFrameworks.Add(
-				new UEBuildFramework(
+				new Framework(
 				"AppsFlyerLib",
 				"../../ThirdParty/IOS/AppsFlyerLib.embeddedframework.zip"
 				)
 			);
 
 			PublicAdditionalFrameworks.Add(
-				new UEBuildFramework(
+				new Framework(
 				"MyTargetSDK",
 				"../../ThirdParty/IOS/MyTargetSDK.embeddedframework.zip"
 				)
 			);
 
 			PublicAdditionalFrameworks.Add(
-				new UEBuildFramework(
+				new Framework(
 				"MyTrackerSDK",
 				"../../ThirdParty/IOS/MyTrackerSDK.embeddedframework.zip"
 				)
