@@ -15,13 +15,13 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 void UPsMRGSProxy::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
 }
 
 void UPsMRGSProxy::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
 }
 
 int32 UPsMRGSProxy::GetGDPRAcceptedVersion()
@@ -47,12 +47,13 @@ int32 UPsMRGSProxy::GetGDPRAgreementVersion()
 void UPsMRGSProxy::InitModule()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_NOT_IMPLEMENTED);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
 }
 
 void UPsMRGSProxy::InitUser(const FString& UserId)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
 }
 
 bool UPsMRGSProxy::IsReady() const

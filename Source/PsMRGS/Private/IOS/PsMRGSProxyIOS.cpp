@@ -685,7 +685,7 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 			if ([TempUserId isEqualToString:RealUserId])
 			{
 				[[MRGSUsers sharedInstance] authorizationUserWithId:TempUserId];
-				UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user %s founded in previous sessions and authorized"), *PS_FUNC_LINE, *FString(TempUserId));
+				UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user %s found in previous sessions and authorized"), *PS_FUNC_LINE, *FString(TempUserId));
 				OnUserAuthSuccess();
 				return;
 			}
@@ -708,7 +708,7 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 	}
 
 	[[MRGSUsers sharedInstance] authorizationUserWithId:RealUserId];
-	UE_LOG(LogMRGS, Log, TEXT("%s: MRGService  %s registred and authorized"), *PS_FUNC_LINE, *FString(RealUserId));
+	UE_LOG(LogMRGS, Log, TEXT("%s: MRGService %s registred and authorized"), *PS_FUNC_LINE, *FString(RealUserId));
 	OnUserAuthSuccess();
 }
 
