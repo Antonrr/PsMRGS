@@ -143,6 +143,12 @@ void UPsMRGSProxyAndroid::InitModule()
 {
 	if (IsReady())
 	{
+		AsyncTask(ENamedThreads::GameThread, [this]() {
+			if (MRGSDelegate.IsBound())
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_INIT_COMPLETE);
+			}
+		});
 		return;
 	}
 
