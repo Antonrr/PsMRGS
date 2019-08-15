@@ -880,6 +880,10 @@ extern "C"
 			{
 				Proxy->OnUserAuthSuccess();
 			}
+			else
+			{
+				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
+			}
 		});
 	}
 
@@ -890,6 +894,10 @@ extern "C"
 			if (Proxy)
 			{
 				Proxy->OnUserAuthError();
+			}
+			else
+			{
+				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
 			}
 		});
 	}

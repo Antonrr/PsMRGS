@@ -313,14 +313,17 @@ public class MRGServiceCpp {
 						Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId found user and authorized %s", userId));
 						onUserAuthSuccess();
 					}
+
 					return;
 				}
 			}
 		}
 
-		String RegistredUserId = MRGSUsers.instance().registerNewUser(userId);
-		if (RegistredUserId.equals(userId)) {
-			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result = %s", userId, RegistredUserId));
+		String RegisteredUserId = MRGSUsers.instance().registerNewUser(userId);
+		if (RegisteredUserId == null) {
+			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result is null", userId));
+			onUserAuthError();
+			return;
 		}
 
 		boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
