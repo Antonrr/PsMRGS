@@ -267,8 +267,9 @@ public class PsMRGS : ModuleRules
 				)
 			);
 
-			string thirdPartyPath = ProjectRoot + "/ThirdParty/IOS/";
-			string tempPathPrefix = thirdPartyPath + "Flurry/";
+            // Hack for remote compilation on windows
+            string thirdPartyPath = (ProjectRoot.Contains("/UE4/Builds") ? "/opt/build-dir/ps-mrgs" : ProjectRoot) + "/ThirdParty/IOS/";
+            string tempPathPrefix = thirdPartyPath + "Flurry/";
 
 			//adding Flurry
 			PublicIncludePaths.Add(tempPathPrefix);
