@@ -44,6 +44,12 @@ int32 UPsMRGSProxy::GetGDPRAgreementVersion()
 //////////////////////////////////////////////////////////////////////////
 // Setup
 
+void UPsMRGSProxy::CheckIntegration()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
+}
+
 void UPsMRGSProxy::InitModule()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
@@ -71,21 +77,6 @@ bool UPsMRGSProxy::UserLoggedIn() const
 //////////////////////////////////////////////////////////////////////////
 // Events
 
-void UPsMRGSProxy::SendGAScreen(const FString& InScreenName)
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-void UPsMRGSProxy::SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel)
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-void UPsMRGSProxy::SendFlurryEvent(const FString& InAction)
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
 void UPsMRGSProxy::SendAFEvent(const FString& InEventName, const FString& InValue)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
@@ -97,24 +88,6 @@ void UPsMRGSProxy::AddMetricWithId(int32 MetricId)
 }
 
 void UPsMRGSProxy::AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId)
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Ads
-
-void UPsMRGSProxy::ShowMyTargetShowcase()
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-void UPsMRGSProxy::ShowMyTargetFullscreen()
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-void UPsMRGSProxy::ShowMyTargetInterstitialSlider()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
@@ -230,6 +203,11 @@ void UPsMRGSProxy::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedPro
 }
 
 void UPsMRGSProxy::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+void UPsMRGSProxy::OnPurchasePending(const FString& ProductId)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }

@@ -8,9 +8,6 @@ UPsMRGSSettings::UPsMRGSSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	iOSMrgsAppId = 0;
-	iOSMyTargetShowcaseSlotId = 0;
-	iOSMyTargetFullscreenSlotId = 0;
-	iOSMyTargetInterstitialSlotId = 62736;
 }
 
 void UPsMRGSSettings::ReadFromConfig()
@@ -30,13 +27,7 @@ void UPsMRGSSettings::ReadFromConfig()
 	GConfig->GetBool(*ConfigSection, TEXT("bEnableMRGS"), bEnableMRGS, GEngineIni);
 	GConfig->GetBool(*ConfigSection, TEXT("bDebugInDevelopment"), bDebugInDevelopment, GEngineIni);
 
-	GConfig->GetInt(*ConfigSection, TEXT("iOsMyTargetShowcaseSlotId"), iOSMyTargetShowcaseSlotId, GEngineIni);
-	GConfig->GetInt(*ConfigSection, TEXT("iOsMyTargetFullscreenSlotId"), iOSMyTargetFullscreenSlotId, GEngineIni);
-	GConfig->GetInt(*ConfigSection, TEXT("iOsMyTargetInterstitialSlotId"), iOSMyTargetInterstitialSlotId, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("iOsMyTrackerAppId"), iOSMyTrackerAppId, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("iOsSupportSecretKey"), iOSSupportSecretKey, GEngineIni);
-
-	// iOS Specific settings
-	GConfig->GetString(*ConfigSection, TEXT("iOsFlurryApiKey"), iOSFlurryApiKey, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("iOsAppleAppId"), iOSAppleAppId, GEngineIni);
 }

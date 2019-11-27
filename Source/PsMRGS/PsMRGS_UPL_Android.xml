@@ -6,13 +6,6 @@
 		<addAttribute tag="application" name="android:usesCleartextTraffic" value="true"/>
 	</androidManifestUpdates>
 
-	<AARImports>
-		<insertValue value="repositories $S(PluginDir)/../../ThirdParty/Android/Dependencies"/>
-		<insertNewline/>
-	</AARImports>
-	
-
-  <!-- Gradle -->
   <buildGradleAdditions>
 	<insert>
 	repositories {
@@ -21,6 +14,10 @@
 		maven {
 			url 'https://maven.google.com'
 		}
+
+		flatDir {
+        	dirs 'libs'
+      	}
 	}
 
 	configurations.all {
@@ -35,29 +32,21 @@
 	}
 
 	dependencies {
+		implementation(name: 'MRGService', ext:'aar')
+		implementation(name: 'MRGSAdvertising', ext:'aar')
+		implementation(name: 'MRGSAnalytics', ext:'aar')
+		implementation(name: 'MRGSBilling', ext:'aar')
+		implementation(name: 'MRGSGDPR', ext:'aar')
+		implementation(name: 'MRGSNotifications', ext:'aar')
+		implementation(name: 'MRGSSupport', ext:'aar')
 
-		implementation ('com.mrgs.android:mrgs-android-sdk:1.1.0') 
-		implementation ('com.mrgs.android:mrgs-dependencies-sdk:1.1.0') 
-
-		implementation 'com.my.tracker:mytracker-sdk:1.5.4'
-		implementation 'com.my.target:mytarget-sdk:5.1.3'
-
-		implementation 'com.android.support:appcompat-v7:26.1.0'
-		implementation 'com.android.support:support-v4:26.1.0'
-
+		implementation 'com.my.tracker:mytracker-sdk:1.5.12'
+		implementation 'com.android.billingclient:billing:2.0.3'
+		implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
 		implementation 'org.apache.httpcomponents:httpmime:4.2.5'
-
+		implementation 'com.android.support:support-v4:26.1.0'
+		implementation 'com.android.support:appcompat-v7:26.1.0'
 	}
-
-<!-- 	android {
-		packagingOptions {
-			pickFirst 'com/sec/android/iap/IAPConnector.aidl'
-			pickFirst 'com/sec/android/iap/IAPServiceCallback.aidl'
-			pickFirst 'com/android/vending/billing/IInAppBillingService.aidl'
-			pickFirst 'org/apache/http/entity/mime/version.properties'
-			pickFirst 'android/support/v13/a/a.class'
-		}
-	} -->
 
 	</insert>
   </buildGradleAdditions>
@@ -66,11 +55,10 @@
 	<proguardAdditions>
 		<insert>
 	
-		-keep class com.my.target.** {*;}
+		-keep class com.my.** {*;}
 		-keep class ru.mail.mrgservice.** {*;}
 		-keep class com.mopub.** {*;}
 		-keep class com.mopub.mobileads.CustomEventInterstitial
-		-keep class ru.mail.mrgservice.MRGSGCMBroadcastReceiver
 		-keep class android.app.** {*;}
 		-keep class ru.mail.mrgservice.MRGSMap { *; }
 		-keep class ru.mail.mrgservice.MRGSList { *; }
@@ -90,9 +78,6 @@
 		-keep class com.android.installreferrer.** { *; }
 		-keep class com.android.vending.billing.** { *; }
 		-keep class com.android.billingclient.api.** { *; }
-		-keep class com.flurry.android.** { *; }
-		-keep class com.flurry.sdk.** { *; }
-		-dontwarn com.flurry.sdk.**
 		-keep class com.appsflyer.AppsFlyerLib { *; }
 		-keep class com.appsflyer.SingleInstallBroadcastReceiver { *; }
 		-keep class com.appsflyer.AppsFlyerProperties { *; }
@@ -101,7 +86,6 @@
 		-keep class com.amazon.device.** { *; }
 		-dontwarn com.amazon.device.**
 		-dontnote com.appsflyer.**
-		-dontnote com.flurry.**
 		-dontnote com.mobileapptracker.**
 		-dontnote com.google.ads.**
 		-dontnote org.apache.http.**
@@ -159,6 +143,16 @@
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />
 		<copyFile src="$S(PluginDir)/../../../../Content/gdpr/gdpr.html" dst="$S(BuildDir)/assets/gdpr/gdpr.html" />
 
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSAdvertising.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSAdvertising.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSAnalytics.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSAnalytics.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSBilling.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSBilling.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGService.aar" dst="$S(BuildDir)/gradle/app/libs/MRGService.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSGDPR.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSGDPR.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSNotifications.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSNotifications.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/gradle/app/libs/in-app-purchasing-2.0.61.jar" />
+
 		<!-- To remove proguadr - uncomment -->
 		<!-- <forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
 		 <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>
@@ -166,9 +160,7 @@
 		<!-- <forceDeleteFile dst="$S(BuildDir)/src/com/android/vending/billing/IInAppBillingService.aidl"/> -->
 
 		<!-- If using jars instead aar - uncomment -->
-		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTarget.jar" dst="$S(BuildDir)/libs/myTarget.jar" /> -->
 		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/AF-Android-SDK.jar" dst="$S(BuildDir)/libs/AF-Android-SDK.jar" />
-		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/flurryAds_6.8.0.jar" dst="$S(BuildDir)/libs/flurryAds_6.8.0.jar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/GoogleConversionTrackingSdk-2.2.4.jar" dst="$S(BuildDir)/libs/GoogleConversionTrackingSdk-2.2.4.jar" />
  		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/libs/in-app-purchasing-2.0.61.jar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MobileAppTracker.jar" dst="$S(BuildDir)/libs/MobileAppTracker.jar" />
@@ -266,6 +258,11 @@
 			return MRGServiceCpp.GetAgreementVersion();
 		}
 
+		public void AndroidThunkJava_MRGService_checkIntegration()
+		{
+			MRGServiceCpp.checkIntegration();
+		}
+
 		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret)
 		{
 			MRGServiceCpp.appContext = getApplicationContext();
@@ -278,49 +275,9 @@
 			MRGServiceCpp.initUser(userId);
 		}
 
-		public void AndroidThunkJava_MRGService_admanLoadData(String type)
-		{
-			MRGServiceCpp.admanLoadData(type);
-		}
-
-		public void AndroidThunkJava_MRGService_admanOpen(final int type)
-		{
-			MRGServiceCpp.admanOpen(type);
-		}
-
-		public void AndroidThunkJava_MRGService_admanClose(final int type)
-		{
-			MRGServiceCpp.admanClose(type);
-		}
-
-		public void AndroidThunkJava_MRGService_admanRelease(final int type)
-		{
-			MRGServiceCpp.admanRelease(type);
-		}
-
-		public void AndroidThunkJava_MRGService_admanSetTitle(final String title)
-		{
-			MRGServiceCpp.admanSetTitle(title);
-		}
-
 		public void AndroidThunkJava_MRGService_showSupport(final String secretKey)
 		{
 			MRGServiceCpp.showSupport(secretKey);
-		}
-
-		public void AndroidThunkJava_MRGService_flurryEvent(final String event)
-		{
-			MRGServiceCpp.flurryEvent(event);
-		}
-
-		public void AndroidThunkJava_MRGService_sendGAEvent(final String category, final String action, final String label) 
-		{
-			MRGServiceCpp.sendGAEvent(category, action, label);
-		}
-
-		public void AndroidThunkJava_MRGService_sendGAScreen(final String screenName)
-		{
-			MRGServiceCpp.sendGAScreen(screenName);
 		}
 
 		public void AndroidThunkJava_MRGService_sendAFEvent(final String eventName, final String value) 

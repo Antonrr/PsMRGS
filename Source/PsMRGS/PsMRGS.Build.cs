@@ -105,9 +105,6 @@ public class PsMRGS : ModuleRules
 			
 			string AndroidGATrackingId = null;
 			string AndroidAppsFlyerDevKey = null;
-			string AndroidFlurryApiKey = null;
-			string AndroidMyTargetShowcaseSlotId = null;
-			string AndroidMyTargetFullscreenSlotId = null;
 			string AndroidMyTrackerAppId = null;
 
 			/** Opens DefaultEngine.ini to read values for variables */
@@ -127,18 +124,6 @@ public class PsMRGS : ModuleRules
 	            		else if (tokens[0] == "AndroidAppsFlyerDevKey")
 	            		{
 							AndroidAppsFlyerDevKey = tokens[1];
-	            		}
-	            		else if (tokens[0] == "AndroidFlurryApiKey")
-	            		{
-							AndroidFlurryApiKey = tokens[1];
-	            		}
-	            		else if (tokens[0] == "AndroidMyTargetShowcaseSlotId")
-	            		{
-							AndroidMyTargetShowcaseSlotId = tokens[1];
-	            		}
-	            		else if (tokens[0] == "AndroidMyTargetFullscreenSlotId")
-	            		{
-							AndroidMyTargetFullscreenSlotId = tokens[1];
 	            		}
 	            		else if (tokens[0] == "AndroidMyTrackerAppId")
 	            		{
@@ -173,18 +158,6 @@ public class PsMRGS : ModuleRules
 	        	{
 					lines[i] = "app_key=" + '"' + AndroidAppsFlyerDevKey + '"';
 	        	}
-	        	if (s.Contains("applicationKey"))
-	        	{
-					lines[i] = "applicationKey=" + '"' + AndroidFlurryApiKey + '"';
-	        	}
-	        	if (s.Contains("slotId"))
-	        	{
-					lines[i] = "slotId=" + '"' + AndroidMyTargetShowcaseSlotId + '"';
-	        	}
-	        	if (s.Contains("fullscreenSlotId"))
-	        	{
-					lines[i] = "fullscreenSlotId=" + '"' + AndroidMyTargetFullscreenSlotId + '"';
-	        	}
 	        	if (s.Contains("appId"))
 	        	{
 					lines[i] = "appId=" + '"' + AndroidMyTrackerAppId + '"';
@@ -213,21 +186,13 @@ public class PsMRGS : ModuleRules
 				"iAd",
 				"CoreTelephony",
 				"SystemConfiguration",
-				"UIKit",
 				"Foundation",
-				"CoreGraphics",
-				"MobileCoreServices",
 				"StoreKit",
 				"CFNetwork",
 				"CoreData",
-				"Security",
 				"CoreLocation",
-				"WatchConnectivity",
-				"MediaPlayer",
 				"CoreFoundation",
-				"UserNotifications",
-				"GameKit",
-				"SafariServices"
+				"UserNotifications"
 			}
 			);
 
@@ -240,14 +205,6 @@ public class PsMRGS : ModuleRules
 
 			PublicAdditionalFrameworks.Add(
 				new Framework(
-				"MRGService",
-				"../../ThirdParty/IOS/MRGService.embeddedframework.zip",
-				"MRGServiceResources.bundle"
-				)
-			);
-
-			PublicAdditionalFrameworks.Add(
-				new Framework(
 				"AppsFlyerLib",
 				"../../ThirdParty/IOS/AppsFlyerLib.embeddedframework.zip"
 				)
@@ -255,8 +212,37 @@ public class PsMRGS : ModuleRules
 
 			PublicAdditionalFrameworks.Add(
 				new Framework(
-				"MyTargetSDK",
-				"../../ThirdParty/IOS/MyTargetSDK.embeddedframework.zip"
+				"MRGSAnalytics",
+				"../../ThirdParty/IOS/MRGSAnalytics.embeddedframework.zip"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGSBank",
+				"../../ThirdParty/IOS/MRGSBank.embeddedframework.zip"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGService",
+				"../../ThirdParty/IOS/MRGService.embeddedframework.zip"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGSGDPR",
+				"../../ThirdParty/IOS/MRGSGDPR.embeddedframework.zip",
+				"MRGSGDPRResources.bundle"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGSSupport",
+				"../../ThirdParty/IOS/MRGSSupport.embeddedframework.zip"
 				)
 			);
 
@@ -273,7 +259,7 @@ public class PsMRGS : ModuleRules
 
 			//adding Flurry
 			PublicIncludePaths.Add(tempPathPrefix);
-			PublicAdditionalLibraries.Add(tempPathPrefix + "/libFlurry_9.0.0.a");
+			PublicAdditionalLibraries.Add(tempPathPrefix + "/libFlurry_10.0.2.a");
 
 			//adding GA
 			tempPathPrefix = thirdPartyPath + "GoogleAnalytics/";

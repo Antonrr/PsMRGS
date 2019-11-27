@@ -17,7 +17,6 @@ import com.epicgames.*;
 import com.epicgames.ue4.GameActivity;
 import android.widget.Toast;
 import ru.mail.mrgservice.MRGSMyComSupportDialog;
-import com.my.target.nativeads.banners.NativeAppwallBanner;
 import ru.mail.mrgservice.MRGSMetrics;
 
 /**
@@ -53,6 +52,7 @@ public class MRGServiceCpp {
 	public static native void onLoadProductsDidFinished(final List<MRGSPurchaseItem> items);
 	private static native void onPurchaseComplete(final String sku, final String transactionId, final String answer);
 	private static native void onPurchaseCancel(final String sku, final String transactionId, final String answer);
+	private static native void onPurchasePending(final String sku);
 	private static native void onPurchaseFail(final String sku, final String answer);
 
 	private static native void onReceivedNotification(final int notificationId, final String title, final String message, final boolean isLocal);
@@ -130,7 +130,7 @@ public class MRGServiceCpp {
 	private final static MRGSBillingDelegate mBillingDelegate = new MRGSBillingDelegate() {
 		@Override
 		public void loadProductsDidFinished(final MRGSBilling mrgsBilling, final ArrayList<MRGSPurchaseItem> mrgsPurchaseItems) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.loadProductsDidFinished(%s, items.count = %d)", MRGSBilling.getBillingName(), mrgsPurchaseItems.size()));
+			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.loadProductsDidFinished(%s, items.count = %d)", MRGSBilling.instance().getBillingName(), mrgsPurchaseItems.size()));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
@@ -141,7 +141,7 @@ public class MRGServiceCpp {
 
 		@Override
 		public void purchaseComplete(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseComplete(%s, %s, %s)", MRGSBilling.getBillingName(), item, answer));
+			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseComplete(%s, %s, %s)", MRGSBilling.instance().getBillingName(), item, answer));
 			if (item.resultCode != 1) // BILLING_RESPONSE_RESULT_USER_CANCELED = 1
 			{
 				threadHelper.runOnNecessaryThread(new Runnable() {
@@ -163,8 +163,19 @@ public class MRGServiceCpp {
 		}
 
 		@Override
+		public void purchaseIsPending(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item) {
+			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseIsPending(%s, %s)", MRGSBilling.instance().getBillingName(), item));
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onPurchasePending((item != null ? item.sku : null));
+				}
+			});
+		}
+
+		@Override
 		public void purchaseFail(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseFail(%s, %s, %s)", MRGSBilling.getBillingName(), item, answer));
+			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseFail(%s, %s, %s)", MRGSBilling.instance().getBillingName(), item, answer));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
@@ -279,6 +290,10 @@ public class MRGServiceCpp {
 		MRGSMetrics.addMetric(metricCode, value, level, objectId);
 	}
 
+	public static void checkIntegration() {
+		MRGService.instance().checkIntegration();
+	}
+
 	public static void initWithAppidAndSecret(final String appId, final String appSecret) {
 
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (%s, %s)", appId, appSecret));
@@ -358,7 +373,7 @@ public class MRGServiceCpp {
 	}
 
 	public static void initPush() {
-		MRGService.instance().initPush(PushDelegate.instance());
+		MRGSPushNotifications.getInstance().initPushNotifications(PushDelegate.instance());
 	}
 
 	public static void initLocalPush() {
@@ -434,156 +449,14 @@ public class MRGServiceCpp {
 		return result;
 	}
 
-	public static void admanLoadData(final String type) {
-		Log.v(LOG_TAG, String.format("admanLoadData(%s)", type));
-		final int tempType = Integer.parseInt(type);
-		threadHelper.runOnNecessaryThread(new Runnable() {
-			@Override
-			public void run() {
-				switch (tempType) {
-					case ADMAN_SHOWCASE:
-						getAdvertising().loadShowcase(AdmanDelegate.instance());
-						break;
-					case ADMAN_FULLSCREEN_BANNER:
-						getAdvertising().loadFullscreen(AdmanDelegate.instance());
-						break;
-					case ADMAN_INTERSTITIAL:
-						getAdvertising().loadInterstitial(AdmanDelegate.instance());
-					break;
-				}
-			}
-		});
-	}
-
-	public static void admanOpen(final int type) {
-		Log.v(LOG_TAG, String.format("admanOpen(%d)", type));
-		threadHelper.runOnNecessaryThread(new Runnable() {
-			@Override
-			public void run() {
-				switch (type) {
-					case ADMAN_SHOWCASE:
-						getAdvertising().openShowcase();
-						break;
-					case ADMAN_FULLSCREEN_BANNER:
-						getAdvertising().openFullscreen();
-						break;
-					case ADMAN_INTERSTITIAL:
-						getAdvertising().openInterstitial();
-						break;
-				}
-			}
-		});
-	}
-
-	public static void admanClose(final int type) {
-		Log.v(LOG_TAG, String.format("admanClose(%d)", type));
-		threadHelper.runOnNecessaryThread(new Runnable() {
-			@Override
-			public void run() {
-				switch (type) {
-					case ADMAN_SHOWCASE:
-						getAdvertising().closeShowcase();
-						break;
-					case ADMAN_FULLSCREEN_BANNER:
-						getAdvertising().closeFullscreen();
-						break;
-					case ADMAN_INTERSTITIAL:
-						getAdvertising().closeInterstitial();
-						break;
-				}
-			}
-		});
-	}
-
-	public static void admanRelease(final int type) {
-		Log.v(LOG_TAG, String.format("admanRelease(%d)", type));
-		threadHelper.runOnNecessaryThread(new Runnable() {
-			@Override
-			public void run() {
-				switch (type) {
-					case ADMAN_SHOWCASE:
-						getAdvertising().releaseShowcase();
-						break;
-					case ADMAN_FULLSCREEN_BANNER:
-						getAdvertising().releaseFullscreen();
-						break;
-
-					case ADMAN_INTERSTITIAL:
-						break;
-						
-				}
-			}
-		});
-	}
-
-	public static void admanSetTitle(final String title) {
-		Log.v(LOG_TAG, "admanSetTitle()");
-		threadHelper.runOnNecessaryThread(new Runnable() {
-			@Override
-			public void run() {
-				getAdvertising().setShowcaseTitle(title);
-			}
-		});
-	}
-
-	/************************************************/
-	/*               Flurry Analytics               */
-	/************************************************/
-	public static void flurryEvent(final String event) {
-		Log.v(LOG_TAG, String.format("flurryEvent('%s')", event));
-		Log.v(LOG_TAG, String.format("flurryEvent start"));
-		MRGService.instance().flurryEvent(event);
-		Log.v(LOG_TAG, String.format("flurryEvent start"));
-	}
-
-	public static void flurryEvent(final String event, final Map<String, String> params) {
-		Log.v(LOG_TAG, String.format("flurryEvent('%s', %s)", event, params));
-		MRGService.instance().flurryEvent(event, params);
-	}
-
-	public static void flurryEventStart(final String event, final Map<String, String> params) {
-		Log.v(LOG_TAG, String.format("flurryEventStart('%s', %s)", event, params));
-		MRGService.instance().flurryEventStart(event, params);
-	}
-
-	public static void flurryEventStop(final String event, final Map<String, String> params) {
-		Log.v(LOG_TAG, String.format("flurryEventStop('%s', %s)", event, params));
-		MRGService.instance().flurryEventStop(event, params);
-	}
-	/************************************************/
-
-
-	/************************************************/
-	/*               Google Analytics               */
-	/************************************************/
-	public static void sendGAEvent(final String category, final String action, final String label) {
-		Log.v(LOG_TAG, String.format("sendGAEvent('%s', '%s', '%s')", category, action, label));
-		MRGService.instance().sendGAEvent(category, action, label, 1L);
-	}
-
-	public static void sendGAScreen(final String screenName) {
-		Log.v(LOG_TAG, String.format("sendGAScreen('%s')", screenName));
-		MRGService.instance().sendGAScreen(screenName);
-	}
-
-	public static void sendGASocEvent(final String network, final String action, final String target) {
-		Log.v(LOG_TAG, String.format("sendGASocEvent('%s', '%s', '%s')", network, action, target));
-		MRGService.instance().sendGASocEvent(network, action, target);
-	}
-
-	public static void sendGATimings(final String category, final long interval, final String name, final String label) {
-		Log.v(LOG_TAG, String.format("sendGATimings('%s', %d, '%s', '%s'", category, interval, name, label));
-		MRGService.instance().sendGATimings(category, interval, name, label);
-	}
-	/************************************************/
-
-
 	/*************************************************/
 	/*                   AppsFlyer                   */
 	/*************************************************/
 	public static void sendAFEvent(final String eventName, final String value) {
 		Log.v(LOG_TAG, String.format("sendAFEvent('%s', '%s')", eventName, value));
-		MRGService.instance().sendAFEvent(eventName, value);
+		MRGSMap params = new MRGSMap();
+		params.put("param1", value);
+		MRGSAnalytics.getInstance().getAppsFlyer().sendEvent(eventName, params);
 	}
 	/*************************************************/
 
@@ -614,14 +487,6 @@ public class MRGServiceCpp {
 			final Handler mainHandler = new Handler(Looper.getMainLooper());
 			mainHandler.post(runnable);
 		}
-	}
-
-	private static MRGSAdvertising getAdvertising() {
-		MRGSAdvertising advertising = MRGSAdvertising.getLastInstance();
-		if (advertising == null) {
-			advertising = MRGSAdvertising.createInstance(MRGService.instance().getCurrentActivity());
-		}
-		return advertising;
 	}
 
 	private static class PushDelegate implements MRGSPushNotificationHandler.MRGSPushNotificationDelegate {
@@ -657,89 +522,6 @@ public class MRGServiceCpp {
 					onReceivedNotification(notificationId, title, message, isLocal);
 				}
 			});
-		}
-	}
-
-	private static class AdmanDelegate implements MRGSAdvertising.LoadDelegate {
-		private AdmanDelegate() {
-		}
-
-		private static AdmanDelegate mInstance;
-
-		synchronized static AdmanDelegate instance() {
-			if (mInstance == null) {
-				mInstance = new AdmanDelegate();
-			}
-			return mInstance;
-		}
-
-		public void onVideoComplete(final MRGSAdvertising.AdvertisingType type) {
-			// Log.d("ADMAN++", String.format("onVideoComplete(%s)", type));
-		}
-
-		/**
-		 * Метод протокола, срабатывает при получении данных о баннерах для Витрины
-		 * @param notification Если True, то нужно показать бабл на кнопке
-		 */
-		public void onLoadComplete(final MRGSAdvertising.AdvertisingType advertisingType, final boolean notification, final List<NativeAppwallBanner> BannersList) {
-			Log.v(LOG_TAG, String.format("AdmanDelegate.onLoadComplete(%s, %s)", advertisingType, notification));
-			final int type;
-			switch (advertisingType) {
-				case SHOWCASE:
-				default:
-					type = ADMAN_SHOWCASE;
-					break;
-				case FULLSCREEN:
-					type = ADMAN_FULLSCREEN_BANNER;
-					break;
-				case INTERSTITIAL :
-					type = ADMAN_INTERSTITIAL;
-					break;
-			}
-			threadHelper.runOnNecessaryThread(new Runnable() {
-				@Override
-				public void run() {
-					onAdmanLoadComplete(type, notification);
-				}
-			});
-		}
-
-		public void onViewComplete(final MRGSAdvertising.AdvertisingType advertisingType) {
-			Log.v(LOG_TAG, String.format("AdmanDelegate.onViewComplete(%s)", advertisingType));
-			final int type;
-			switch (advertisingType) {
-				case SHOWCASE:
-				default:
-					type = ADMAN_SHOWCASE;
-					break;
-				case FULLSCREEN:
-					type = ADMAN_FULLSCREEN_BANNER;
-					break;
-
-				case INTERSTITIAL:
-					type = ADMAN_INTERSTITIAL;
-					break;
-			}
-			onAdmanViewComplete(type);
-		}
-
-		public void onNoAd(final MRGSAdvertising.AdvertisingType advertisingType) {
-			final int type;
-			switch (advertisingType) {
-				case SHOWCASE:
-				default:
-					type = ADMAN_SHOWCASE;
-					break;
-				case FULLSCREEN:
-					type = ADMAN_FULLSCREEN_BANNER;
-					break;
-
-				case INTERSTITIAL:
-					type = ADMAN_INTERSTITIAL;
-					break;
-			}
-
-			onAdmanHasNoAdd(type);
 		}
 	}
 

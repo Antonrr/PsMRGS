@@ -7,7 +7,7 @@
 #include "PsMRGSProxy.h"
 
 #if PLATFORM_IOS
-#import <MRGService/MRGService.h>
+#import <MRGService/MRGServiceKit.h>
 
 #include "IOSAppDelegate.h"
 #import	<StoreKit/StoreKit.h>
@@ -16,7 +16,7 @@
 #include "PsMRGSProxyIOS.generated.h"
 
 #if PLATFORM_IOS
-@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSMyTargetDelegate, MRGSBankDelegate, SKStoreProductViewControllerDelegate>
+@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegate, SKStoreProductViewControllerDelegate>
 
 - (NSString *)getCurrencyCode:(SKProduct *)product;
 - (void)restorePurchase;
@@ -54,6 +54,9 @@ public:
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
+
+	/** Check library integration */
+	virtual void CheckIntegration() override;
 	
 	/** Start mrgs initialization */
 	virtual void InitModule() override;
@@ -70,15 +73,6 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Events
 	
-	/** Send google analytics screen */
-	virtual void SendGAScreen(const FString& InScreenName) override;
-	
-	/** Send google analytics event */
-	virtual void SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel) override;
-	
-	/** Send flurry event */
-	virtual void SendFlurryEvent(const FString& InAction) override;
-	
 	/** Send applsflyer event */
 	virtual void SendAFEvent(const FString& InEventName, const FString& InValue) override;
 	
@@ -87,18 +81,6 @@ public:
 	
 	/** Log metric on mrgs with string code */
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
-	
-	//////////////////////////////////////////////////////////////////////////
-	// Ads
-	
-	/** Show mytarget apps */
-	virtual void ShowMyTargetShowcase() override;
-	
-	/** Show mytarget banner */
-	virtual void ShowMyTargetFullscreen() override;
-	
-	/** Show mytarget interstitial slider */
-	virtual void ShowMyTargetInterstitialSlider() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Store

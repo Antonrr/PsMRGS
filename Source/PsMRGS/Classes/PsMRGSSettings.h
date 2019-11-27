@@ -28,10 +28,6 @@ class UPsMRGSSettings : public UObject
 	UPROPERTY(Config, EditAnywhere)
 	FString iOSMrgsClientSecret;
 
-	/** iOS Mrgs flurry api key */
-	UPROPERTY(Config, EditAnywhere)
-	FString iOSFlurryApiKey;
-
 	/** iOS Google analytics tracking id */
 	UPROPERTY(Config, EditAnywhere)
 	FString iOSGATrackingId;
@@ -43,18 +39,6 @@ class UPsMRGSSettings : public UObject
 	/** iOS app apple id */
 	UPROPERTY(Config, EditAnywhere)
 	FString iOSAppleAppId;
-
-	/** iOS Mrgs mytaraget showcase slot id */
-	UPROPERTY(Config, EditAnywhere)
-	int32 iOSMyTargetShowcaseSlotId;
-
-	/** iOS Mrgs mytaraget fullscreen slot id */
-	UPROPERTY(Config, EditAnywhere)
-	int32 iOSMyTargetFullscreenSlotId;
-
-	/** iOS Mrgs MyTarget Interstitial Slot Id */
-	UPROPERTY(Config, EditAnywhere)
-	int32 iOSMyTargetInterstitialSlotId;
 
 	/** iOS Mrgs mytracker app id */
 	UPROPERTY(Config, EditAnywhere)

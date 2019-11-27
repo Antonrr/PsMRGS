@@ -22,13 +22,6 @@ public:
 	static FString JavaStringToFstring(jstring str);
 };
 
-enum MRGSAdmanEntityType : uint8
-{
-	MRGSAdmanShowcase = 1,
-	MRGSAdmanFullscreenBanner = 2,
-	MRGSAdmanInterstitialSlider = 3,
-};
-
 #endif
 
 UCLASS()
@@ -60,6 +53,8 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// MRGS
 
+	virtual void CheckIntegration() override;
+
 	virtual void InitModule() override;
 
 	virtual void InitUser(const FString& UserId) override;
@@ -70,23 +65,11 @@ public:
 
 	virtual void BuyProduct(const FString& ProductId, const FString& Payload) override;
 
-	virtual void SendGAScreen(const FString& ScreenName) override;
-
-	virtual void SendGAEvent(const FString& Category, const FString& Action, const FString& Label) override;
-
-	virtual void SendFlurryEvent(const FString& Action) override;
-
 	virtual void SendAFEvent(const FString& EventName, const FString& Value) override;
 
 	virtual void AddMetricWithId(int32 MetricId) override;
 
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
-
-	virtual void ShowMyTargetShowcase() override;
-
-	virtual void ShowMyTargetFullscreen() override;
-
-	virtual void ShowMyTargetInterstitialSlider() override;
 
 	virtual void ShowSupport() override;
 
@@ -125,6 +108,8 @@ public:
 
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload) override;
 
+	virtual void OnPurchasePending(const FString& ProductId) override;
+
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer) override;
 
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
@@ -133,11 +118,6 @@ public:
 
 	virtual void OnUserAuthError();
 
-private:
-	/** Process adman by type */
-	void ProcessAdmanCase(FString AdType);
-
-public:
 	virtual FString GetDevicePlatform() const override;
 
 	virtual FString GetOpenUDID() const override;

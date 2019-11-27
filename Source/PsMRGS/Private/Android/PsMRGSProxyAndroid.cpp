@@ -139,6 +139,17 @@ int32 UPsMRGSProxyAndroid::GetGDPRAgreementVersion()
 //////////////////////////////////////////////////////////////////////////
 // MRGS
 
+void UPsMRGSProxyAndroid::CheckIntegration()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID CheckjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_checkIntegration", "()V", false);
+
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, CheckjMethod);
+	}
+}
+
 void UPsMRGSProxyAndroid::InitModule()
 {
 	if (IsReady())
@@ -255,54 +266,6 @@ void UPsMRGSProxyAndroid::BuyProduct(const FString& ProductId, const FString& Pa
 	}
 }
 
-void UPsMRGSProxyAndroid::SendGAScreen(const FString& InScreenName)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID SendGAScreen = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_sendGAScreen", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SendGAScreen, Env->NewStringUTF(TCHAR_TO_UTF8(*InScreenName)));
-	}
-}
-
-void UPsMRGSProxyAndroid::SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID SendGAEvent = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_sendGAEvent", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SendGAEvent, Env->NewStringUTF(TCHAR_TO_UTF8(*InCategory)), Env->NewStringUTF(TCHAR_TO_UTF8(*InAction)), Env->NewStringUTF(TCHAR_TO_UTF8(*InLabel)));
-	}
-}
-
-void UPsMRGSProxyAndroid::SendFlurryEvent(const FString& InAction)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID SendflurryEvent = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_flurryEvent", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SendflurryEvent, Env->NewStringUTF(TCHAR_TO_UTF8(*InAction)));
-	}
-}
-
 void UPsMRGSProxyAndroid::SendAFEvent(const FString& InEventName, const FString& InValue)
 {
 	if (bInitComplete == false)
@@ -348,55 +311,6 @@ void UPsMRGSProxyAndroid::AddMetricWithCode(const FString& MetricCode, int32 Val
 	{
 		static jmethodID AddMetric = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_addMetricWithCode", "(Ljava/lang/String;III)V", false);
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AddMetric, Env->NewStringUTF(TCHAR_TO_UTF8(*MetricCode)), Value, Level, ObjectId);
-	}
-}
-
-void UPsMRGSProxyAndroid::ShowMyTargetShowcase()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanShowcase));
-	ProcessAdmanCase(AdType);
-}
-
-void UPsMRGSProxyAndroid::ShowMyTargetFullscreen()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanFullscreenBanner));
-	ProcessAdmanCase(AdType);
-}
-
-void UPsMRGSProxyAndroid::ShowMyTargetInterstitialSlider()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	FString AdType;
-	AdType.AppendInt(static_cast<int32>(MRGSAdmanEntityType::MRGSAdmanInterstitialSlider));
-	ProcessAdmanCase(AdType);
-}
-
-void UPsMRGSProxyAndroid::ProcessAdmanCase(FString AdType)
-{
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID InterstitialLoadFullscreenData = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanLoadData", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InterstitialLoadFullscreenData, Env->NewStringUTF(TCHAR_TO_UTF8(*AdType)));
 	}
 }
 
@@ -602,6 +516,16 @@ void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FSt
 	});
 }
 
+void UPsMRGSProxyAndroid::OnPurchasePending(const FString& ProductId)
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_PENDING);
+		}
+	});
+}
+
 void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FString& Answer)
 {
 	AsyncTask(ENamedThreads::GameThread, [this]() {
@@ -786,6 +710,19 @@ extern "C"
 		});
 	}
 
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchasePending(JNIEnv* env, jobject obj, jstring sku)
+	{
+		FString Sku = MRGSJniHelper::JavaStringToFstring(sku);
+
+		AsyncTask(ENamedThreads::GameThread, [Sku]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnPurchasePending(Sku);
+			}
+		});
+	}
+
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onPurchaseFail(JNIEnv* env, jobject obj, jstring sku, jstring answer)
 	{
 		FString Sku = MRGSJniHelper::JavaStringToFstring(sku);
@@ -812,64 +749,6 @@ extern "C"
 				Proxy->OnPurchaseCanceled(Sku, Answer);
 			}
 		});
-	}
-
-	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanLoadComplete(JNIEnv* env, jobject obj, jint jtype, jboolean jnotification)
-	{
-		JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-		if (Env)
-		{
-			static jmethodID AdmanOpen = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanOpen", "(I)V", false);
-			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, AdmanOpen, jtype);
-		}
-	}
-
-	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanHasNoAdd(JNIEnv* env, jobject obj)
-	{
-		AsyncTask(ENamedThreads::GameThread, []() {
-			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
-			if (Proxy)
-			{
-				Proxy->OnShowCaseDataHasNoAds();
-			}
-		});
-	}
-
-	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdmanViewComplete(JNIEnv* env, jobject obj, jint jtype)
-	{
-		if (env)
-		{
-			MRGSAdmanEntityType AdmanActionType = static_cast<MRGSAdmanEntityType>((int)jtype);
-			static jmethodID AdmanClose = FJavaWrapper::FindMethod(env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanClose", "(I)V", false);
-			FJavaWrapper::CallVoidMethod(env, FJavaWrapper::GameActivityThis, AdmanClose, jtype);
-
-			static jmethodID AdmanRelease = FJavaWrapper::FindMethod(env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_admanRelease", "(I)V", false);
-			FJavaWrapper::CallVoidMethod(env, FJavaWrapper::GameActivityThis, AdmanRelease, jtype);
-
-			AsyncTask(ENamedThreads::GameThread, [AdmanActionType]() {
-				auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
-				switch (AdmanActionType)
-				{
-				case MRGSAdmanEntityType::MRGSAdmanFullscreenBanner:
-					if (Proxy)
-					{
-						Proxy->OnFullscreenClosed();
-					}
-					break;
-
-				case MRGSAdmanEntityType::MRGSAdmanInterstitialSlider:
-					if (Proxy)
-					{
-						Proxy->OnInterstitialSliderClosed();
-					}
-					break;
-
-				default:
-					UE_LOG(LogMRGS, Error, TEXT("%s: Unrecognized error"), *PS_FUNC_LINE);
-					break;
-				}
-			});
-		}
 	}
 
 	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onUserAuthSuccess(JNIEnv* env, jobject obj)

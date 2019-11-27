@@ -10,6 +10,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_INIT_COMPLETE = 0,
 	MRGS_PRODUCTS_LOADED,
 	MRGS_PURCHASE_COMPLETE,
+	MRGS_PURCHASE_PENDING,
 	MRGS_PURCHASE_FAILED,
 	MRGS_PURCHASE_CANCELED,
 	MRGS_SUPPORT_CLOSED,
@@ -93,6 +94,10 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
 
+	/** Check library integration */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
+	virtual void CheckIntegration();
+
 	/** Start mrgs initialization */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Setup")
 	virtual void InitModule();
@@ -112,18 +117,6 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Events
 
-	/** Send google analytics screen */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendGAScreen(const FString& InScreenName);
-
-	/** Send google analytics event */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel);
-
-	/** Send flurry event */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
-	virtual void SendFlurryEvent(const FString& InAction);
-
 	/** Send applsflyer event */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void SendAFEvent(const FString& InEventName, const FString& InValue);
@@ -135,21 +128,6 @@ public:
 	/** Log metric on mrgs with string code */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Ads
-
-	/** Show mytarget apps */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
-	virtual void ShowMyTargetShowcase();
-
-	/** Show mytarget banner */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
-	virtual void ShowMyTargetFullscreen();
-
-	/** Show mytarget interstitial slider */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|Ads")
-	virtual void ShowMyTargetInterstitialSlider();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Store
@@ -229,6 +207,9 @@ public:
 
 	/** Purchase successfully complete on store */
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload);
+
+	/** Purchase is pending */
+	virtual void OnPurchasePending(const FString& ProductId);
 
 	/** Error while processing purchase on store */
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer);

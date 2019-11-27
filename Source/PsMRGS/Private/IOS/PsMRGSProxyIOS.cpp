@@ -60,96 +60,6 @@
 	}
 }
 
-/** MRGSMyTarget delegate */
-
-- (void)mrgsMyTarget:(MRGSMyTarget*)mrgsMyTarget didReceiveShowcaseDataAndFoundNotifications:(BOOL)hasNotifications withAppWallAd:(NSArray*)ad
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: MyTarget has notifications: %d"), *PS_FUNC_LINE, int32(hasNotifications));
-
-	dispatch_async(dispatch_get_main_queue(), ^{
-	  mrgsMyTarget.showcaseTitle = @"More games";
-	  mrgsMyTarget.showcaseCloseButtonTitle = @"Close";
-	  [mrgsMyTarget openShowcaseWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController
-		  onComplete:^{
-			[mrgsMyTarget releaseShowcase];
-			UE_LOG(LogMRGS, Log, TEXT("%s: Showcase closed"), *PS_FUNC_LINE);
-		  }
-		  onError:^(NSError* error) {
-			UE_LOG(LogMRGS, Log, TEXT("%s: Showcase error"), *PS_FUNC_LINE);
-		  }];
-	});
-}
-
-- (void)mrgsMyTarget:(MRGSMyTarget*)mrgsAdman didNotReceiveShowcaseDataWithReason:(NSString*)reason
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: didnt receive showcase data with reason: %s"), *PS_FUNC_LINE, *FString(reason));
-	if (self.Proxy)
-	{
-		self.Proxy->OnShowcaseDataRecieveError(FString(reason));
-	}
-}
-
-- (void)mrgsMyTargetShowcaseHasNoAds:(MRGSMyTarget*)mrgsMyTarget
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget showcase has no ads"), *PS_FUNC_LINE);
-	if (self.Proxy)
-	{
-		self.Proxy->OnShowCaseDataHasNoAds();
-	}
-}
-
-- (void)mrgsMyTargetDidReceiveFullscreenBannerData:(MRGSMyTarget*)mrgsMyTarget
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget open fullscreen"), *PS_FUNC_LINE);
-	dispatch_async(dispatch_get_main_queue(), ^{
-	  [mrgsMyTarget openFullscreenBannerInViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
-	});
-}
-
-- (void)mrgsMyTarget:(MRGSMyTarget*)mrgsMyTarget didNotReceiveFullscreenBannerDataWithReason:(NSString*)reason
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget didnt receive fullscreen banner data with reason: %s"), *PS_FUNC_LINE, *FString(reason));
-	if (self.Proxy)
-	{
-		self.Proxy->OnFullscreenDataRecieveError(FString(reason));
-	}
-}
-
-- (void)mrgsMyTargetFullscreenBannerClosed:(MRGSMyTarget*)mrgsMyTarget
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget fullscreen banner closed"), *PS_FUNC_LINE);
-	[mrgsMyTarget releaseFullscreenBanner];
-	if (self.Proxy)
-	{
-		self.Proxy->OnFullscreenClosed();
-	}
-}
-
-- (void)mrgsMyTargetDidReceiveInterstitialSliderAdData:(MRGSMyTarget*)mrgsMyTarget
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
-	[mrgsMyTarget openInterstitialSliderAdWithViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
-}
-
-- (void)mrgsMyTarget:(MRGSMyTarget*)mrgsMyTarget didNotReceiveInterstitialSliderAdDataWithReason:(NSString*)reason
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget didnt receive interstitial slider data with reason: %s"), *PS_FUNC_LINE, *FString(reason));
-	if (self.Proxy)
-	{
-		self.Proxy->OnInterstitialDataRecieveError(FString(reason));
-	}
-}
-
-- (void)mrgsMyTargetInterstitialSliderAdClosed:(MRGSMyTarget*)mrgsMyTarget
-{
-	UE_LOG(LogMRGS, Log, TEXT("%s: mrgs MyTarget interstitial slider closed"), *PS_FUNC_LINE);
-	[mrgsMyTarget releaseInterstitialSliderAd];
-	if (self.Proxy)
-	{
-		self.Proxy->OnInterstitialSliderClosed();
-	}
-}
-
 - (void)showAlertViewWithTitle:(NSString*)title andMessage:(NSString*)message
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -418,6 +328,13 @@ int32 UPsMRGSProxyIOS::GetGDPRAgreementVersion()
 //////////////////////////////////////////////////////////////////////////
 // Setup
 
+void UPsMRGSProxyIOS::CheckIntegration()
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  [[MRGServiceInit sharedInstance] checkIntegration];
+	});
+}
+
 void UPsMRGSProxyIOS::InitModule()
 {
 	if (IsReady())
@@ -458,16 +375,6 @@ void UPsMRGSProxyIOS::InitModule()
 
 	  NSMutableArray* ExternalParams = [[NSMutableArray alloc] init];
 
-	  // Flurry
-	  NSString* FlurryKey = MRGSSettings->iOSFlurryApiKey.GetNSString();
-	  if ([FlurryKey length] > 0)
-	  {
-		  MRGSFlurryParams* FlurryParams = [[MRGSFlurryParams alloc] initWithAPIKey:FlurryKey];
-		  FlurryParams.crashReportEnabled = false;
-		  FlurryParams.debug = bDebug;
-		  [ExternalParams addObject:FlurryParams];
-	  }
-
 	  // Google Analytics
 	  NSString* GaTrackingId = MRGSSettings->iOSGATrackingId.GetNSString();
 	  if ([GaTrackingId length] > 0)
@@ -487,16 +394,6 @@ void UPsMRGSProxyIOS::InitModule()
 		  AppsFlyerParams.debug = bDebug;
 		  [ExternalParams addObject:AppsFlyerParams];
 	  }
-
-	  // MyTarget
-	  int MyTargetShowcaseSlotId = MRGSSettings->iOSMyTargetShowcaseSlotId;
-	  int MyTargetFullscreenSlotId = MRGSSettings->iOSMyTargetFullscreenSlotId;
-	  int MyTargetInterstitialSlotId = MRGSSettings->iOSMyTargetInterstitialSlotId;
-	  MRGSMyTargetParams* MyTargetParams = [[MRGSMyTargetParams alloc] initWithShowcaseSlotId:MyTargetShowcaseSlotId
-																	   fullscreenBannerSlotId:MyTargetFullscreenSlotId
-																		   interstitialSlotId:MyTargetInterstitialSlotId];
-	  MyTargetParams.debug = bDebug;
-	  [ExternalParams addObject:MyTargetParams];
 
 	  // MyTracker
 	  NSString* MyTrackerAppId = MRGSSettings->iOSMyTrackerAppId.GetNSString();
@@ -567,9 +464,6 @@ void UPsMRGSProxyIOS::OnInitComplete()
 	MRGSMyComSupport* Support = [MRGSMyComSupport sharedInstance];
 	Support.secret = MRGSSettings->iOSSupportSecretKey.GetNSString();
 	Support.delegate = Delegate;
-
-	MRGSMyTarget* MyTarget = [MRGSMyTarget sharedInstance];
-	MyTarget.delegate = Delegate;
 
 	[MRGSBank sharedInstance].delegate = Delegate;
 
@@ -793,39 +687,6 @@ void UPsMRGSProxyIOS::OnPurchaseCanceled(const FString& ProductId, const FString
 	});
 }
 
-void UPsMRGSProxyIOS::SendGAScreen(const FString& InScreenName)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	[MRGSGoogleAnalytics setNewScreenName:InScreenName.GetNSString()];
-}
-
-void UPsMRGSProxyIOS::SendGAEvent(const FString& InCategory, const FString& InAction, const FString& InLabel)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	[MRGSGoogleAnalytics createEventWithCategory:InCategory.GetNSString() action:InAction.GetNSString() label:InLabel.GetNSString() value:[NSNumber numberWithInt:1]];
-}
-
-void UPsMRGSProxyIOS::SendFlurryEvent(const FString& InAction)
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	[MRGSFlurry logEvent:InAction.GetNSString() withParameters:nil];
-}
-
 void UPsMRGSProxyIOS::SendAFEvent(const FString& InEventName, const FString& InValue)
 {
 	if (bInitComplete == false)
@@ -834,7 +695,7 @@ void UPsMRGSProxyIOS::SendAFEvent(const FString& InEventName, const FString& InV
 		return;
 	}
 
-	[MRGSAppsFlyer trackEvent:InEventName.GetNSString() withValues:nil];
+	[[[MRGSAnalytics sharedInstance] appsFlyer] trackEvent:InEventName.GetNSString() withValues:nil];
 }
 
 void UPsMRGSProxyIOS::AddMetricWithId(int32 MetricId)
@@ -857,42 +718,6 @@ void UPsMRGSProxyIOS::AddMetricWithCode(const FString& MetricCode, int32 Value, 
 	}
 
 	[MRGSMetrics addMetricWithCode:MetricCode.GetNSString() andValue:Value andLevel:Level andObjectId:ObjectId];
-}
-
-void UPsMRGSProxyIOS::ShowMyTargetShowcase()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	MRGSMyTarget* MyTarget = [MRGSMyTarget sharedInstance];
-	[MyTarget loadShowcaseData];
-}
-
-void UPsMRGSProxyIOS::ShowMyTargetFullscreen()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	MRGSMyTarget* MyTarget = [MRGSMyTarget sharedInstance];
-	[MyTarget loadFullscreenBannerData];
-}
-
-void UPsMRGSProxyIOS::ShowMyTargetInterstitialSlider()
-{
-	if (bInitComplete == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
-		return;
-	}
-
-	MRGSMyTarget* MyTarget = [MRGSMyTarget sharedInstance];
-	[MyTarget loadInterstitialSliderAd];
 }
 
 void UPsMRGSProxyIOS::ShowSupport()
