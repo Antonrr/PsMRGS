@@ -47,10 +47,11 @@ class FPsMRGS : public IPsMRGS
 #if PLATFORM_ANDROID
 			KitPlatformClass = UPsMRGSProxyAndroid::StaticClass();
 #endif
-			MRGSProxy = NewObject<UPsMRGSProxy>(GetTransientPackage(), KitPlatformClass);
-			MRGSProxy->SetFlags(RF_Standalone);
-			MRGSProxy->AddToRoot();
 		}
+
+		MRGSProxy = NewObject<UPsMRGSProxy>(GetTransientPackage(), KitPlatformClass);
+		MRGSProxy->SetFlags(RF_Standalone);
+		MRGSProxy->AddToRoot();
 	}
 
 	virtual void ShutdownModule() override
