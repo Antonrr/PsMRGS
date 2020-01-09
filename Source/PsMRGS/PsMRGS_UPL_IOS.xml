@@ -2,7 +2,7 @@
 <root xmlns:android="http://schemas.ios.com/res/ios">
 	<init>
 		<log text="PsMRGS UPL Init"/>
-		<copyFile src="$S(PluginDir)/../../../../Content/gdpr/gdpr.html" dst="$S(BuildDir)/gdpr/gdpr.html" />
+		<copyFile src="$S(PluginDir)/../../../../Build/GDPR/gdpr.html" dst="$S(BuildDir)/gdpr/gdpr.html" />
 	</init>
 
 	<iosPListUpdates>

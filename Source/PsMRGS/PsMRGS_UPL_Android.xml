@@ -141,7 +141,7 @@
 		<deleteFiles filespec="src/com/android/vending/billing/IInAppBillingService.aidl" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGService.xml" dst="$S(BuildDir)/assets/MRGService.xml" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />
-		<copyFile src="$S(PluginDir)/../../../../Content/gdpr/gdpr.html" dst="$S(BuildDir)/assets/gdpr/gdpr.html" />
+		<copyFile src="$S(PluginDir)/../../../../Build/GDPR/gdpr.html" dst="$S(BuildDir)/assets/gdpr/gdpr.html" />
 
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSAdvertising.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSAdvertising.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSAnalytics.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSAnalytics.aar" />
