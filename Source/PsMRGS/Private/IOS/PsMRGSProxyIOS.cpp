@@ -5,7 +5,7 @@
 #include "PsMRGSCommon.h"
 #include "PsMRGSSettings.h"
 
-#include "Async.h"
+#include "Async/Async.h"
 
 #if PLATFORM_IOS
 
