@@ -6,7 +6,7 @@
 #include "PsMRGSProxy.h"
 
 #if PLATFORM_ANDROID
-#include "AndroidApplication.h"
+#include "Android/AndroidApplication.h"
 #include "Runtime/Launch/Public/Android/AndroidJNI.h"
 #include <jni.h>
 #include <string>
