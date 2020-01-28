@@ -360,7 +360,7 @@ void UPsMRGSProxyIOS::InitModule()
 #if !UE_BUILD_SHIPPING
 	  bool bDebug = MRGSSettings->bDebugInDevelopment;
 #else
-	  bool bDebug = false;
+		  bool bDebug = false;
 #endif
 	  NSString* Secret = MRGSSettings->iOSMrgsClientSecret.GetNSString();
 	  MRGServiceParams* MrgsParams = [[MRGServiceParams alloc] initWithAppId:AppId andSecret:Secret];
