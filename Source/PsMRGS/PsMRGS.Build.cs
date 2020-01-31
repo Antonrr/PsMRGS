@@ -196,13 +196,6 @@ public class PsMRGS : ModuleRules
 			}
 			);
 
-			PublicAdditionalLibraries.AddRange(
-			new string[]
-			{
-				"sqlite3"
-			}
-			);
-
 			PublicAdditionalFrameworks.Add(
 				new Framework(
 				"AppsFlyerLib",
