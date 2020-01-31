@@ -196,6 +196,14 @@ public class PsMRGS : ModuleRules
 			}
 			);
 
+			PublicAdditionalLibraries.AddRange(
+			new string[]
+			{
+				// Google analytics uses this library
+				"sqlite3"
+			}
+			);
+
 			PublicAdditionalFrameworks.Add(
 				new Framework(
 				"AppsFlyerLib",
