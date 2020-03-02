@@ -563,52 +563,8 @@ void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 		return;
 	}
 
-	NSString* RealUserId = UserId.GetNSString();
-	NSArray* Users = [[MRGSUsers sharedInstance] getAllUsers];
-	int Count = [Users count];
-	if (Users && Count > 0)
-	{
-		for (int i = 0; i < Count; i++)
-		{
-			NSDictionary* User = Users[i];
-			if (!User)
-			{
-				return;
-			}
-
-			NSString* TempUserId = [User objectForKey:@"userId"];
-			if (!TempUserId)
-			{
-				return;
-			}
-
-			if ([TempUserId isEqualToString:RealUserId])
-			{
-				[[MRGSUsers sharedInstance] authorizationUserWithId:TempUserId];
-				UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user %s found in previous sessions and authorized"), *PS_FUNC_LINE, *FString(TempUserId));
-				OnUserAuthSuccess();
-				return;
-			}
-
-			if (i == MaxUsersSlots - 1)
-			{
-				[[MRGSUsers sharedInstance] removeUserWIthId:TempUserId];
-				UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user %s removed"), *PS_FUNC_LINE, *FString(TempUserId));
-			}
-		}
-	}
-
-	NSError* Err = nil;
-	[[MRGSUsers sharedInstance] registerNewUserWithId:RealUserId andError:&Err];
-	if (Err)
-	{
-		UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user registration error: %s"), *PS_FUNC_LINE, *FString(Err.localizedDescription));
-		OnUserAuthError();
-		return;
-	}
-
-	[[MRGSUsers sharedInstance] authorizationUserWithId:RealUserId];
-	UE_LOG(LogMRGS, Log, TEXT("%s: MRGService %s registred and authorized"), *PS_FUNC_LINE, *FString(RealUserId));
+	[MRGSUsers setUserId:UserId.GetNSString()];
+	UE_LOG(LogMRGS, Log, TEXT("%s: MRGService user id %s authorized"), *PS_FUNC_LINE, *UserId);
 	OnUserAuthSuccess();
 }
 

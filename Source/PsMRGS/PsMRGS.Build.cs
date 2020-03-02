@@ -260,7 +260,7 @@ public class PsMRGS : ModuleRules
 
 			//adding Flurry
 			PublicIncludePaths.Add(tempPathPrefix);
-			PublicAdditionalLibraries.Add(tempPathPrefix + "/libFlurry_10.0.2.a");
+			PublicAdditionalLibraries.Add(tempPathPrefix + "/libFlurry_10.1.0.a");
 
 			//adding GA
 			tempPathPrefix = thirdPartyPath + "GoogleAnalytics/";
