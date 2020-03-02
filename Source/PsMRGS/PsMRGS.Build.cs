@@ -22,7 +22,7 @@ public class PsMRGS : ModuleRules
 		get
 		{
 			return System.IO.Path.GetFullPath(
-			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/Assets/MRGService.xml.default";
+			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/assets/MRGService.xml.default";
 		}
 	}
 
@@ -31,7 +31,7 @@ public class PsMRGS : ModuleRules
 		get
 		{
 			return System.IO.Path.GetFullPath(
-			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/Assets/MRGService.xml";
+			System.IO.Path.Combine(ModuleDirectory, "../../")) + "ThirdParty/Android/assets/MRGService.xml";
 		}
 	}
 
@@ -106,6 +106,7 @@ public class PsMRGS : ModuleRules
 			string AndroidGATrackingId = null;
 			string AndroidAppsFlyerDevKey = null;
 			string AndroidMyTrackerAppId = null;
+			string DebugValue = null;
 
 			/** Opens DefaultEngine.ini to read values for variables */
 	        using (StreamReader sr = File.OpenText(ConfigPath))
@@ -129,6 +130,10 @@ public class PsMRGS : ModuleRules
 	            		{
 	            			AndroidMyTrackerAppId = tokens[1];
 	            		}
+	            		else if (tokens[0] == "bDebugInDevelopment")
+	            		{
+	            			DebugValue = tokens[1];
+	            		}
 	            	}
 	            }
 	        }
@@ -145,6 +150,7 @@ public class PsMRGS : ModuleRules
 	        }
 
 	        /** Clear MRGService.xml to empty state */
+	        // @todo refactor this some day
 			System.IO.File.WriteAllText(PluginAndroidSettingsXml, string.Empty);
 
 	        for (int i = 0; i < lines.Count; i++)
@@ -154,13 +160,31 @@ public class PsMRGS : ModuleRules
 	        	{
 					lines[i] = "trackingId=" + '"' + AndroidGATrackingId + '"';
 	        	}
+
 	        	if (s.Contains("app_key"))
 	        	{
 					lines[i] = "app_key=" + '"' + AndroidAppsFlyerDevKey + '"';
 	        	}
+
 	        	if (s.Contains("appId"))
 	        	{
 					lines[i] = "appId=" + '"' + AndroidMyTrackerAppId + '"';
+	        	}
+
+	        	if (s.Contains("<debug>false</debug>"))
+	        	{
+	        		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+	        		{
+	        			lines[i] = "<debug>" + DebugValue.ToLower() + "</debug>";
+	        		}
+	        	}
+
+	        	if (s.Contains("<testDevice>false</testDevice>"))
+	        	{
+	        		if (Target.Configuration != UnrealTargetConfiguration.Shipping)
+	        		{
+	        			lines[i] = "<testDevice>" + DebugValue.ToLower() + "</testDevice>";
+	        		}
 	        	}
 	        }
 

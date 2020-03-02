@@ -312,42 +312,7 @@ public class MRGServiceCpp {
 
 	public static void initUser(final String userId) {
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId started"));
-		MRGSList users = MRGSUsers.instance().getAllUsers();
-		int count = users.size();
-		if (count > 0) {
-			for (int i = 0; i < count; i++) {
-				String tempUserId = ((MRGSMap) users.get(i)).objectForKey("userId").toString();
-				MRGSLog.vp("userID = " + tempUserId);
-				if(tempUserId.equals(userId)) {
-					boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
-					if (bResult == false) {
-						Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId found user but couldn't authorize %s", userId));
-						onUserAuthError();
-					}
-					else {
-						Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId found user and authorized %s", userId));
-						onUserAuthSuccess();
-					}
-
-					return;
-				}
-			}
-		}
-
-		String RegisteredUserId = MRGSUsers.instance().registerNewUser(userId);
-		if (RegisteredUserId == null) {
-			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't register new user %s. Result is null", userId));
-			onUserAuthError();
-			return;
-		}
-
-		boolean bResult = MRGSUsers.instance().authorizationUserWithId(userId);
-		if (bResult == false) {
-			Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId couldn't authorize new user %s", userId));
-			onUserAuthError();
-			return;
-		}
-
+		MRGSUsers.instance().setUserId(userId);
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId registered and authorized new user %s", userId));
 		onUserAuthSuccess();
 	}
@@ -378,14 +343,6 @@ public class MRGServiceCpp {
 
 	public static void initLocalPush() {
 		MRGSLocalPushService.setDelegate(PushDelegate.instance());
-	}
-
-	public static void registerUserWithId(final String userId) {
-		
-	}
-
-	public static void authorizeUserWithId(final String userId) {
-		MRGSUsers.instance().authorizationUserWithId(userId);
 	}
 
 	public static void getProductsInfo(final String skuList) {
@@ -473,10 +430,10 @@ public class MRGServiceCpp {
 	public static void markUserAsCheater(final int want, final int have, final String comment) {
 		if (comment == null || comment.length() == 0) {
 			Log.v(LOG_TAG, String.format("markUserAsCheater(%d, %d)", want, have));
-			MRGService.markUserAsCheater(want, have);
+			MRGSUsers.instance().markUserAsCheater(want, have);
 		} else {
 			Log.v(LOG_TAG, String.format("markUserAsCheater(%d, %d, '%s')", want, have, comment));
-			MRGService.markUserAsCheater(want, have, comment);
+			MRGSUsers.instance().markUserAsCheater(want, have, comment);
 		}
 	}
 

@@ -4,8 +4,8 @@
 	xs:noNamespaceSchemaLocation="http://mrgs.my.com/xsd/MRGService.xsd?7" >
 
 	<Options>
-		<debug>true</debug>                                   
-		<testDevice>true</testDevice>                         
+<debug>false</debug>
+<testDevice>false</testDevice>
 		<crashReports>false</crashReports>                    
 		<localPushNotifications>false</localPushNotifications>
 		
