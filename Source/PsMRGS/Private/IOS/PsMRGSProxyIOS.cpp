@@ -35,12 +35,12 @@
 
 - (void)loadServerDataDidFinished:(NSDictionary*)serverData
 {
-	UE_LOG(LogMRGS, Error, TEXT("%s"), *PS_FUNC_LINE);
+	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
 }
 
 - (void)initializationFinish
 {
-	UE_LOG(LogMRGS, Error, TEXT("%s: MRGS init complete"), *PS_FUNC_LINE);
+	UE_LOG(LogMRGS, Log, TEXT("%s: MRGS init complete"), *PS_FUNC_LINE);
 	if (self.Proxy)
 	{
 		self.Proxy->OnInitComplete();
