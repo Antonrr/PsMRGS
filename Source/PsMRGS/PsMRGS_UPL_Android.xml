@@ -46,6 +46,7 @@
 		implementation 'org.apache.httpcomponents:httpmime:4.2.5'
 		implementation 'com.android.support:support-v4:26.1.0'
 		implementation 'com.android.support:appcompat-v7:26.1.0'
+		implementation 'com.google.firebase:firebase-messaging:17.3.4'
 	}
 
 	</insert>
