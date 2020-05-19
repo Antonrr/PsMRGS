@@ -369,6 +369,8 @@ void UPsMRGSProxyIOS::InitModule()
 	  MrgsParams.shouldResetBadge = bDebug;
 	  MrgsParams.crashReportEnabled = false;
 	  MrgsParams.allowPushNotificationHooks = false;
+	  MrgsParams.disablePaymentsCheck = !bDebug;
+	  MrgsParams.automaticPaymentTracking = !bDebug;
 
 	  NSArray* Paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, bDebug);
 	  MrgsParams.storePath = [[Paths objectAtIndex:0] stringByAppendingPathComponent:@"/mrgsStore"];
