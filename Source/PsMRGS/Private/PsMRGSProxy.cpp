@@ -98,6 +98,7 @@ void UPsMRGSProxy::AddMetricWithCode(const FString& MetricCode, int32 Value, int
 void UPsMRGSProxy::LoadStoreProducts(const TArray<FString>& ProductsList)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
 }
 
 void UPsMRGSProxy::BuyProduct(const FString& ProductId, const FString& Payload)
@@ -109,6 +110,16 @@ const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxy::GetProducts() const
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	return LoadedProducts;
+}
+
+void UPsMRGSProxy::DebugSetProducts(const TArray<FPsMRGSPurchaseInfo>& InProducts)
+{
+#if !UE_BUILD_SHIPPING
+	UE_LOG(LogMRGS, Warning, TEXT("%s: setting DebugSetProducts"), *PS_FUNC_LINE);
+	LoadedProducts = InProducts;
+#else
+	UE_LOG(LogMRGS, Error, TEXT("%s: DebugSetProducts called on Shipping build; ignoring"), *PS_FUNC_LINE);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

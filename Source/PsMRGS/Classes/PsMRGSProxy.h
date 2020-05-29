@@ -60,6 +60,10 @@ struct FPsMRGSPurchaseInfo
 	/** Product description from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Description;
+
+	/** Whether this is a debug (fake) product generated on client for testing purposes */
+	UPROPERTY(BlueprintReadOnly)
+	bool bDebug;
 };
 
 UCLASS()
@@ -143,6 +147,9 @@ public:
 	/** Get loaded products */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual const TArray<FPsMRGSPurchaseInfo>& GetProducts() const;
+
+	/** Override loaded products list (debug purposes only */
+	void DebugSetProducts(const TArray<FPsMRGSPurchaseInfo>& InProducts);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Support
