@@ -103,10 +103,10 @@ public class PsMRGS : ModuleRules
 
 			/** Write settings from DefaultEngineIni of MRGS to MRGService.xml in Plugin dir */
 			
-			string AndroidGATrackingId = null;
-			string AndroidAppsFlyerDevKey = null;
-			string AndroidMyTrackerAppId = null;
-			string DebugValue = null;
+			string AndroidGATrackingId = "";
+			string AndroidAppsFlyerDevKey = "";
+			string AndroidMyTrackerAppId = "";
+			string DebugValue = "false";
 
 			/** Opens DefaultEngine.ini to read values for variables */
 	        using (StreamReader sr = File.OpenText(ConfigPath))
