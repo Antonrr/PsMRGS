@@ -42,6 +42,7 @@
 
 		implementation 'com.my.tracker:mytracker-sdk:2.0.1'
 		implementation 'com.android.billingclient:billing:2.0.3'
+		implementation 'com.google.android.gms:play-services-games:16.0.0'
 		implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
 		implementation 'org.apache.httpcomponents:httpmime:4.2.5'
 		implementation 'com.android.support:support-v4:26.1.0'
