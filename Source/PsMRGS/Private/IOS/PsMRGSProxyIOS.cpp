@@ -169,6 +169,7 @@
 		Item.Title = FString(Product.localizedTitle);
 		Item.Type = FString(TEXT("inapp"));
 		Item.Description = FString(Product.localizedDescription);
+		Item.bDebug = false;
 		Items.Add(Item);
 	}
 
