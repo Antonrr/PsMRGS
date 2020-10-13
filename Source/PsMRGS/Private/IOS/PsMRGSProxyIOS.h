@@ -16,9 +16,9 @@
 #include "PsMRGSProxyIOS.generated.h"
 
 #if PLATFORM_IOS
-@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegate, SKStoreProductViewControllerDelegate>
+@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegateEx, SKStoreProductViewControllerDelegate>
 
-- (NSString *)getCurrencyCode:(SKProduct *)product;
+- (NSString *)getCurrencyCode:(MRGSBankProduct*)product;
 - (void)restorePurchase;
 
 @property (nonatomic) UPsMRGSProxy* Proxy;
@@ -45,12 +45,6 @@ public:
 	
 	/** Get accepted version of the agreement */
 	virtual int32 GetGDPRAcceptedVersion() override;
-	
-	/** Set current version of the agreement */
-	virtual void SetGDPRAgreementVersion(int32 Version) override;
-	
-	/** Get current version of the agreement */
-	virtual int32 GetGDPRAgreementVersion() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Setup

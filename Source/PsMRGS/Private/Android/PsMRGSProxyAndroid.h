@@ -44,12 +44,6 @@ public:
 	/** Get accepted version of the agreement */
 	virtual int32 GetGDPRAcceptedVersion() override;
 
-	/** Set current version of the agreement */
-	virtual void SetGDPRAgreementVersion(int32 Version) override;
-
-	/** Get current version of the agreement */
-	virtual int32 GetGDPRAgreementVersion() override;
-
 	//////////////////////////////////////////////////////////////////////////
 	// MRGS
 

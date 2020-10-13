@@ -30,17 +30,6 @@ int32 UPsMRGSProxy::GetGDPRAcceptedVersion()
 	return -1;
 }
 
-void UPsMRGSProxy::SetGDPRAgreementVersion(int32 Version)
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-}
-
-int32 UPsMRGSProxy::GetGDPRAgreementVersion()
-{
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return 0;
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Setup
 

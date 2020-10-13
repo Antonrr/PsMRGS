@@ -127,27 +127,35 @@ public class MRGServiceCpp {
 	};
 
 
-	private final static MRGSBillingDelegate mBillingDelegate = new MRGSBillingDelegate() {
+	private final static MRGSBillingDelegateEx mBillingDelegate = new MRGSBillingDelegateEx() {
 		@Override
-		public void loadProductsDidFinished(final MRGSBilling mrgsBilling, final ArrayList<MRGSPurchaseItem> mrgsPurchaseItems) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.loadProductsDidFinished(%s, items.count = %d)", MRGSBilling.instance().getBillingName(), mrgsPurchaseItems.size()));
+		public void onReceiveProductsResponce(final MRGSBillingEntities.MRGSBankProductsResponse productsResponce)
+		{
+			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveProductsResponce(%s, items.count = %d)", MRGSBilling.instance().getBillingName(), productsResponce.validItems.size()));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
-					onLoadProductsDidFinished(mrgsPurchaseItems);
+					onLoadProductsDidFinished(productsResponce.validItems);
 				}
 			});
 		}
 
-		@Override
-		public void purchaseComplete(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseComplete(%s, %s, %s)", MRGSBilling.instance().getBillingName(), item, answer));
-			if (item.resultCode != 1) // BILLING_RESPONSE_RESULT_USER_CANCELED = 1
+	    @Override
+		public void onReceiveProductsError(final MRGSBillingEntities.MRGSBankProductsResponse productsResponce)
+	    {
+
+	    }
+
+	    @Override
+		public void onReceiveSuccessfullPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
+	    {
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveSuccessfullPurchase(%s, %s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload));
+			if (purchase.purchaseItem.resultCode != 1) // BILLING_RESPONSE_RESULT_USER_CANCELED = 1
 			{
 				threadHelper.runOnNecessaryThread(new Runnable() {
 					@Override
 					public void run() {
-						onPurchaseComplete(item.sku, item.transactionId, answer);
+						onPurchaseComplete(purchase.purchaseItem.sku, purchase.purchaseItem.transactionId, purchase.developerPayload);
 					}
 				});
 			}
@@ -156,33 +164,53 @@ public class MRGServiceCpp {
 				threadHelper.runOnNecessaryThread(new Runnable() {
 					@Override
 					public void run() {
-						onPurchaseCancel(item.sku, item.transactionId, answer);
+						onPurchaseCancel(purchase.purchaseItem.sku, purchase.purchaseItem.transactionId, purchase.developerPayload);
 					}
 				});
 			}
-		}
+	    }
 
-		@Override
-		public void purchaseIsPending(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseIsPending(%s, %s)", MRGSBilling.instance().getBillingName(), item));
+	    @Override
+		public void onReceiveFailedPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
+	    {
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveFailedPurchase(%s, %s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
-					onPurchasePending((item != null ? item.sku : null));
+					onPurchaseFail((purchase.purchaseItem != null ? purchase.purchaseItem.sku : null), purchase.developerPayload);
 				}
 			});
-		}
+	    }
 
-		@Override
-		public void purchaseFail(final MRGSBilling mrgsBilling, final MRGSPurchaseItem item, final String answer) {
-			Log.v(LOG_TAG, String.format("MRGSBillingDelegate.purchaseFail(%s, %s, %s)", MRGSBilling.instance().getBillingName(), item, answer));
+	    @Override
+		public void onReceivePendingPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
+	    {
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceivePendingPurchase(%s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
-					onPurchaseFail((item != null ? item.sku : null), answer);
+					onPurchasePending((purchase.purchaseItem != null ? purchase.purchaseItem.sku : null));
 				}
 			});
-		}
+	    }
+
+	    @Override
+		public void onReceiveCancelledPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
+	    {
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveCancelledPurchase(%s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem));
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onPurchaseCancel(purchase.purchaseItem.sku, purchase.purchaseItem.transactionId, purchase.developerPayload);
+				}
+			});
+	    }
+
+	    @Override
+		public void onTransactionsRestoreCompleted()
+	    {
+
+	    }
 	};
 
 	private final static MRGSMyComSupportDialog.MyComListener mSupportDelegate = new MRGSMyComSupportDialog.MyComListener() {
@@ -244,16 +272,6 @@ public class MRGServiceCpp {
 		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
 		GameActivity activity = GameActivity.Get();
 		return mGDPR.getAgreedVersion(activity);
-	}
-
-	public static void SetAgreementVersion(int Version) {
-		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
-		mGDPR.setAgreementVersion(Version);
-	}
-
-	public static int GetAgreementVersion() {
-		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
-		return mGDPR.getAgreementVersion();
 	}
 
 	public static void showSupport(final String secretKey) {
@@ -322,7 +340,7 @@ public class MRGServiceCpp {
 
 		MRGService.service(context, mServerDataDelegate, appId, appSecret);
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
-		MRGSBilling.instance().setDelegate(mBillingDelegate);
+		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
 		GameActivity activity = GameActivity.Get();
 		activity.OnMrgsInitComplete();
@@ -373,11 +391,6 @@ public class MRGServiceCpp {
 		item.sku = sku;
 		item.transactionId = transactionId;
 		MRGSBilling.instance().closePayment(item);
-	}
-
-	public static void addSamsungProductPrice(final String groupId, final String itemId, final double priceInUSD) {
-		Log.v(LOG_TAG, String.format("addSamsungProductPrice(%s, %s, %f)", groupId, itemId, priceInUSD));
-		MRGSSamsungPrice.instance().addProductPrice(groupId, itemId, priceInUSD);
 	}
 
 	public static void addLocalPush(final MRGSPushNotification notification) {

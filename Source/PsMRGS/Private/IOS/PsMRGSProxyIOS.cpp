@@ -115,15 +115,17 @@
 	}
 }
 
-- (void)loadingPaymentsResponce:(SKProductsResponse*)response
+/** MRGSBankDelegateEx */
+
+- (void)didReceiveProductsResponce:(MRGSBankProductsResponce* _Nonnull)response
 {
-	if ([response.invalidProductIdentifiers count] > 0)
+	if ([response.invalidProductsIds count] > 0)
 	{
-		UE_LOG(LogMRGS, Warning, TEXT("%s invalidProductIdentifiers: %s"), *PS_FUNC_LINE, *FString([response.invalidProductIdentifiers description]));
+		UE_LOG(LogMRGS, Warning, TEXT("%s invalidProductsIds: %s"), *PS_FUNC_LINE, *FString([response.invalidProductsIds description]));
 	}
 
 	TArray<FPsMRGSPurchaseInfo> Items;
-	for (SKProduct* Product in response.products)
+	for (MRGSBankProduct* Product in response.validProducts)
 	{
 		if (Product == nil)
 		{
@@ -158,14 +160,15 @@
 		FPsMRGSPurchaseInfo Item;
 		Item.Sku = FString(Product.productIdentifier);
 
+		SKProduct* nativeProduct = Product.skProduct;
 		NSNumberFormatter* NumberFormatter = [[NSNumberFormatter alloc] init];
 		[NumberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
 		[NumberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
-		[NumberFormatter setLocale:Product.priceLocale];
-		NSString* FormattedString = [NumberFormatter stringFromNumber:Product.price];
+		[NumberFormatter setLocale:nativeProduct.priceLocale];
+		NSString* FormattedString = [NumberFormatter stringFromNumber:nativeProduct.price];
 
 		Item.Price = FString(FormattedString);
-		Item.FormattedPrice = FString([NSString stringWithFormat:@"%.02f %@", [Product.price doubleValue], [self getCurrencyCode:Product]]);
+		Item.FormattedPrice = FString([NSString stringWithFormat:@"%.02f %@", [nativeProduct.price doubleValue], [self getCurrencyCode:Product]]);
 		Item.Title = FString(Product.localizedTitle);
 		Item.Type = FString(TEXT("inapp"));
 		Item.Description = FString(Product.localizedDescription);
@@ -183,58 +186,102 @@
 	}
 }
 
+- (void)didReceiveProductsError:(MRGSBankProductsResponce* _Nonnull)response
+{
+	if ([response.invalidProductsIds count] > 0)
+	{
+		UE_LOG(LogMRGS, Warning, TEXT("%s invalidProductsIds: %s"), *PS_FUNC_LINE, *FString([response.invalidProductsIds description]));
+	}
+
+	if (response.requestError != nil)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: didReceiveProductsError: %s"), *PS_FUNC_LINE, *FString([response.requestError description]));
+	}
+}
+
+- (void)didReceiveSucessfullPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
+{
+	SKPaymentTransaction* nativeTransaction = purchase.transaction.transaction;
+	FString PaymentId = FString(nativeTransaction.payment.productIdentifier);
+	FString TransId = FString(nativeTransaction.transactionIdentifier);
+	FString Payload;
+
+	if (purchase.developerPayload != nil)
+	{
+		Payload = FString(purchase.developerPayload);
+	}
+
+	UE_LOG(LogMRGS, Log, TEXT("%s paymentId: %s transId: \"%s\", payload: \"%s\""), *PS_FUNC_LINE, *PaymentId, *TransId, *Payload);
+
+	if (self.Proxy)
+	{
+		self.Proxy->OnPurchaseComplete(PaymentId, TransId, Payload);
+	}
+}
+
+- (void)didReceiveFailedPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
+{
+	SKPaymentTransaction* nativeTransaction = purchase.transaction.transaction;
+	FString PaymentId = FString(nativeTransaction.payment.productIdentifier);
+	FString Error;
+	if (purchase.error != nil)
+	{
+		Error = FString([purchase.error description]);
+	}
+
+	UE_LOG(LogMRGS, Warning, TEXT("%s paymentId: %s Error: %s"), *PS_FUNC_LINE, *PaymentId, *Error);
+
+	if (self.Proxy)
+	{
+		if (purchase.error.code != SKErrorPaymentCancelled)
+		{
+			self.Proxy->OnPurchaseFailed(PaymentId, Error);
+		}
+		else
+		{
+			self.Proxy->OnPurchaseCanceled(PaymentId, Error);
+		}
+	}
+}
+
+- (void)didReceivePendingPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
+{
+
+}
+
+- (void)didReceiveCancelledPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
+{
+	SKPaymentTransaction* nativeTransaction = purchase.transaction.transaction;
+	FString PaymentId = FString(nativeTransaction.payment.productIdentifier);
+	FString Error;
+	if (purchase.error != nil)
+	{
+		Error = FString([purchase.error description]);
+	}
+
+	UE_LOG(LogMRGS, Warning, TEXT("%s paymentId: %s Error: %s"), *PS_FUNC_LINE, *PaymentId, *Error);
+
+	if (self.Proxy)
+	{
+		self.Proxy->OnPurchaseCanceled(PaymentId, Error);
+	}
+}
+
+- (void)didCompleteTransactionsRestore
+{
+
+}
+
+/** end of MRGSBankDelegateEx */
+
 - (void)restorePurchase
 {
 	[[MRGSBank sharedInstance] restorePurchase];
 }
 
-- (void)paymentSuccessful:(SKPaymentTransaction*)transaction answer:(NSString*)answer
+- (NSString*)getCurrencyCode:(MRGSBankProduct*)product
 {
-	FString PaymentId = FString(transaction.payment.productIdentifier);
-	FString TransId = FString(transaction.transactionIdentifier);
-	UE_LOG(LogMRGS, Log, TEXT("%s paymentId: %s transId: %s"), *PS_FUNC_LINE, *PaymentId, *TransId);
-
-	if (self.Proxy)
-	{
-		self.Proxy->OnPurchaseComplete(PaymentId, TransId, FString(TEXT("")));
-	}
-}
-
-- (void)paymentSuccessful:(SKPaymentTransaction*)transaction answer:(NSString*)answer withDeveloperPayload:(NSString*)payload
-{
-	FString PaymentId = FString(transaction.payment.productIdentifier);
-	FString TransId = FString(transaction.transactionIdentifier);
-	FString PayloadAnswer = FString(payload);
-	UE_LOG(LogMRGS, Log, TEXT("%s paymentId: %s transId: %s payload: %a"), *PS_FUNC_LINE, *PaymentId, *TransId, *PayloadAnswer);
-
-	if (self.Proxy)
-	{
-		self.Proxy->OnPurchaseComplete(PaymentId, TransId, PayloadAnswer);
-	}
-}
-
-- (void)paymentFailed:(SKPaymentTransaction*)transaction error:(NSError*)error
-{
-	FString PaymentId = FString(transaction.payment.productIdentifier);
-	FString Answer = FString([error description]);
-	UE_LOG(LogMRGS, Warning, TEXT("%s paymentId: %s Answer: %s"), *PS_FUNC_LINE, *PaymentId, *Answer);
-
-	if (self.Proxy)
-	{
-		if (error.code != SKErrorPaymentCancelled)
-		{
-			self.Proxy->OnPurchaseFailed(PaymentId, Answer);
-		}
-		else
-		{
-			self.Proxy->OnPurchaseCanceled(PaymentId, Answer);
-		}
-	}
-}
-
-- (NSString*)getCurrencyCode:(SKProduct*)product
-{
-	NSLocale* PriceLocale = [product priceLocale];
+	NSLocale* PriceLocale = [product.skProduct priceLocale];
 	NSNumberFormatter* CurrencyFormatter = [[[NSNumberFormatter alloc] init] autorelease];
 	[CurrencyFormatter setLocale:PriceLocale];
 	return [CurrencyFormatter internationalCurrencySymbol];
@@ -314,16 +361,6 @@ void UPsMRGSProxyIOS::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bo
 int32 UPsMRGSProxyIOS::GetGDPRAcceptedVersion()
 {
 	return [[MRGSGDPR sharedInstance] getAgreedVersion];
-}
-
-void UPsMRGSProxyIOS::SetGDPRAgreementVersion(int32 Version)
-{
-	[MRGSGDPR sharedInstance].agreementVersion = Version;
-}
-
-int32 UPsMRGSProxyIOS::GetGDPRAgreementVersion()
-{
-	return [MRGSGDPR sharedInstance].agreementVersion;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -468,7 +505,7 @@ void UPsMRGSProxyIOS::OnInitComplete()
 	Support.secret = MRGSSettings->iOSSupportSecretKey.GetNSString();
 	Support.delegate = Delegate;
 
-	[MRGSBank sharedInstance].delegate = Delegate;
+	[MRGSBank sharedInstance].delegateExtended = Delegate;
 
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
@@ -579,14 +616,13 @@ void UPsMRGSProxyIOS::LoadStoreProducts(const TArray<FString>& ProductsList)
 		return;
 	}
 
-	NSMutableArray* Objects = [[NSMutableArray alloc] init];
+	MRGSBankProductsRequest* request = [[MRGSBankProductsRequest alloc] init];
 	for (auto& Product : ProductsList)
 	{
-		[Objects addObject:[MRGSBankProduct productWithId:Product.GetNSString() andType:@"cons"]];
+		[request addProductIdentifier:Product.GetNSString() withType:kMRGSBankProductTypeConsumable];
 	}
 
-	NSArray* ResultArray = [NSArray arrayWithArray:Objects];
-	[[MRGSBank sharedInstance] loadProductsWithTypesFromAppleServer:ResultArray];
+	[[MRGSBank sharedInstance] requestProductsInfo:request];
 }
 
 void UPsMRGSProxyIOS::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
@@ -613,7 +649,7 @@ void UPsMRGSProxyIOS::BuyProduct(const FString& ProductId, const FString& Payloa
 		return;
 	}
 
-	[[MRGSBank sharedInstance] addPayment:ProductId.GetNSString() withDeveloperPayload:Payload.GetNSString()];
+	[[MRGSBank sharedInstance] purchaseProduct:ProductId.GetNSString() withDeveloperPayload:Payload.GetNSString()];
 }
 
 void UPsMRGSProxyIOS::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)

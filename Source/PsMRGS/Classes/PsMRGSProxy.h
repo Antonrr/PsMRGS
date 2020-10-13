@@ -87,14 +87,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
 	virtual int32 GetGDPRAcceptedVersion();
 
-	/** Set current version of the agreement */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual void SetGDPRAgreementVersion(int32 Version);
-
-	/** Get current version of the agreement */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual int32 GetGDPRAgreementVersion();
-
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
 

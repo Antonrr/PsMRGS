@@ -105,37 +105,6 @@ int32 UPsMRGSProxyAndroid::GetGDPRAcceptedVersion()
 	}
 }
 
-void UPsMRGSProxyAndroid::SetGDPRAgreementVersion(int32 Version)
-{
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_SetAgreementVersion", "(I)V", false);
-
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, Version);
-	}
-	else
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
-	}
-}
-
-int32 UPsMRGSProxyAndroid::GetGDPRAgreementVersion()
-{
-	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
-	if (Env)
-	{
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_GetAgreementVersion", "()I", false);
-
-		return FJavaWrapper::CallIntMethod(Env, FJavaWrapper::GameActivityThis, methodId);
-	}
-	else
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
-		return 0;
-	}
-}
-
 //////////////////////////////////////////////////////////////////////////
 // MRGS
 

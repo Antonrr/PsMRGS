@@ -250,16 +250,6 @@
 			return MRGServiceCpp.GetGDPRAcceptedVersion();
 		}
 
-		public void AndroidThunkJava_MRGService_SetAgreementVersion(final int Version)
-		{
-			MRGServiceCpp.SetAgreementVersion(Version);
-		}
-
-		public int AndroidThunkJava_MRGService_GetAgreementVersion()
-		{
-			return MRGServiceCpp.GetAgreementVersion();
-		}
-
 		public void AndroidThunkJava_MRGService_checkIntegration()
 		{
 			MRGServiceCpp.checkIntegration();
