@@ -246,7 +246,6 @@
 
 - (void)didReceivePendingPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
 {
-
 }
 
 - (void)didReceiveCancelledPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
@@ -269,7 +268,6 @@
 
 - (void)didCompleteTransactionsRestore
 {
-
 }
 
 /** end of MRGSBankDelegateEx */
