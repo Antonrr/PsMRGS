@@ -220,7 +220,7 @@ public class PsMRGS : ModuleRules
 			}
 			);
 
-			PublicAdditionalLibraries.AddRange(
+			PublicSystemLibraries.AddRange(
 			new string[]
 			{
 				// Google analytics uses this library
