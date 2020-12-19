@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "Modules/ModuleManager.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #if ENGINE_MINOR_VERSION >= 15

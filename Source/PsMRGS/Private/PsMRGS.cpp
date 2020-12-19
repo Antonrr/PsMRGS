@@ -15,7 +15,6 @@
 #endif
 
 #include "Developer/Settings/Public/ISettingsModule.h"
-#include "Misc/ConfigCacheIni.h"
 #include "UObject/Package.h"
 
 #define LOCTEXT_NAMESPACE "PsMRGS"
