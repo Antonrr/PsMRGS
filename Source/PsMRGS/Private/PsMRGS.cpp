@@ -75,7 +75,6 @@ class FPsMRGS : public IPsMRGS
 
 private:
 	/** Holds the kit settings */
-	UPROPERTY()
 	UPsMRGSSettings* KitSettings;
 };
 
