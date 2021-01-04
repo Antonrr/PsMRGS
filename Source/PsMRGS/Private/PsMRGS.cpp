@@ -75,7 +75,7 @@ class FPsMRGS : public IPsMRGS
 
 private:
 	/** Holds the kit settings */
-	UPsMRGSSettings* KitSettings;
+	UPsMRGSSettings* KitSettings = nullptr;
 };
 
 IMPLEMENT_MODULE(FPsMRGS, PsMRGS)
