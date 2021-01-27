@@ -40,14 +40,14 @@
 		implementation(name: 'MRGSNotifications', ext:'aar')
 		implementation(name: 'MRGSSupport', ext:'aar')
 
-		implementation 'com.my.tracker:mytracker-sdk:2.0.1'
+		implementation 'com.my.tracker:mytracker-sdk:2.0.9'
 		implementation 'com.android.billingclient:billing:2.0.3'
 		implementation 'com.google.android.gms:play-services-games:16.0.0'
 		implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
 		implementation 'org.apache.httpcomponents:httpmime:4.2.5'
 		implementation 'com.android.support:support-v4:26.1.0'
-		implementation 'com.android.support:appcompat-v7:26.1.0'
-		implementation 'com.google.firebase:firebase-messaging:17.3.4'
+		implementation 'androidx.appcompat:appcompat:1.1.0'
+		implementation 'com.google.firebase:firebase-messaging:20.0.0'
 		implementation 'com.appsflyer:af-android-sdk:5.4.3'
 	}
 
@@ -241,9 +241,9 @@
 			MRGServiceCpp.ShowDefaultGDPRAgreement(appId, bOnlyEU, bWithAdvertising);
 		}
 
-		public void AndroidThunkJava_MRGService_ShowGDPRAgreement(final String appId, final int AgreementVersion, final boolean bOnlyEU, final boolean bWithAdvertising)
+		public void AndroidThunkJava_MRGService_ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising)
 		{
-			MRGServiceCpp.ShowGDPRAgreement(appId, AgreementVersion, bOnlyEU, bWithAdvertising);
+			MRGServiceCpp.ShowGDPRAgreement(appId, bOnlyEU, bWithAdvertising);
 		}
 
 		public int AndroidThunkJava_MRGService_GetGDPRAcceptedVersion()

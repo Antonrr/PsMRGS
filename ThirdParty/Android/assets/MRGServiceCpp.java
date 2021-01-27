@@ -246,7 +246,7 @@ public class MRGServiceCpp {
 		});
 	}
 
-	public static void ShowGDPRAgreement(final String appId, final int AgreementVersion, final boolean bOnlyEU, final boolean bWithAdvertising) {
+	public static void ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
 		{
@@ -262,8 +262,7 @@ public class MRGServiceCpp {
 				mGDPR.withAdvertising(bWithAdvertising);
 				mGDPR.showAgreementAtActivity(thisActivity,
                              appId,
-                             "gdpr/gdpr.html",
-                             AgreementVersion);
+                             "gdpr/gdpr.html");
 			}
 		});
 	}

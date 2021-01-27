@@ -81,7 +81,7 @@ public:
 
 	/** Show specified GDPR agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual void ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising);
+	virtual void ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising);
 
 	/** Get accepted version of the agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")

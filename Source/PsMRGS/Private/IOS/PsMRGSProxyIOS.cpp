@@ -333,7 +333,7 @@ void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertisi
 	});
 }
 
-void UPsMRGSProxyIOS::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
@@ -351,8 +351,7 @@ void UPsMRGSProxyIOS::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bo
 										 forAppId:MRGSSettings->iOSMrgsAppId
 										 fromFile:[[NSBundle mainBundle] URLForResource:@"gdpr"
 																		  withExtension:@"html"
-																		   subdirectory:@"gdpr"]
-									  withVersion:AgreementVersion];
+																		   subdirectory:@"gdpr"]];
 	});
 }
 

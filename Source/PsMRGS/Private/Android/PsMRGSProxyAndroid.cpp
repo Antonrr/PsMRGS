@@ -65,7 +65,7 @@ void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdver
 	}
 }
 
-void UPsMRGSProxyAndroid::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyAndroid::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
@@ -77,10 +77,10 @@ void UPsMRGSProxyAndroid::ShowGDPRAgreement(int32 AgreementVersion, bool bOnlyEU
 			return;
 		}
 
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;IZZ)V", false);
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;ZZ)V", false);
 
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, AgreementVersion, bOnlyEU, bWithAdvertising);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising);
 		Env->DeleteLocalRef(AppId);
 	}
 	else
