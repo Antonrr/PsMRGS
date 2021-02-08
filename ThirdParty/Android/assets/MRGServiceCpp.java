@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.Pair;
 import android.content.res.AssetManager;
+import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -311,9 +312,9 @@ public class MRGServiceCpp {
 		MRGService.instance().checkIntegration();
 	}
 
-	public static void initWithAppidAndSecret(final String appId, final String appSecret) {
+	public static void initWithAppidAndSecret(final String appId, final String appSecret, final boolean bDebug) {
 
-		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (%s, %s)", appId, appSecret));
+		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (%s, %s, %b)", appId, appSecret, bDebug));
 
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
@@ -322,7 +323,7 @@ public class MRGServiceCpp {
 			public void run() 
 			{
 				Log.v(LOG_TAG, String.format("MRGServiceCPP:init context (%s)", appContext.getPackageCodePath()));
-				init(appContext, appId, appSecret);
+				init(appContext, appId, appSecret, bDebug);
 			}
 		});
 	}
@@ -334,10 +335,18 @@ public class MRGServiceCpp {
 		onUserAuthSuccess();
 	}
 
-	public static void init(final Context context,final String appId, final String appSecret) {
+	public static void init(final Context context,final String appId, final String appSecret, final boolean bDebug) {
 		Log.v(LOG_TAG, String.format("init MRGS started"));
 
-		MRGService.service(context, mServerDataDelegate, appId, appSecret);
+		Bundle mrgsSettings = new Bundle();
+		mrgsSettings.putBoolean("debug", bDebug);
+		mrgsSettings.putString("billing", "google");
+		mrgsSettings.putBoolean("testDevice", bDebug);
+		mrgsSettings.putBoolean("crashReports", false);
+		mrgsSettings.putBoolean("localPushNotifications", false);
+		mrgsSettings.putString("utmSource", "test-utm-source");
+
+		MRGService.service(context, mServerDataDelegate, appId, appSecret, mrgsSettings);
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
 		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
