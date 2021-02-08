@@ -256,11 +256,11 @@
 			MRGServiceCpp.checkIntegration();
 		}
 
-		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret)
+		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret, final boolean bDebug)
 		{
 			MRGServiceCpp.appContext = getApplicationContext();
 			MRGService.setAppContext(getApplicationContext());
-			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret);
+			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret, bDebug);
 		}
 
 		public void AndroidThunkJava_MRGService_initUserWithId(String userId)
