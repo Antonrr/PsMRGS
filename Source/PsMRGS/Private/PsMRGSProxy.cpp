@@ -7,6 +7,7 @@
 UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	DebugCPPASetting = EPsMRGSCPPASetting::DontShare;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -28,6 +29,27 @@ int32 UPsMRGSProxy::GetGDPRAcceptedVersion()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	return -1;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// CCPA
+
+bool UPsMRGSProxy::ShouldShowCCPA()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return true;
+}
+
+EPsMRGSCPPASetting UPsMRGSProxy::GetCCPASettingValue()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	return DebugCPPASetting;
+}
+
+void UPsMRGSProxy::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+{
+	DebugCPPASetting = Value;
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
 //////////////////////////////////////////////////////////////////////////

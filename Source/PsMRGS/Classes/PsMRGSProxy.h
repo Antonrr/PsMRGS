@@ -30,6 +30,13 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_NOT_IMPLEMENTED,
 };
 
+UENUM(BlueprintType)
+enum class EPsMRGSCPPASetting : uint8
+{
+	Share = 0,
+	DontShare = 1
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, EPsMRGSEventsTypes, MyEventName);
 
 USTRUCT(BlueprintType)
@@ -49,7 +56,7 @@ struct FPsMRGSPurchaseInfo
 	UPROPERTY(BlueprintReadOnly)
 	FString FormattedPrice;
 
-	/** Procudt title from store */
+	/** Product title from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Title;
 
@@ -86,6 +93,22 @@ public:
 	/** Get accepted version of the agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
 	virtual int32 GetGDPRAcceptedVersion();
+
+	//////////////////////////////////////////////////////////////////////////
+	// CCPA
+
+public:
+	/** Get whether CCPA is applicable */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual bool ShouldShowCCPA();
+
+	/** Get CPPA setting value */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual EPsMRGSCPPASetting GetCCPASettingValue();
+
+	/** Set CPPA setting value */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	virtual void SetCCPASettingValue(EPsMRGSCPPASetting Value);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
@@ -235,4 +258,8 @@ protected:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
 	FPsMRGSDelegate MRGSDelegate;
+
+private:
+	/** Debug CPPA setting value*/
+	EPsMRGSCPPASetting DebugCPPASetting;
 };

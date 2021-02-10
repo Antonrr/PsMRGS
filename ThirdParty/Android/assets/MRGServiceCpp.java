@@ -274,6 +274,24 @@ public class MRGServiceCpp {
 		return mGDPR.getAgreedVersion(activity);
 	}
 
+	public static boolean ShouldShowCCPA() {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		GameActivity activity = GameActivity.Get();
+		return mGDPR.shouldShowCCPAButton(activity);
+	}
+
+	public static int GetCCPASettingValue() {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		GameActivity activity = GameActivity.Get();
+		return mGDPR.getCurrentCCPAUserPreference(activity);
+	}
+
+	public static void SetCCPASettingValue(int Value) {
+		mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
+		GameActivity activity = GameActivity.Get();
+		mGDPR.setUserChangedCCPAPreferences(activity, Value);
+	}
+
 	public static void showSupport(final String secretKey) {
 		Log.v(LOG_TAG, String.format("showSupport(%s)", secretKey));
 

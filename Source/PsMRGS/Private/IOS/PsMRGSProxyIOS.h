@@ -45,6 +45,19 @@ public:
 	
 	/** Get accepted version of the agreement */
 	virtual int32 GetGDPRAcceptedVersion() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// CCPA
+
+public:
+	/** Show MRGS built-in GDPR agreement */
+	virtual bool ShouldShowCCPA() override;
+
+	/** Get CPPA setting value */
+	virtual EPsMRGSCPPASetting GetCCPASettingValue() override;
+
+	/** Set CPPA setting value */
+	virtual void SetCCPASettingValue(EPsMRGSCPPASetting Value) override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Setup

@@ -106,6 +106,95 @@ int32 UPsMRGSProxyAndroid::GetGDPRAcceptedVersion()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// CCPA
+
+bool UPsMRGSProxyAndroid::ShouldShowCCPA()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShouldShowCCPA", "()Z", false);
+
+		return FJavaWrapper::CallBooleanMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+		return false;
+	}
+}
+
+EPsMRGSCPPASetting UPsMRGSProxyAndroid::GetCCPASettingValue()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_GetCCPASettingValue", "()I", false);
+
+		/**
+		 public abstract class MRGSCCPA {
+		   public static final int USER_PREFERENCE_SHARE = 0;
+		   public static final int USER_PREFERENCE_NOT_SHARING = 1;
+		 }
+		 */
+
+		const int32 Result = FJavaWrapper::CallIntMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+		if (Result == 0)
+		{
+			return EPsMRGSCPPASetting::Share;
+		}
+		else if (Result == 1)
+		{
+			return EPsMRGSCPPASetting::DontShare;
+		}
+		else
+		{
+			UE_LOG(LogMRGS, Error, TEXT("%s: unhandled MRGSCCPAUserPreference value"), *PS_FUNC_LINE);
+			return EPsMRGSCPPASetting::Share;
+		}
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+		return EPsMRGSCPPASetting::Share;
+	}
+}
+
+void UPsMRGSProxyAndroid::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_SetCCPASettingValue", "(I)V", false);
+
+		/**
+		 public abstract class MRGSCCPA {
+		   public static final int USER_PREFERENCE_SHARE = 0;
+		   public static final int USER_PREFERENCE_NOT_SHARING = 1;
+		 }
+		 */
+
+		if (Value == EPsMRGSCPPASetting::Share)
+		{
+			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 0);
+		}
+		else if (Value == EPsMRGSCPPASetting::DontShare)
+		{
+			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 1);
+		}
+		else
+		{
+			UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCPPASetting value"), *PS_FUNC_LINE);
+			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 1);
+		}
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // MRGS
 
 void UPsMRGSProxyAndroid::CheckIntegration()

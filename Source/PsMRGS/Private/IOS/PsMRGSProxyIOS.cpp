@@ -361,6 +361,49 @@ int32 UPsMRGSProxyIOS::GetGDPRAcceptedVersion()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// CCPA
+
+bool UPsMRGSProxyIOS::ShouldShowCCPA()
+{
+	return [[MRGSGDPR sharedInstance] shouldShowCCPAButton];
+}
+
+EPsMRGSCPPASetting UPsMRGSProxyIOS::GetCCPASettingValue()
+{
+	MRGSCCPAUserPreference Preference = [[MRGSGDPR sharedInstance] getCurrentCCPAUserPrefrence];
+	if (Preference == kMRGSCCPAUserPreferenceShare)
+	{
+		return EPsMRGSCPPASetting::Share;
+	}
+	else if (Preference == kMRGSCCPAUserPreferenceNotSharing)
+	{
+		return EPsMRGSCPPASetting::DontShare;
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: unhandled MRGSCCPAUserPreference value"), *PS_FUNC_LINE);
+		return EPsMRGSCPPASetting::Share;
+	}
+}
+
+void UPsMRGSProxyIOS::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+{
+	if (Value == EPsMRGSCPPASetting::Share)
+	{
+		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceShare];
+	}
+	else if (Value == EPsMRGSCPPASetting::DontShare)
+	{
+		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceNotSharing];
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCPPASetting value"), *PS_FUNC_LINE);
+		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceNotSharing];
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Setup
 
 void UPsMRGSProxyIOS::CheckIntegration()

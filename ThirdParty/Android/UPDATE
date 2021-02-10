@@ -1,0 +1,6 @@
+Check that values of CPPA preferences are in sync with native code.
+
+public abstract class MRGSCCPA {
+  public static final int USER_PREFERENCE_SHARE = 0;
+  public static final int USER_PREFERENCE_NOT_SHARING = 1;
+}

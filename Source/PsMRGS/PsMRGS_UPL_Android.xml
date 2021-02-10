@@ -251,6 +251,21 @@
 			return MRGServiceCpp.GetGDPRAcceptedVersion();
 		}
 
+		public boolean AndroidThunkJava_MRGService_ShouldShowCCPA()
+		{
+			return MRGServiceCpp.ShouldShowCCPA();
+		}
+
+		public int AndroidThunkJava_MRGService_GetCCPASettingValue()
+		{
+			return MRGServiceCpp.GetCCPASettingValue();
+		}
+
+		public void AndroidThunkJava_MRGService_SetCCPASettingValue(int Value)
+		{
+			MRGServiceCpp.SetCCPASettingValue(Value);
+		}
+
 		public void AndroidThunkJava_MRGService_checkIntegration()
 		{
 			MRGServiceCpp.checkIntegration();
