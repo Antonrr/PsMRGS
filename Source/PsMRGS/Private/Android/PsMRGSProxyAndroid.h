@@ -52,10 +52,10 @@ public:
 	virtual bool ShouldShowCCPA() override;
 
 	/** Get CPPA setting value */
-	virtual EPsMRGSCPPASetting GetCCPASettingValue() override;
+	virtual EPsMRGSCCPASetting GetCCPASettingValue() override;
 
 	/** Set CPPA setting value */
-	virtual void SetCCPASettingValue(EPsMRGSCPPASetting Value) override;
+	virtual void SetCCPASettingValue(EPsMRGSCCPASetting Value) override;
 
 	//////////////////////////////////////////////////////////////////////////
 	// MRGS

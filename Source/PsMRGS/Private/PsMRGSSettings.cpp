@@ -26,6 +26,7 @@ void UPsMRGSSettings::ReadFromConfig()
 	GConfig->GetString(*ConfigSection, TEXT("iOsGATrackingId"), iOSGATrackingId, GEngineIni);
 	GConfig->GetBool(*ConfigSection, TEXT("bEnableMRGS"), bEnableMRGS, GEngineIni);
 	GConfig->GetBool(*ConfigSection, TEXT("bDebugInDevelopment"), bDebugInDevelopment, GEngineIni);
+	GConfig->GetBool(*ConfigSection, TEXT("bShowAppTrackingRequestAtStartup"), bShowAppTrackingRequestAtStartup, GEngineIni);
 
 	GConfig->GetString(*ConfigSection, TEXT("iOsMyTrackerAppId"), iOSMyTrackerAppId, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("iOsSupportSecretKey"), iOSSupportSecretKey, GEngineIni);

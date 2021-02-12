@@ -368,38 +368,103 @@ bool UPsMRGSProxyIOS::ShouldShowCCPA()
 	return [[MRGSGDPR sharedInstance] shouldShowCCPAButton];
 }
 
-EPsMRGSCPPASetting UPsMRGSProxyIOS::GetCCPASettingValue()
+EPsMRGSCCPASetting UPsMRGSProxyIOS::GetCCPASettingValue()
 {
 	MRGSCCPAUserPreference Preference = [[MRGSGDPR sharedInstance] getCurrentCCPAUserPrefrence];
 	if (Preference == kMRGSCCPAUserPreferenceShare)
 	{
-		return EPsMRGSCPPASetting::Share;
+		return EPsMRGSCCPASetting::Share;
 	}
 	else if (Preference == kMRGSCCPAUserPreferenceNotSharing)
 	{
-		return EPsMRGSCPPASetting::DontShare;
+		return EPsMRGSCCPASetting::DontShare;
 	}
 	else
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: unhandled MRGSCCPAUserPreference value"), *PS_FUNC_LINE);
-		return EPsMRGSCPPASetting::Share;
+		return EPsMRGSCCPASetting::Share;
 	}
 }
 
-void UPsMRGSProxyIOS::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+void UPsMRGSProxyIOS::SetCCPASettingValue(EPsMRGSCCPASetting Value)
 {
-	if (Value == EPsMRGSCPPASetting::Share)
+	if (Value == EPsMRGSCCPASetting::Share)
 	{
 		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceShare];
 	}
-	else if (Value == EPsMRGSCPPASetting::DontShare)
+	else if (Value == EPsMRGSCCPASetting::DontShare)
 	{
 		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceNotSharing];
 	}
 	else
 	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCPPASetting value"), *PS_FUNC_LINE);
+		UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCCPASetting value"), *PS_FUNC_LINE);
 		[[MRGSGDPR sharedInstance] setUserChangedCCPAPrefrences:kMRGSCCPAUserPreferenceNotSharing];
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+// App tracking
+
+bool UPsMRGSProxyIOS::ShouldShowTrackingAuthorizationDialog()
+{
+	return [[MRGSDevice currentDevice] shouldShowTrackingAuthorizationDialog];
+}
+
+void UPsMRGSProxyIOS::RequestTrackingAuthorization()
+{
+	[[MRGSDevice currentDevice] requestTrackingAuthorizationWithCompletionHandler:^(MRGSIDFATrackingAuthorizationStatus Status) {
+	  AsyncTask(ENamedThreads::GameThread, [this, Status]() {
+		  if (MRGSDelegate.IsBound())
+		  {
+			  switch (Status)
+			  {
+			  case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusNotDetermined:
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ATT_NOT_DETERMINED);
+				  break;
+
+			  case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusRestricted:
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ATT_RESTRICTED);
+				  break;
+
+			  case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusDenied:
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ATT_DENIED);
+				  break;
+
+			  case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusAuthorized:
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ATT_AUTHORIZED);
+				  break;
+
+			  default:
+				  UE_LOG(LogMRGS, Error, TEXT("%s: unknown ATT status"), *PS_FUNC_LINE);
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
+				  break;
+			  }
+		  }
+	  });
+	}];
+}
+
+EPsMRGSATTStatus UPsMRGSProxyIOS::GetTrackingAuthorizationStatus()
+{
+	MRGSIDFATrackingAuthorizationStatus Status = [MRGSDevice currentDevice].currentTrackingAuthorizationStatus;
+	switch (Status)
+	{
+	case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusNotDetermined:
+		return EPsMRGSATTStatus::NotDetermined;
+
+	case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusRestricted:
+		return EPsMRGSATTStatus::Restricted;
+
+	case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusDenied:
+		return EPsMRGSATTStatus::Denied;
+
+	case MRGSIDFATrackingAuthorizationStatus::MRGSIDFATrackingAuthorizationStatusAuthorized:
+		return EPsMRGSATTStatus::Authorized;
+
+	default:
+		UE_LOG(LogMRGS, Error, TEXT("%s: unknown ATT status"), *PS_FUNC_LINE);
+		return EPsMRGSATTStatus::NotDetermined;
 	}
 }
 
@@ -449,6 +514,7 @@ void UPsMRGSProxyIOS::InitModule()
 	  MrgsParams.allowPushNotificationHooks = false;
 	  MrgsParams.disablePaymentsCheck = false;
 	  MrgsParams.automaticPaymentTracking = false;
+	  MrgsParams.automaticallyShowIDFARequestAtStartup = MRGSSettings->bShowAppTrackingRequestAtStartup;
 
 	  NSArray* Paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, bDebug);
 	  MrgsParams.storePath = [[Paths objectAtIndex:0] stringByAppendingPathComponent:@"/mrgsStore"];
@@ -834,6 +900,11 @@ FString UPsMRGSProxyIOS::GetOpenUDID() const
 		}
 	}
 	return Result;
+}
+
+void UPsMRGSProxyIOS::OpenApplicationPageInSystemSettings()
+{
+	[MRGSDevice openSystemSettingsOfApplication];
 }
 
 #endif //IOS

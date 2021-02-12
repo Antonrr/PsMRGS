@@ -54,10 +54,23 @@ public:
 	virtual bool ShouldShowCCPA() override;
 
 	/** Get CPPA setting value */
-	virtual EPsMRGSCPPASetting GetCCPASettingValue() override;
+	virtual EPsMRGSCCPASetting GetCCPASettingValue() override;
 
 	/** Set CPPA setting value */
-	virtual void SetCCPASettingValue(EPsMRGSCPPASetting Value) override;
+	virtual void SetCCPASettingValue(EPsMRGSCCPASetting Value) override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// App tracking
+
+public:
+	/** Get whether should show tracking auth dialog */
+	virtual bool ShouldShowTrackingAuthorizationDialog() override;
+
+	/** Request app tracking authorization */
+	virtual void RequestTrackingAuthorization() override;
+
+	/** Get app tracking authorization status */
+	virtual EPsMRGSATTStatus GetTrackingAuthorizationStatus() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
@@ -115,6 +128,9 @@ public:
 	
 	/** Get OpenUDID */
 	virtual FString GetOpenUDID() const override;
+
+	/** Open application page in system settings */
+	virtual void OpenApplicationPageInSystemSettings() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Callbacks

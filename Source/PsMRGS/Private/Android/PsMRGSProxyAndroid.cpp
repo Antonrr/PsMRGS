@@ -124,7 +124,7 @@ bool UPsMRGSProxyAndroid::ShouldShowCCPA()
 	}
 }
 
-EPsMRGSCPPASetting UPsMRGSProxyAndroid::GetCCPASettingValue()
+EPsMRGSCCPASetting UPsMRGSProxyAndroid::GetCCPASettingValue()
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
@@ -141,26 +141,26 @@ EPsMRGSCPPASetting UPsMRGSProxyAndroid::GetCCPASettingValue()
 		const int32 Result = FJavaWrapper::CallIntMethod(Env, FJavaWrapper::GameActivityThis, methodId);
 		if (Result == 0)
 		{
-			return EPsMRGSCPPASetting::Share;
+			return EPsMRGSCCPASetting::Share;
 		}
 		else if (Result == 1)
 		{
-			return EPsMRGSCPPASetting::DontShare;
+			return EPsMRGSCCPASetting::DontShare;
 		}
 		else
 		{
 			UE_LOG(LogMRGS, Error, TEXT("%s: unhandled MRGSCCPAUserPreference value"), *PS_FUNC_LINE);
-			return EPsMRGSCPPASetting::Share;
+			return EPsMRGSCCPASetting::Share;
 		}
 	}
 	else
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
-		return EPsMRGSCPPASetting::Share;
+		return EPsMRGSCCPASetting::Share;
 	}
 }
 
-void UPsMRGSProxyAndroid::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+void UPsMRGSProxyAndroid::SetCCPASettingValue(EPsMRGSCCPASetting Value)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
@@ -174,17 +174,17 @@ void UPsMRGSProxyAndroid::SetCCPASettingValue(EPsMRGSCPPASetting Value)
 		 }
 		 */
 
-		if (Value == EPsMRGSCPPASetting::Share)
+		if (Value == EPsMRGSCCPASetting::Share)
 		{
 			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 0);
 		}
-		else if (Value == EPsMRGSCPPASetting::DontShare)
+		else if (Value == EPsMRGSCCPASetting::DontShare)
 		{
 			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 1);
 		}
 		else
 		{
-			UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCPPASetting value"), *PS_FUNC_LINE);
+			UE_LOG(LogMRGS, Error, TEXT("%s: unhandled EPsMRGSCCPASetting value"), *PS_FUNC_LINE);
 			FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, 1);
 		}
 	}

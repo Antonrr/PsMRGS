@@ -12,18 +12,21 @@
 
 	  <if condition="isRootDictionary">
 		<true>
+			<!-- ATS -->
 			<setElement result="eNSAppTransportSecurity" value="key" text="NSAppTransportSecurity"/>
 		  	<addElement tag="$" name="eNSAppTransportSecurity"/>
-
 		  	<setElement result="dNSAppTransportSecurityDict" value="dict"/>
-
 		  	<setElement result="eNSAllowsArbitraryLoads" value="key" text="NSAllowsArbitraryLoads"/>
 		  	<addElement tag="$dNSAppTransportSecurityDict" name="eNSAllowsArbitraryLoads"/>
-
 		  	<setElement result="eTrue" value="true" text=""/>
 		  	<addElement tag="$dNSAppTransportSecurityDict" name="eTrue"/>
-
 		  	<addElement tag="$" name="dNSAppTransportSecurityDict"/>
+
+		  	<!-- ATT -->
+		  	<setElement result="eNSUserTrackingUsageDescription" value="key" text="NSUserTrackingUsageDescription"/>
+		  	<addElement tag="$" name="eNSUserTrackingUsageDescription"/>
+		  	<setElement result="eDescriptionString" value="string" text="This identifier will be used to deliver personalized ads to you."/>
+			<addElement tag="$" name="eDescriptionString"/>
 		</true>
 	  </if>
 	</loopElements>

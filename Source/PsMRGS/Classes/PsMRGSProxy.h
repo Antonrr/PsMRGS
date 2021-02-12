@@ -28,13 +28,28 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_GDPR_ACCEPTED_WITHOUT_ADS,
 	MRGS_GDPR_ERROR,
 	MRGS_NOT_IMPLEMENTED,
+	MRGS_ATT_NOT_DETERMINED,
+	MRGS_ATT_RESTRICTED,
+	MRGS_ATT_DENIED,
+	MRGS_ATT_AUTHORIZED,
 };
 
+/** CCPA setting */
 UENUM(BlueprintType)
-enum class EPsMRGSCPPASetting : uint8
+enum class EPsMRGSCCPASetting : uint8
 {
 	Share = 0,
 	DontShare = 1
+};
+
+/** App Tracking status */
+UENUM(BlueprintType)
+enum class EPsMRGSATTStatus : uint8
+{
+	NotDetermined = 0,
+	Restricted = 1,
+	Denied = 2,
+	Authorized = 3
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, EPsMRGSEventsTypes, MyEventName);
@@ -99,16 +114,32 @@ public:
 
 public:
 	/** Get whether CCPA is applicable */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
+	UFUNCTION(BlueprintCallable, Category = "MRGS|CCPA")
 	virtual bool ShouldShowCCPA();
 
 	/** Get CPPA setting value */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual EPsMRGSCPPASetting GetCCPASettingValue();
+	UFUNCTION(BlueprintCallable, Category = "MRGS|CCPA")
+	virtual EPsMRGSCCPASetting GetCCPASettingValue();
 
 	/** Set CPPA setting value */
-	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual void SetCCPASettingValue(EPsMRGSCPPASetting Value);
+	UFUNCTION(BlueprintCallable, Category = "MRGS|CCPA")
+	virtual void SetCCPASettingValue(EPsMRGSCCPASetting Value);
+
+	//////////////////////////////////////////////////////////////////////////
+	// App tracking
+
+public:
+	/** Get whether should show tracking auth dialog */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|App Tracking")
+	virtual bool ShouldShowTrackingAuthorizationDialog();
+
+	/** Request app tracking authorization */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|App Tracking")
+	virtual void RequestTrackingAuthorization();
+
+	/** Get app tracking authorization status */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|App Tracking")
+	virtual EPsMRGSATTStatus GetTrackingAuthorizationStatus();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Setup
@@ -183,6 +214,10 @@ public:
 	/** Get OpenUDID */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetOpenUDID() const;
+
+	/** Open application page in system settings */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual void OpenApplicationPageInSystemSettings();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Callbacks
@@ -261,5 +296,5 @@ public:
 
 private:
 	/** Debug CPPA setting value*/
-	EPsMRGSCPPASetting DebugCPPASetting;
+	EPsMRGSCCPASetting DebugCCPASetting;
 };

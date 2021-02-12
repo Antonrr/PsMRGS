@@ -20,6 +20,10 @@ class UPsMRGSSettings : public UObject
 	UPROPERTY(Config, EditAnywhere)
 	bool bDebugInDevelopment;
 
+	/** Whether to show app stracking request on startup */
+	UPROPERTY(Config, EditAnywhere)
+	bool bShowAppTrackingRequestAtStartup;
+
 	/** iOS Mrgs appid */
 	UPROPERTY(Config, EditAnywhere)
 	int32 iOSMrgsAppId;

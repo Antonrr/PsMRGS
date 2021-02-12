@@ -7,7 +7,7 @@
 UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	DebugCPPASetting = EPsMRGSCPPASetting::DontShare;
+	DebugCCPASetting = EPsMRGSCCPASetting::DontShare;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,16 +40,34 @@ bool UPsMRGSProxy::ShouldShowCCPA()
 	return true;
 }
 
-EPsMRGSCPPASetting UPsMRGSProxy::GetCCPASettingValue()
+EPsMRGSCCPASetting UPsMRGSProxy::GetCCPASettingValue()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return DebugCPPASetting;
+	return DebugCCPASetting;
 }
 
-void UPsMRGSProxy::SetCCPASettingValue(EPsMRGSCPPASetting Value)
+void UPsMRGSProxy::SetCCPASettingValue(EPsMRGSCCPASetting Value)
 {
-	DebugCPPASetting = Value;
+	DebugCCPASetting = Value;
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// App tracking
+
+bool UPsMRGSProxy::ShouldShowTrackingAuthorizationDialog()
+{
+	return false;
+}
+
+void UPsMRGSProxy::RequestTrackingAuthorization()
+{
+	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
+}
+
+EPsMRGSATTStatus UPsMRGSProxy::GetTrackingAuthorizationStatus()
+{
+	return EPsMRGSATTStatus::NotDetermined;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -154,6 +172,11 @@ FString UPsMRGSProxy::GetOpenUDID() const
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	return FString();
+}
+
+void UPsMRGSProxy::OpenApplicationPageInSystemSettings()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
 //////////////////////////////////////////////////////////////////////////
