@@ -830,6 +830,19 @@ void UPsMRGSProxyIOS::ShowSupport()
 		return;
 	}
 
+	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
+	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
+		return;
+	}
+
+	if (MRGSSettings->iOSSupportSecretKey.IsEmpty())
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: iOSSupportSecretKey is empty"), *PS_FUNC_LINE);
+		return;
+	}
+
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  UIView* ViewContainer = [UIApplication sharedApplication].keyWindow.rootViewController.view;
 	  MRGSMyComSupport* support = [MRGSMyComSupport sharedInstance];

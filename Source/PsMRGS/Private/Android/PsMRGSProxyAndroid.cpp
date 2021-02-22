@@ -397,6 +397,7 @@ void UPsMRGSProxyAndroid::ShowSupport()
 	if (SupportSecretKey.IsEmpty())
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: AndroidMrgsSupportSecretKey is empty"), *PS_FUNC_LINE);
+		return;
 	}
 
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
