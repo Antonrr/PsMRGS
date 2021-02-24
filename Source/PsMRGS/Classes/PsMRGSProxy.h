@@ -32,6 +32,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_ATT_RESTRICTED,
 	MRGS_ATT_DENIED,
 	MRGS_ATT_AUTHORIZED,
+	MRGS_ATT_ERROR,
 };
 
 /** CCPA setting */

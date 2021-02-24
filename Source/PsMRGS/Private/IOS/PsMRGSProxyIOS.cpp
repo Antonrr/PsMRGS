@@ -437,7 +437,7 @@ void UPsMRGSProxyIOS::RequestTrackingAuthorization()
 
 			  default:
 				  UE_LOG(LogMRGS, Error, TEXT("%s: unknown ATT status"), *PS_FUNC_LINE);
-				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
+				  MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ATT_ERROR);
 				  break;
 			  }
 		  }
