@@ -216,7 +216,8 @@ public class PsMRGS : ModuleRules
 				"CoreData",
 				"CoreLocation",
 				"CoreFoundation",
-				"UserNotifications"
+				"UserNotifications",
+				"AppTrackingTransparency"
 			}
 			);
 
