@@ -174,7 +174,7 @@ public class MRGServiceCpp {
 	    @Override
 		public void onReceiveFailedPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
 	    {
-	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveFailedPurchase(%s, %s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload));
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveFailedPurchase(%s, %s, %s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload, purchase.error.toString()));
 			threadHelper.runOnNecessaryThread(new Runnable() {
 				@Override
 				public void run() {
