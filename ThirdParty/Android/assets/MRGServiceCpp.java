@@ -150,8 +150,9 @@ public class MRGServiceCpp {
 	    @Override
 		public void onReceiveSuccessfullPurchase(final MRGSBillingEntities.MRGSBankPurchaseResult purchase)
 	    {
-	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveSuccessfullPurchase(%s, %s, %s)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload));
-			if (purchase.purchaseItem.resultCode != 1) // BILLING_RESPONSE_RESULT_USER_CANCELED = 1
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveSuccessfullPurchase(%s, %s, %s, %d)", MRGSBilling.instance().getBillingName(), purchase.purchaseItem, purchase.developerPayload, purchase.purchaseItem.resultCode));
+	    	// https://developer.android.com/reference/com/android/billingclient/api/Purchase.PurchaseState
+			if (purchase.purchaseItem.resultCode == 1) // PURCHASED
 			{
 				threadHelper.runOnNecessaryThread(new Runnable() {
 					@Override
@@ -160,12 +161,12 @@ public class MRGServiceCpp {
 					}
 				});
 			}
-			else
+			else // PENDING or UNSPECIFIED_STATE
 			{
 				threadHelper.runOnNecessaryThread(new Runnable() {
 					@Override
 					public void run() {
-						onPurchaseCancel(purchase.purchaseItem.sku, purchase.purchaseItem.transactionId, purchase.developerPayload);
+						onPurchaseFail(purchase.purchaseItem.sku, purchase.developerPayload);
 					}
 				});
 			}
