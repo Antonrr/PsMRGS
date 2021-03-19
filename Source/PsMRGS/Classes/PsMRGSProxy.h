@@ -68,6 +68,10 @@ struct FPsMRGSPurchaseInfo
 	UPROPERTY(BlueprintReadOnly)
 	FString Price;
 
+	/** Product currency from store */
+	UPROPERTY(BlueprintReadOnly)
+	FString Currency;
+
 	/** Price formatted */
 	UPROPERTY(BlueprintReadOnly)
 	FString FormattedPrice;

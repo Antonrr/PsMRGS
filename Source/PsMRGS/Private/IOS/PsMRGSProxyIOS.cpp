@@ -169,6 +169,7 @@
 
 		Item.Price = FString(FormattedString);
 		Item.FormattedPrice = FString([NSString stringWithFormat:@"%.02f %@", [nativeProduct.price doubleValue], [self getCurrencyCode:Product]]);
+		Item.Currency = FString(nativeProduct.priceLocale.currencyCode);
 		Item.Title = FString(Product.localizedTitle);
 		Item.Type = FString(TEXT("inapp"));
 		Item.Description = FString(Product.localizedDescription);

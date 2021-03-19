@@ -652,6 +652,11 @@ extern "C"
 		jstring jdescription = (jstring)env->GetObjectField(jitem, fid);
 		OutItem.Description = MRGSJniHelper::JavaStringToFstring(jdescription);
 
+		static jmethodID getCurrencyMethodId = FJavaWrapper::FindMethod(env, itemClass, "getCurrency", "()Ljava/lang/String;", false);
+		jstring jcurrency = (jstring)env->CallObjectMethod(jitem, getCurrencyMethodId);
+		OutItem.Currency = MRGSJniHelper::JavaStringToFstring(jcurrency);
+
+		env->DeleteLocalRef(jcurrency);
 		env->DeleteLocalRef(jsku);
 		env->DeleteLocalRef(jprice);
 		env->DeleteLocalRef(jtitle);
