@@ -301,16 +301,12 @@ public class MRGServiceCpp {
 			@Override
 			public void run() {
 				try {
-					Log.v(LOG_TAG, "showSupport try start");		
+					Log.v(LOG_TAG, "showSupportStart");
 					GameActivity tempActivity = GameActivity.Get();
 					MRGSMyComSupportDialog dialog = new MRGSMyComSupportDialog(tempActivity, secretKey, true);
 					dialog.setListener(mSupportDelegate);
-					dialog.setErrorMessage("Не удалось загрузить страницу");
-					dialog.setErrorTitle("Ошибка подключения");
-					dialog.setErrorButton("Ок");
 					dialog.setFullscreen(true);
 					dialog.show();
-					Log.v(LOG_TAG, "showSupportStart");			
 				}	
 				catch (Throwable e) {
     				e.printStackTrace();
@@ -367,6 +363,7 @@ public class MRGServiceCpp {
 
 		MRGService.service(context, mServerDataDelegate, appId, appSecret, mrgsSettings);
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
+		MRGSMyComSupport.getMyComSupport().setWidgetTheme(MRGSMyComSupport.WidgetTheme.LIGHT);
 		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
 		GameActivity activity = GameActivity.Get();
