@@ -551,7 +551,7 @@ void UPsMRGSProxyIOS::InitModule()
 
 	  // MRGSMyComSupport
 	  MRGSMyComSupportParams* SupportParams = [[MRGSMyComSupportParams alloc] init];
-	  SupportParams.projectId = AppId;
+	  SupportParams.projectId = [NSString stringWithFormat:@"%d", AppId];
 	  SupportParams.secret = MRGSSettings->iOSSupportSecretKey.GetNSString();
 	  [ExternalParams addObject:SupportParams];
 
