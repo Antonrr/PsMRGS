@@ -549,6 +549,12 @@ void UPsMRGSProxyIOS::InitModule()
 	  MyTrackerParams.enableLogging = bDebug;
 	  [ExternalParams addObject:MyTrackerParams];
 
+	  // MRGSMyComSupport
+	  MRGSMyComSupportParams* SupportParams = [[MRGSMyComSupportParams alloc] init];
+	  SupportParams.projectId = AppId;
+	  SupportParams.secret = MRGSSettings->iOSSupportSecretKey.GetNSString();
+	  [ExternalParams addObject:SupportParams];
+
 	  [MRGServiceInit startWithServiceParams:MrgsParams
 						   externalSDKParams:ExternalParams
 									delegate:Delegate];
@@ -601,17 +607,7 @@ void UPsMRGSProxyIOS::OnInitComplete()
 
 	bInitComplete = true;
 
-	const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
-	if (MRGSSettings == nullptr || MRGSSettings->IsValidLowLevel() == false)
-	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSSettings not initialized or removed"), *PS_FUNC_LINE);
-		return;
-	}
-
-	MRGSMyComSupport* Support = [MRGSMyComSupport sharedInstance];
-	Support.secret = MRGSSettings->iOSSupportSecretKey.GetNSString();
-	Support.delegate = Delegate;
-
+	[MRGSMyComSupport sharedInstance].delegate = Delegate;
 	[MRGSBank sharedInstance].delegateExtended = Delegate;
 
 	AsyncTask(ENamedThreads::GameThread, [this]() {

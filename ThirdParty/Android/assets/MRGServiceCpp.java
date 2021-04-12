@@ -344,9 +344,8 @@ public class MRGServiceCpp {
 	}
 
 	public static void initUser(final String userId) {
-		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId started"));
 		MRGSUsers.instance().setUserId(userId);
-		Log.v(LOG_TAG, String.format("MRGServiceCPP:initWithUserId registered and authorized new user %s", userId));
+		Log.v(LOG_TAG, String.format("MRGServiceCPP:initUser %s", userId));
 		onUserAuthSuccess();
 	}
 
