@@ -273,11 +273,11 @@
 			MRGServiceCpp.checkIntegration();
 		}
 
-		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret, final boolean bDebug)
+		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret, final String SupportSecret, final boolean bDebug)
 		{
 			MRGServiceCpp.appContext = getApplicationContext();
 			MRGService.setAppContext(getApplicationContext());
-			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret, bDebug);
+			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret, SupportSecret, bDebug);
 		}
 
 		public void AndroidThunkJava_MRGService_initUserWithId(String userId)
@@ -288,6 +288,11 @@
 		public void AndroidThunkJava_MRGService_showSupport(final String secretKey)
 		{
 			MRGServiceCpp.showSupport(secretKey);
+		}
+
+		public void AndroidThunkJava_MRGService_checkTickets()
+		{
+			MRGServiceCpp.checkTickets();
 		}
 
 		public void AndroidThunkJava_MRGService_sendAFEvent(final String eventName, final String value) 

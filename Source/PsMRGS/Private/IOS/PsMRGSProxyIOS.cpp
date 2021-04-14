@@ -104,6 +104,10 @@
 - (void)myComSupportDidReceiveNotificationsForTickets
 {
 	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
+	if (self.Proxy)
+	{
+		self.Proxy->OnSupportTicketsReceived();
+	}
 }
 
 - (void)myComSupportCheckTicketsFailWithError:(NSError*)error
@@ -688,16 +692,6 @@ void UPsMRGSProxyIOS::OnSupportReceivedError(const FString& Error)
 	});
 }
 
-void UPsMRGSProxyIOS::OnSupportTicketsFailWithError(const FString& Error)
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
-		}
-	});
-}
-
 void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 {
 	if (bInitComplete == false)
@@ -845,6 +839,12 @@ void UPsMRGSProxyIOS::ShowSupport()
 	  MRGSMyComSupport* support = [MRGSMyComSupport sharedInstance];
 	  [support showSupportViewOnSuperview:ViewContainer];
 	});
+}
+
+void UPsMRGSProxyIOS::CheckSupportTickets()
+{
+	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);
+	[[MRGSMyComSupport sharedInstance] checkTickets];
 }
 
 void UPsMRGSProxyIOS::OnSupportClosed()

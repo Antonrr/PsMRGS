@@ -15,6 +15,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_PURCHASE_CANCELED,
 	MRGS_SUPPORT_CLOSED,
 	MRGS_SUPPORT_ERROR,
+	MRGS_SUPPORT_TICKETS_NEW,
 	MRGS_SUPPORT_TICKETS_ERROR,
 	MRGS_FULLSCREEN_CLOSED,
 	MRGS_INTERSTITIAL_SLIDER_CLOSED,
@@ -209,6 +210,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
 	virtual void ShowSupport();
 
+	/** Check if there are new support tickets */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Support")
+	virtual void CheckSupportTickets();
+
 	//////////////////////////////////////////////////////////////////////////
 	// Tools
 
@@ -257,6 +262,9 @@ public:
 
 	/** Support received error */
 	virtual void OnSupportReceivedError(const FString& Error);
+
+	/** Support has updates on tickets */
+	virtual void OnSupportTicketsReceived();
 
 	/** Support tickets update fail with error */
 	virtual void OnSupportTicketsFailWithError(const FString& Error);

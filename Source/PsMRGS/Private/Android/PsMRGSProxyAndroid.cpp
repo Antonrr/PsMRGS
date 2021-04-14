@@ -239,9 +239,10 @@ void UPsMRGSProxyAndroid::InitModule()
 	{
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
 		jstring Secret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSecret));
-		static jmethodID InitjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initWithAppIdAndSecret", "(Ljava/lang/String;Ljava/lang/String;Z)V", false);
+		jstring SupportSecret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSupportSecretKey));
+		static jmethodID InitjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initWithAppIdAndSecret", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V", false);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitjMethod, AppId, Secret, bDebug);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitjMethod, AppId, Secret, SupportSecret, bDebug);
 		Env->DeleteLocalRef(AppId);
 		Env->DeleteLocalRef(Secret);
 	}
@@ -408,6 +409,22 @@ void UPsMRGSProxyAndroid::ShowSupport()
 	}
 }
 
+void UPsMRGSProxyAndroid::CheckSupportTickets()
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID CheckTickets = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_checkTickets", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, CheckTickets);
+	}
+}
+
 bool UPsMRGSProxyAndroid::IsReady() const
 {
 	return bInitComplete;
@@ -533,16 +550,6 @@ void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
 		if (MRGSDelegate.IsBound())
 		{
 			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
-		}
-	});
-}
-
-void UPsMRGSProxyAndroid::OnSupportTicketsFailWithError(const FString& Error)
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
 		}
 	});
 }
@@ -843,6 +850,24 @@ extern "C"
 			if (Proxy)
 			{
 				Proxy->OnUserAuthError();
+			}
+			else
+			{
+				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onSupportTicketResponse(JNIEnv* env, jobject obj, jboolean bHasTickets)
+	{
+		AsyncTask(ENamedThreads::GameThread, [bHasTickets]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				if (bHasTickets)
+				{
+					Proxy->OnSupportTicketsReceived();
+				}
 			}
 			else
 			{

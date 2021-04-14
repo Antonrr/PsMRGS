@@ -119,6 +119,9 @@ public:
 	
 	/** Show support screen */
 	virtual void ShowSupport() override;
+
+	/** Check if there are new support tickets */
+	virtual void CheckSupportTickets() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Tools
@@ -165,9 +168,6 @@ public:
 	
 	/** Support received error */
 	virtual void OnSupportReceivedError(const FString& Error) override;
-	
-	/** Support tickets update fail with error */
-	virtual void OnSupportTicketsFailWithError(const FString& Error) override;
 	
 	/** Support closed */
 	virtual void OnSupportClosed() override;

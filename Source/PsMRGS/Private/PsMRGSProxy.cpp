@@ -159,6 +159,11 @@ void UPsMRGSProxy::ShowSupport()
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+void UPsMRGSProxy::CheckSupportTickets()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Tools
 
@@ -232,9 +237,24 @@ void UPsMRGSProxy::OnSupportReceivedError(const FString& Error)
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+void UPsMRGSProxy::OnSupportTicketsReceived()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_NEW);
+		}
+	});
+}
+
 void UPsMRGSProxy::OnSupportTicketsFailWithError(const FString& Error)
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_TICKETS_ERROR);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnSupportClosed()

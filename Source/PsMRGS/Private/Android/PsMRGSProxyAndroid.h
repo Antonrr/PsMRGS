@@ -80,6 +80,8 @@ public:
 
 	virtual void ShowSupport() override;
 
+	virtual void CheckSupportTickets() override;
+
 	virtual bool IsReady() const override;
 
 	virtual bool UserLoggedIn() const;
@@ -104,8 +106,6 @@ public:
 	virtual void OnShowcaseDataRecieveError(const FString& Error) override;
 
 	virtual void OnSupportReceivedError(const FString& Error) override;
-
-	virtual void OnSupportTicketsFailWithError(const FString& Error) override;
 
 	virtual void OnShowCaseDataHasNoAds() override;
 

@@ -63,6 +63,8 @@ public class MRGServiceCpp {
 	public static native void onAdmanViewComplete(int type);
 	public static native void onAdmanHasNoAdd(int type);
 
+	public static native void onSupportTicketResponse(boolean bHasTickets);
+
 
 	/**
 	 * Позволяет выполнять callback'и от MRGService в потоке, в котором требуется приложению. Например, для
@@ -315,6 +317,24 @@ public class MRGServiceCpp {
 		});
 	}
 
+	public static void checkTickets() {
+		Log.v(LOG_TAG, String.format("checkTickets()"));
+
+		GameActivity activity = GameActivity.Get();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					GameActivity tempActivity = GameActivity.Get();
+					MRGSMyComSupport.checkTickets(tempActivity);
+				}	
+				catch (Throwable e) {
+    				e.printStackTrace();
+				}
+			}
+		});
+	}
+
 	public static void addMetric(int metricId){
 		MRGSMetrics.addMetric(metricId);
 	}
@@ -327,7 +347,7 @@ public class MRGServiceCpp {
 		MRGService.instance().checkIntegration();
 	}
 
-	public static void initWithAppidAndSecret(final String appId, final String appSecret, final boolean bDebug) {
+	public static void initWithAppidAndSecret(final String appId, final String appSecret, final String supportSecret, final boolean bDebug) {
 
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (%s, %s, %b)", appId, appSecret, bDebug));
 
@@ -338,7 +358,7 @@ public class MRGServiceCpp {
 			public void run() 
 			{
 				Log.v(LOG_TAG, String.format("MRGServiceCPP:init context (%s)", appContext.getPackageCodePath()));
-				init(appContext, appId, appSecret, bDebug);
+				init(appContext, appId, appSecret, supportSecret, bDebug);
 			}
 		});
 	}
@@ -349,7 +369,7 @@ public class MRGServiceCpp {
 		onUserAuthSuccess();
 	}
 
-	public static void init(final Context context,final String appId, final String appSecret, final boolean bDebug) {
+	public static void init(final Context context,final String appId, final String appSecret, final String supportSecret, final boolean bDebug) {
 		Log.v(LOG_TAG, String.format("init MRGS started"));
 
 		Bundle mrgsSettings = new Bundle();
@@ -363,6 +383,7 @@ public class MRGServiceCpp {
 		MRGService.service(context, mServerDataDelegate, appId, appSecret, mrgsSettings);
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
 		MRGSMyComSupport.getMyComSupport().setWidgetTheme(MRGSMyComSupport.WidgetTheme.LIGHT);
+		MRGSMyComSupport.setSecret(supportSecret);
 		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
 		GameActivity activity = GameActivity.Get();
@@ -518,9 +539,6 @@ public class MRGServiceCpp {
 		}
 	}
 
-	/**
-	 * Выполняет callback'и в необходимом потоке. Например, в случае Cocos2d-x это должен быть GL-thread.
-	 */
 	public interface ThreadHelper {
 		void runOnNecessaryThread(final Runnable callback);
 	}
@@ -540,8 +558,8 @@ public class MRGServiceCpp {
 
 		@Override
 		public void onTicketResponse(final boolean hasNotifications) {
-			// String message = (hasNotifications ? "Есть новые ответы по тикетам" : "Нет новых ответов на тикеты");
-			// Toast.makeText(GameActivity.Get(), message, Toast.LENGTH_LONG).show();
+			Log.v(LOG_TAG, String.format("SupportTicketListener hasNotifications %b", hasNotifications));
+			onSupportTicketResponse(hasNotifications);
 		}
 	}
 }
