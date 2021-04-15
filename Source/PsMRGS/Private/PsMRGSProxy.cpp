@@ -4,6 +4,8 @@
 
 #include "PsMRGSCommon.h"
 
+#include "Async/Async.h"
+
 UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
