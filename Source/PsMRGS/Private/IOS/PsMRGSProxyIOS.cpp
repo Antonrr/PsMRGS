@@ -543,6 +543,7 @@ void UPsMRGSProxyIOS::InitModule()
 	  {
 		  MRGSAppsFlyerParams* AppsFlyerParams = [[MRGSAppsFlyerParams alloc] initWithDevKey:AppsFlyerDevKey andAppleAppId:AppleAppId];
 		  AppsFlyerParams.debug = bDebug;
+		  AppsFlyerParams.waitForATTUserAuthorization = 20.f;
 		  [ExternalParams addObject:AppsFlyerParams];
 	  }
 
