@@ -580,41 +580,33 @@ void UPsMRGSProxyAndroid::OnUserAuthError()
 
 void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
 {
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
-		}
+	AsyncTask(ENamedThreads::GameThread, [this, PaymentId, TransactionId, Payload]() {
+		MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE);
+		MRGSIAPDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_COMPLETE, PaymentId, TransactionId, Payload);
 	});
 }
 
 void UPsMRGSProxyAndroid::OnPurchasePending(const FString& ProductId)
 {
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_PENDING);
-		}
+	AsyncTask(ENamedThreads::GameThread, [this, ProductId]() {
+		MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_PENDING);
+		MRGSIAPDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_PENDING, ProductId, "", "");
 	});
 }
 
 void UPsMRGSProxyAndroid::OnPurchaseFailed(const FString& ProductId, const FString& Answer)
 {
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
-		}
+	AsyncTask(ENamedThreads::GameThread, [this, ProductId, Answer]() {
+		MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED);
+		MRGSIAPDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_FAILED, ProductId, "", Answer);
 	});
 }
 
 void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FString& Answer)
 {
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_CANCELED);
-		}
+	AsyncTask(ENamedThreads::GameThread, [this, ProductId, Answer]() {
+		MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_CANCELED);
+		MRGSIAPDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PURCHASE_CANCELED, ProductId, "", Answer);
 	});
 }
 
@@ -645,7 +637,11 @@ extern "C"
 
 		fid = env->GetFieldID(itemClass, "price", "Ljava/lang/String;");
 		jstring jprice = (jstring)env->GetObjectField(jitem, fid);
-		OutItem.Price = MRGSJniHelper::JavaStringToFstring(jprice);
+		OutItem.FormattedPrice = MRGSJniHelper::JavaStringToFstring(jprice);
+
+		static jmethodID getPriceMicrosMethodId = FJavaWrapper::FindMethod(env, itemClass, "getPriceMicros", "()Ljava/lang/String;", false);
+		jstring jpricemicros = (jstring)env->CallObjectMethod(jitem, getPriceMicrosMethodId);
+		OutItem.PriceMicros = MRGSJniHelper::JavaStringToFstring(jpricemicros);
 
 		fid = env->GetFieldID(itemClass, "title", "Ljava/lang/String;");
 		jstring jtitle = (jstring)env->GetObjectField(jitem, fid);
@@ -666,6 +662,7 @@ extern "C"
 		env->DeleteLocalRef(jcurrency);
 		env->DeleteLocalRef(jsku);
 		env->DeleteLocalRef(jprice);
+		env->DeleteLocalRef(jpricemicros);
 		env->DeleteLocalRef(jtitle);
 		env->DeleteLocalRef(jtype);
 		env->DeleteLocalRef(jdescription);

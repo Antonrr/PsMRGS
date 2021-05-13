@@ -55,6 +55,7 @@ enum class EPsMRGSATTStatus : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPsMRGSDelegate, EPsMRGSEventsTypes, MyEventName);
+typedef TMulticastDelegate<void(EPsMRGSEventsTypes MyEventName, FString ProductId, FString TransactionId, FString Payload)> FPsMRGSIAPDelegate;
 
 USTRUCT(BlueprintType)
 struct FPsMRGSPurchaseInfo
@@ -68,6 +69,10 @@ struct FPsMRGSPurchaseInfo
 	/** Product price from store */
 	UPROPERTY(BlueprintReadOnly)
 	FString Price;
+
+	/** Product micros from store (Android) */
+	UPROPERTY(BlueprintReadOnly)
+	FString PriceMicros;
 
 	/** Product currency from store */
 	UPROPERTY(BlueprintReadOnly)
@@ -306,6 +311,9 @@ protected:
 public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
 	FPsMRGSDelegate MRGSDelegate;
+
+	/** Delegate that would be trigget on purchase related events */
+	FPsMRGSIAPDelegate MRGSIAPDelegate;
 
 private:
 	/** Debug CPPA setting value*/
