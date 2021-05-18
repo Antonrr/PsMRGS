@@ -301,8 +301,8 @@ void UPsMRGSProxyAndroid::LoadStoreProducts(const TArray<FString>& ProductsList)
 
 void UPsMRGSProxyAndroid::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
 {
-	LoadedProducts = InLoadedProducts;
-	AsyncTask(ENamedThreads::GameThread, [this]() {
+	AsyncTask(ENamedThreads::GameThread, [this, InLoadedProducts]() {
+		LoadedProducts = InLoadedProducts;
 		if (MRGSDelegate.IsBound())
 		{
 			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
