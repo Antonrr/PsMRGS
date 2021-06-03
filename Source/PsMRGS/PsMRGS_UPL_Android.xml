@@ -156,9 +156,9 @@
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSNotifications.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSNotifications.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
-		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/gradle/app/libs/in-app-purchasing-2.0.61.jar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.76.jar" dst="$S(BuildDir)/gradle/app/libs/in-app-purchasing-2.0.76.jar" />
 
-		<!-- To remove proguadr - uncomment -->
+		<!-- To remove proguard - uncomment -->
 		<!-- <forceDeleteFileLine dst="$S(BuildDir)/project.properties" mask="proguard.config"/>
 		 <forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="proguardFiles"/>
 		<forceDeleteFileLine dst="$S(BuildDir)/gradle/app/build.gradle" mask="minifyEnabled"/>		 -->
@@ -167,7 +167,7 @@
 		<!-- If using jars instead aar - uncomment -->
 		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/AF-Android-SDK.jar" dst="$S(BuildDir)/libs/AF-Android-SDK.jar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/GoogleConversionTrackingSdk-2.2.4.jar" dst="$S(BuildDir)/libs/GoogleConversionTrackingSdk-2.2.4.jar" />
- 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.61.jar" dst="$S(BuildDir)/libs/in-app-purchasing-2.0.61.jar" />
+ 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.76.jar" dst="$S(BuildDir)/libs/in-app-purchasing-2.0.76.jar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MobileAppTracker.jar" dst="$S(BuildDir)/libs/MobileAppTracker.jar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGService.jar" dst="$S(BuildDir)/libs/MRGService.jar" /> -->
 		<!-- <copyFile src="$S(PluginDir)/../../ThirdParty/Android/myTracker.jar" dst="$S(BuildDir)/libs/myTracker.jar" /> -->
