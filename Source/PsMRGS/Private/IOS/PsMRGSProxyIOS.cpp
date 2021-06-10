@@ -200,7 +200,7 @@
 
 	if (response.requestError != nil)
 	{
-		UE_LOG(LogMRGS, Error, TEXT("%s: didReceiveProductsError: %s"), *PS_FUNC_LINE, *FString([response.requestError description]));
+		UE_LOG(LogMRGS, Error, TEXT("%s: didReceiveProductsError: %s"), *PS_FUNC_LINE, *FString([response.requestError localizedDescription]));
 	}
 }
 
