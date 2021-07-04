@@ -267,6 +267,22 @@ void UPsMRGSProxyAndroid::InitUser(const FString& UserId)
 	}
 }
 
+void UPsMRGSProxyAndroid::SetAutoRestoreTransactions(bool bRestore)
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID jMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_autoRestoreTransactions", "(Z)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, jMethod);
+	}
+}
+
 void UPsMRGSProxyAndroid::LoadStoreProducts(const TArray<FString>& ProductsList)
 {
 	if (bInitComplete == false)

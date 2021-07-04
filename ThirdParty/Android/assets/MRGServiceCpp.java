@@ -369,6 +369,12 @@ public class MRGServiceCpp {
 		onUserAuthSuccess();
 	}
 
+	public static void autoRestoreTransactions(final boolean bRestore)
+	{
+		MRGSBilling.instance().autoRestoreTransactions(bRestore);
+		Log.v(LOG_TAG, String.format("MRGServiceCPP:autoRestoreTransactions %b", bRestore));
+	}
+
 	public static void init(final Context context,final String appId, final String appSecret, final String supportSecret, final boolean bDebug) {
 		Log.v(LOG_TAG, String.format("init MRGS started"));
 

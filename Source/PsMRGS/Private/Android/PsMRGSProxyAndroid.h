@@ -66,6 +66,8 @@ public:
 
 	virtual void InitUser(const FString& UserId) override;
 
+	virtual void SetAutoRestoreTransactions(bool bRestore);
+
 	virtual void LoadStoreProducts(const TArray<FString>& ProductsList) override;
 
 	virtual const TArray<FPsMRGSPurchaseInfo>& GetProducts() const override;

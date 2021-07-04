@@ -193,6 +193,9 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Store
 
+	/** Whether to restore transactions after loading products. Must be called after InitModule but before LoadStoreProducts */
+	virtual void SetAutoRestoreTransactions(bool bRestore);
+
 	/** Load products from store */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Store")
 	virtual void LoadStoreProducts(const TArray<FString>& ProductsList);

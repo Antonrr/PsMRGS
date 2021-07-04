@@ -285,6 +285,11 @@
 			MRGServiceCpp.initUser(userId);
 		}
 
+		public void AndroidThunkJava_MRGService_autoRestoreTransactions(final boolean bRestore)
+		{
+			MRGServiceCpp.autoRestoreTransactions(bRestore);
+		}
+
 		public void AndroidThunkJava_MRGService_showSupport(final String secretKey)
 		{
 			MRGServiceCpp.showSupport(secretKey);
