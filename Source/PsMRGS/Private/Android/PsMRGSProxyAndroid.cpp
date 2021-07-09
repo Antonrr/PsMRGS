@@ -279,7 +279,7 @@ void UPsMRGSProxyAndroid::SetAutoRestoreTransactions(bool bRestore)
 	if (Env)
 	{
 		static jmethodID jMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_autoRestoreTransactions", "(Z)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, jMethod);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, jMethod, bRestore);
 	}
 }
 
