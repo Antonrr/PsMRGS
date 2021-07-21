@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #pragma once
 
@@ -34,6 +34,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_ATT_DENIED,
 	MRGS_ATT_AUTHORIZED,
 	MRGS_ATT_ERROR,
+	MRGS_NOTIFICATION_CLICKED,
 };
 
 /** CCPA setting */
@@ -238,6 +239,17 @@ public:
 	virtual void OpenApplicationPageInSystemSettings();
 
 	//////////////////////////////////////////////////////////////////////////
+	// Notifications
+
+	/** Call EnableMRGSNotifications */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Notifications")
+	virtual void EnableNotifications();
+
+	/** Call DisableMRGSNotifications */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Notifications")
+	virtual void DisableNotifications();
+
+	//////////////////////////////////////////////////////////////////////////
 	// Callbacks
 
 public:
@@ -267,6 +279,13 @@ public:
 
 	/** Showcase data is empty */
 	virtual void OnShowCaseDataHasNoAds();
+
+	/** Notification clicked handler */
+	virtual void OnClickOnNotification(int32 NotificationId, const FString& Title, const FString& Message, const FString& DeveloperPayload, bool bIsLocal);
+
+	/** Get notification developer payload */
+	UFUNCTION(BlueprintCallable)
+	virtual FString GetNotificationDeveloperPayload() const;
 
 	/** Support received error */
 	virtual void OnSupportReceivedError(const FString& Error);

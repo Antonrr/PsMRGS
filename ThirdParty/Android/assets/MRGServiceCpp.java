@@ -56,15 +56,13 @@ public class MRGServiceCpp {
 	private static native void onPurchasePending(final String sku);
 	private static native void onPurchaseFail(final String sku, final String answer);
 
-	private static native void onReceivedNotification(final int notificationId, final String title, final String message, final boolean isLocal);
-	private static native void onClickOnNotification(final int notificationId, final String title, final String message, final boolean isLocal);
+	private static native void onClickOnNotification(int idNotify, final String title, final String msg, final String developerPayload, boolean isLocal);
 
 	public static native void onAdmanLoadComplete(int type, boolean notification);
 	public static native void onAdmanViewComplete(int type);
 	public static native void onAdmanHasNoAdd(int type);
 
 	public static native void onSupportTicketResponse(boolean bHasTickets);
-
 
 	/**
 	 * Позволяет выполнять callback'и от MRGService в потоке, в котором требуется приложению. Например, для
@@ -233,6 +231,25 @@ public class MRGServiceCpp {
 		}
 	};
 
+	private final static MRGSPushNotificationHandler.MRGSPushNotificationExDelegate mNotificationDelegate = new MRGSPushNotificationHandler.MRGSPushNotificationExDelegate() {
+		@Override
+		public void clickOnNotification(int idNotify, String title, String msg, MRGSMap developerPayload, boolean isLocal) {
+			Log.v(LOG_TAG, "clickOnNotification");
+			final String developerPayloadJson = MRGSJson.stringWithMap(developerPayload);
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onClickOnNotification(idNotify, title, msg, developerPayloadJson, isLocal);
+				}
+			});
+		}
+
+		@Override
+		public void receivedNotification(int idNotify, String title, String msg, MRGSMap developerPayload, boolean isLocal) {
+
+		}
+	};
+
 	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
@@ -392,6 +409,8 @@ public class MRGServiceCpp {
 		MRGSMyComSupport.setSecret(supportSecret);
 		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
+		MRGSLocalPushService.setDelegateEx(mNotificationDelegate);
+
 		GameActivity activity = GameActivity.Get();
 		activity.OnMrgsInitComplete();
 		threadHelper.runOnNecessaryThread(new Runnable() 
@@ -403,14 +422,6 @@ public class MRGServiceCpp {
 				onInitComplete();
 			}
 		});
-	}
-
-	public static void initPush() {
-		MRGSPushNotifications.getInstance().initPushNotifications(PushDelegate.instance());
-	}
-
-	public static void initLocalPush() {
-		MRGSLocalPushService.setDelegate(PushDelegate.instance());
 	}
 
 	public static void getProductsInfo(final String skuList) {
@@ -506,42 +517,6 @@ public class MRGServiceCpp {
 		} else {
 			final Handler mainHandler = new Handler(Looper.getMainLooper());
 			mainHandler.post(runnable);
-		}
-	}
-
-	private static class PushDelegate implements MRGSPushNotificationHandler.MRGSPushNotificationDelegate {
-		private PushDelegate() {
-		}
-
-		private static PushDelegate mInstance;
-
-		synchronized static PushDelegate instance() {
-			if (mInstance == null) {
-				mInstance = new PushDelegate();
-			}
-			return mInstance;
-		}
-
-		@Override
-		public void clickOnNotification(final int notificationId, final String title, final String message, final boolean isLocal) {
-			Log.v(LOG_TAG, String.format("PushDelegate.clickOnNotification(%d, '%s', '%s', %s)", notificationId, title, message, (isLocal ? "local" : "server")));
-			threadHelper.runOnNecessaryThread(new Runnable() {
-				@Override
-				public void run() {
-					onClickOnNotification(notificationId, title, message, isLocal);
-				}
-			});
-		}
-
-		@Override
-		public void receivedNotification(final int notificationId, final String title, final String message, final boolean isLocal) {
-			Log.v(LOG_TAG, String.format("PushDelegate.receivedNotification(%d, '%s', '%s', %s)", notificationId, title, message, (isLocal ? "local" : "server")));
-			threadHelper.runOnNecessaryThread(new Runnable() {
-				@Override
-				public void run() {
-					onReceivedNotification(notificationId, title, message, isLocal);
-				}
-			});
 		}
 	}
 

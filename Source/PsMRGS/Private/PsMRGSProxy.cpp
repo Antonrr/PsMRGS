@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxy.h"
 
@@ -191,6 +191,19 @@ void UPsMRGSProxy::OpenApplicationPageInSystemSettings()
 }
 
 //////////////////////////////////////////////////////////////////////////
+// Notifications
+
+void UPsMRGSProxy::EnableNotifications()
+{
+	// no op
+}
+
+void UPsMRGSProxy::DisableNotifications()
+{
+	// no op
+}
+
+//////////////////////////////////////////////////////////////////////////
 // Callbacks
 
 void UPsMRGSProxy::OnGDPRAccepted(bool bWithAdvertising)
@@ -236,6 +249,16 @@ void UPsMRGSProxy::OnShowcaseDataRecieveError(const FString& Error)
 void UPsMRGSProxy::OnShowCaseDataHasNoAds()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+void UPsMRGSProxy::OnClickOnNotification(int32 NotificationId, const FString& Title, const FString& Message, const FString& DeveloperPayload, bool bIsLocal)
+{
+	// no op
+}
+
+FString UPsMRGSProxy::GetNotificationDeveloperPayload() const
+{
+	return FString{};
 }
 
 void UPsMRGSProxy::OnSupportReceivedError(const FString& Error)

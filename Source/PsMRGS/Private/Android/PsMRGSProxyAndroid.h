@@ -111,6 +111,10 @@ public:
 
 	virtual void OnShowCaseDataHasNoAds() override;
 
+	virtual void OnClickOnNotification(int32 NotificationId, const FString& Title, const FString& Message, const FString& DeveloperPayload, bool bIsLocal) override;
+
+	virtual FString GetNotificationDeveloperPayload() const override;
+
 	virtual void OnSupportClosed() override;
 
 	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts) override;
@@ -131,5 +135,8 @@ public:
 
 	virtual FString GetOpenUDID() const override;
 
+protected:
+	/** Notification developer payload */
+	FString NotificationDeveloperPayload;
 #endif
 };

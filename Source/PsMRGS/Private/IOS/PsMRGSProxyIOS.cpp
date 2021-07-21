@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxyIOS.h"
 
@@ -282,6 +282,19 @@
 	[[MRGSBank sharedInstance] restorePurchase];
 }
 
+- (void)registerLifeCycleListener
+{
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(didFinishLaunching:)
+												 name:UIApplicationDidFinishLaunchingNotification
+											   object:nil];
+}
+
+- (void)didFinishLaunching:(NSNotification*)notification
+{
+	[MRGServiceInit application:[UIApplication sharedApplication] didFinishLaunchingWithOptions:[IOSAppDelegate GetDelegate].launchOptions];
+}
+
 - (NSString*)getCurrencyCode:(MRGSBankProduct*)product
 {
 	NSLocale* PriceLocale = [product.skProduct priceLocale];
@@ -314,6 +327,9 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 
 	Delegate = [[PsMRGSDelegate alloc] init];
 	Delegate.Proxy = this;
+
+	[Delegate registerLifeCycleListener];
+	[Delegate didFinishLaunching:nil];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -514,11 +530,13 @@ void UPsMRGSProxyIOS::InitModule()
 	  MRGServiceParams* MrgsParams = [[MRGServiceParams alloc] initWithAppId:AppId andSecret:Secret];
 	  MrgsParams.debug = bDebug;
 	  MrgsParams.startOnTestDevice = bDebug;
-	  MrgsParams.shouldResetBadge = bDebug;
+	  MrgsParams.shouldResetBadge = false;
 	  MrgsParams.crashReportEnabled = false;
-	  MrgsParams.allowPushNotificationHooks = false;
+	  MrgsParams.allowPushNotificationHooks = true;
 	  MrgsParams.disablePaymentsCheck = false;
 	  MrgsParams.automaticPaymentTracking = false;
+	  MrgsParams.MRGSNotificationCenterSupported = true;
+	  MrgsParams.defferedMRGSNotificationCenterStart = true;
 	  MrgsParams.automaticallyShowIDFARequestAtStartup = MRGSSettings->bShowAppTrackingRequestAtStartup;
 
 	  NSArray* Paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, bDebug);
@@ -910,6 +928,16 @@ FString UPsMRGSProxyIOS::GetOpenUDID() const
 void UPsMRGSProxyIOS::OpenApplicationPageInSystemSettings()
 {
 	[MRGSDevice openSystemSettingsOfApplication];
+}
+
+void UPsMRGSProxyIOS::EnableNotifications()
+{
+	[[MRGSNotificationCenter currentCenter] enableMRGSNotifications];
+}
+
+void UPsMRGSProxyIOS::DisableNotifications()
+{
+	[[MRGSNotificationCenter currentCenter] disableMRGSNotifications];
 }
 
 #endif //IOS

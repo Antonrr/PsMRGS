@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #pragma once
 
@@ -18,8 +18,10 @@
 #if PLATFORM_IOS
 @interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegateEx, SKStoreProductViewControllerDelegate>
 
-- (NSString *)getCurrencyCode:(MRGSBankProduct*)product;
+- (NSString*)getCurrencyCode:(MRGSBankProduct*)product;
 - (void)restorePurchase;
+- (void)registerLifeCycleListener;
+- (void)didFinishLaunching:(NSNotification*)notification;
 
 @property (nonatomic) UPsMRGSProxy* Proxy;
 
@@ -134,6 +136,15 @@ public:
 
 	/** Open application page in system settings */
 	virtual void OpenApplicationPageInSystemSettings() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Notifications
+
+	/** Call EnableMRGSNotifications */
+	virtual void EnableNotifications() override;
+
+	/** Call DisableMRGSNotifications */
+	virtual void DisableNotifications() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Callbacks

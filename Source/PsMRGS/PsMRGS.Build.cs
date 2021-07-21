@@ -279,6 +279,13 @@ public class PsMRGS : ModuleRules
 				)
 			);
 
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGSNotifications",
+				"../../ThirdParty/IOS/MRGSNotifications.embeddedframework.zip"
+				)
+			);
+
             // Hack for remote compilation on windows
             string thirdPartyPath = (ProjectRoot.Contains("/UE4/Builds") ? "/opt/build-dir/ps-mrgs" : ProjectRoot) + "/ThirdParty/IOS/";
             string tempPathPrefix = thirdPartyPath + "Flurry/";

@@ -550,6 +550,22 @@ void UPsMRGSProxyAndroid::OnShowCaseDataHasNoAds()
 	});
 }
 
+void UPsMRGSProxyAndroid::OnClickOnNotification(int32 NotificationId, const FString& Title, const FString& Message, const FString& DeveloperPayload, bool bIsLocal)
+{
+	AsyncTask(ENamedThreads::GameThread, [this, DeveloperPayload]() {
+		NotificationDeveloperPayload = DeveloperPayload;
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOTIFICATION_CLICKED);
+		}
+	});
+}
+
+FString UPsMRGSProxyAndroid::GetNotificationDeveloperPayload() const
+{
+	return NotificationDeveloperPayload;
+}
+
 void UPsMRGSProxyAndroid::OnSupportClosed()
 {
 	AsyncTask(ENamedThreads::GameThread, [this]() {
@@ -863,6 +879,21 @@ extern "C"
 			if (Proxy)
 			{
 				Proxy->OnUserAuthError();
+			}
+			else
+			{
+				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onClickOnNotification(JNIEnv* env, jobject obj, int notificationId, jstring title, jstring message, jstring developerPayload, jboolean isLocal)
+	{
+		AsyncTask(ENamedThreads::GameThread, [notificationId, title, message, developerPayload, isLocal]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnClickOnNotification(notificationId, MRGSJniHelper::JavaStringToFstring(title), MRGSJniHelper::JavaStringToFstring(message), MRGSJniHelper::JavaStringToFstring(developerPayload), isLocal);
 			}
 			else
 			{
