@@ -50,6 +50,7 @@
 		implementation 'com.android.support:support-v4:26.1.0'
 		implementation 'androidx.appcompat:appcompat:1.2.0'
 		implementation 'com.google.firebase:firebase-messaging:21.0.1'
+		implementation 'com.google.firebase:firebase-iid'
 		implementation 'com.appsflyer:af-android-sdk:6.2.3'
 	}
 
