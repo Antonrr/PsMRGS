@@ -349,7 +349,7 @@ void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertisi
 	  GDPRInstance.delegate = Delegate;
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
-	  [GDPRInstance showDefaultAgreementAtViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+	  [GDPRInstance showDefaultAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 												forAppId:MRGSSettings->iOSMrgsAppId];
 	});
 }
@@ -368,7 +368,7 @@ void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 	  GDPRInstance.delegate = Delegate;
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
-	  [GDPRInstance showAgreementAtViewController:[UIApplication sharedApplication].keyWindow.rootViewController
+	  [GDPRInstance showAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 										 forAppId:MRGSSettings->iOSMrgsAppId
 										 fromFile:[[NSBundle mainBundle] URLForResource:@"gdpr"
 																		  withExtension:@"html"
@@ -848,7 +848,7 @@ void UPsMRGSProxyIOS::ShowSupport()
 	}
 
 	dispatch_async(dispatch_get_main_queue(), ^{
-	  UIView* ViewContainer = [UIApplication sharedApplication].keyWindow.rootViewController.view;
+	  UIView* ViewContainer = UIApplication.sharedApplication.delegate.window.rootViewController.view;
 	  MRGSMyComSupport* support = [MRGSMyComSupport sharedInstance];
 	  [support showSupportViewOnSuperview:ViewContainer];
 	});
