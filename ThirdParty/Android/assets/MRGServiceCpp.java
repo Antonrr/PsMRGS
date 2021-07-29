@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.io.InputStream;
 import ru.mail.mrgservice.*;
+import ru.mail.mrgservice.advertising.*;
+import ru.mail.mrgservice.showcase.*;
 import com.epicgames.*;
 import com.epicgames.ue4.GameActivity;
 import android.widget.Toast;
@@ -27,11 +29,6 @@ import ru.mail.mrgservice.MRGSMetrics;
 @SuppressWarnings("unused")
 public class MRGServiceCpp {
 	private final static String LOG_TAG = "[JAVA] MRGServiceCpp.log";
-	//support key Jhfd763NMqweYUkGD
-
-	private final static int ADMAN_SHOWCASE = 1;
-	private final static int ADMAN_FULLSCREEN_BANNER = 2;
-	private final static int ADMAN_INTERSTITIAL = 3;
 
 	public static Context appContext;
 
@@ -58,11 +55,15 @@ public class MRGServiceCpp {
 
 	private static native void onClickOnNotification(int idNotify, final String title, final String msg, final String developerPayload, boolean isLocal);
 
-	public static native void onAdmanLoadComplete(int type, boolean notification);
-	public static native void onAdmanViewComplete(int type);
-	public static native void onAdmanHasNoAdd(int type);
-
 	public static native void onSupportTicketResponse(boolean bHasTickets);
+
+	private static MRGSAdvert mrgsAdvert;
+	private static native void onAdvertisingLoadedCallback();
+    private static native void onAdvertisingLoadingErrorCallback();
+    private static native void onAdvertisingFinishedCallback(boolean bSkipped);
+
+    private static native void onShowcaseNewContentCallback();
+    private static native void onShowcaseShowFinishedCallback();
 
 	/**
 	 * Позволяет выполнять callback'и от MRGService в потоке, в котором требуется приложению. Например, для
@@ -250,6 +251,70 @@ public class MRGServiceCpp {
 		}
 	};
 
+	private final static MRGSAdvert.LoadDelegate mAdvertLoadDelegate = new MRGSAdvert.LoadDelegate() {
+		@Override
+		public void onAdvertisingLoaded() {
+			Log.v(LOG_TAG, "onAdvertisingLoaded");
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onAdvertisingLoadedCallback();
+				}
+			});
+		}
+    
+    	@Override
+    	public void onAdvertisingLoadingError() {
+    		Log.v(LOG_TAG, "onAdvertisingLoadingError");
+    		threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onAdvertisingLoadingErrorCallback();
+				}
+			});
+    	}
+	};
+
+	private final static MRGSAdvert.ShowDelegate mAdvertShowDelegate = new MRGSAdvert.ShowDelegate() {
+		@Override
+		public void onAdvertisingFinished(boolean bSkipped) {
+			Log.v(LOG_TAG, "onAdvertisingFinished");
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onAdvertisingFinishedCallback(bSkipped);
+				}
+			});
+		}
+	};
+	
+
+	private final static MRGSShowcase.OnNewContentListener mShowcaseNewContentListener = new MRGSShowcase.OnNewContentListener() {
+		@Override
+		public void onNewContent(int contentCount) {
+			Log.v(LOG_TAG, "onNewContent");
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onShowcaseNewContentCallback();
+				}
+			});
+		}
+	};
+
+	private final static MRGSShowcase.OnShowListener mShowcaseShowListener = new MRGSShowcase.OnShowListener() {
+		@Override
+		public void onShowFinished() {
+			Log.v(LOG_TAG, "onShowFinished");
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onShowcaseShowFinishedCallback();
+				}
+			});
+		}
+	};
+
 	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
@@ -411,6 +476,14 @@ public class MRGServiceCpp {
 
 		MRGSLocalPushService.setDelegateEx(mNotificationDelegate);
 
+		mrgsAdvert = MRGSAdvertisingFactory.createMRGSAdvertising(true);
+		mrgsAdvert.setLoadDelegate(mAdvertLoadDelegate);
+        mrgsAdvert.setShowDelegate(mAdvertShowDelegate);
+        mrgsAdvert.loadContent();
+
+        MRGSShowcase.getInstance().setNewContentListener(mShowcaseNewContentListener);
+        MRGSShowcase.getInstance().setShowListener(mShowcaseShowListener);
+
 		GameActivity activity = GameActivity.Get();
 		activity.OnMrgsInitComplete();
 		threadHelper.runOnNecessaryThread(new Runnable() 
@@ -478,6 +551,22 @@ public class MRGServiceCpp {
 			result.add((MRGSPushNotification)mrgsList.get(i));
 		}
 		return result;
+	}
+
+	public static void loadAdvertisingContent() {
+		mrgsAdvert.loadContent();
+	}
+
+	public static boolean isAdvertisingLoaded() {
+		return mrgsAdvert.canShowContent();
+	}
+
+	public static void showAdvertising() {
+		mrgsAdvert.showContent();
+	}
+
+	public static void openShowcase() {
+		MRGSShowcase.getInstance().showContent();
 	}
 
 	/*************************************************/

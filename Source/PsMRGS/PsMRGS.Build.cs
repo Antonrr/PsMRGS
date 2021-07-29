@@ -238,6 +238,20 @@ public class PsMRGS : ModuleRules
 
 			PublicAdditionalFrameworks.Add(
 				new Framework(
+				"MRGSAdvertising",
+				"../../ThirdParty/IOS/MRGSAdvertising.embeddedframework.zip"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+				"MRGSShowcase",
+				"../../ThirdParty/IOS/MRGSShowcase.embeddedframework.zip"
+				)
+			);
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
 				"MRGSAnalytics",
 				"../../ThirdParty/IOS/MRGSAnalytics.embeddedframework.zip"
 				)

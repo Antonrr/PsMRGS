@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #pragma once
 
@@ -88,13 +88,27 @@ public:
 
 	virtual bool UserLoggedIn() const;
 
+	//////////////////////////////////////////////////////////////////////////
+	// Advertising
+
 public:
-	/** GDPR agreement accepted */
-	virtual void OnGDPRAccepted(bool bWithAdvertising) override;
+	/** Load next ad */
+	virtual void LoadAdvertising() override;
 
-	/** GDPR error */
-	virtual void OnGDPRError() override;
+	/** Get whether advertising is loaded */
+	virtual bool IsAdvertisingLoaded() override;
 
+	/** Show advertising */
+	virtual void ShowAdvertising() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Showcase
+
+public:
+	/** Open Showcase */
+	virtual void OpenShowcase() override;
+
+public:
 	virtual void OnInitComplete() override;
 
 	virtual void OnFullscreenClosed() override;
@@ -107,17 +121,11 @@ public:
 
 	virtual void OnShowcaseDataRecieveError(const FString& Error) override;
 
-	virtual void OnSupportReceivedError(const FString& Error) override;
-
 	virtual void OnShowCaseDataHasNoAds() override;
 
 	virtual void OnClickOnNotification(int32 NotificationId, const FString& Title, const FString& Message, const FString& DeveloperPayload, bool bIsLocal) override;
 
 	virtual FString GetNotificationDeveloperPayload() const override;
-
-	virtual void OnSupportClosed() override;
-
-	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts) override;
 
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload) override;
 
@@ -126,10 +134,6 @@ public:
 	virtual void OnPurchaseFailed(const FString& ProductId, const FString& Answer) override;
 
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
-
-	virtual void OnUserAuthSuccess();
-
-	virtual void OnUserAuthError();
 
 	virtual FString GetDevicePlatform() const override;
 

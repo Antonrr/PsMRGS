@@ -277,6 +277,14 @@
 
 /** end of MRGSBankDelegateEx */
 
+- (NSString*)getCurrencyCode:(MRGSBankProduct*)product
+{
+	NSLocale* PriceLocale = [product.skProduct priceLocale];
+	NSNumberFormatter* CurrencyFormatter = [[[NSNumberFormatter alloc] init] autorelease];
+	[CurrencyFormatter setLocale:PriceLocale];
+	return [CurrencyFormatter internationalCurrencySymbol];
+}
+
 - (void)restorePurchase
 {
 	[[MRGSBank sharedInstance] restorePurchase];
@@ -295,14 +303,6 @@
 	[MRGServiceInit application:[UIApplication sharedApplication] didFinishLaunchingWithOptions:[IOSAppDelegate GetDelegate].launchOptions];
 }
 
-- (NSString*)getCurrencyCode:(MRGSBankProduct*)product
-{
-	NSLocale* PriceLocale = [product.skProduct priceLocale];
-	NSNumberFormatter* CurrencyFormatter = [[[NSNumberFormatter alloc] init] autorelease];
-	[CurrencyFormatter setLocale:PriceLocale];
-	return [CurrencyFormatter internationalCurrencySymbol];
-}
-
 - (void)productViewControllerDidFinish:(SKStoreProductViewController*)viewController
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -311,6 +311,86 @@
 		  [[IOSAppDelegate GetDelegate].IOSController dismissViewControllerAnimated:YES completion:nil];
 	  }
 	});
+}
+
+- (void)initAdvertising
+{
+	if (self.videoAdvertising == nil)
+	{
+		self.videoAdvertising = [[MRGSAdvertisingManager sharedInstance] createAdvertising:YES];
+	}
+
+	[self.videoAdvertising setLoadDelegate:self];
+	[self.videoAdvertising setShowDelegate:self];
+	[self.videoAdvertising loadContent];
+}
+
+- (void)loadAdvertisingContent
+{
+	if (self.videoAdvertising)
+	{
+		[self.videoAdvertising loadContent];
+	}
+}
+
+- (bool)isAdvertisingLoaded
+{
+	if (self.videoAdvertising)
+	{
+		return [self.videoAdvertising canShowContent];
+	}
+	else
+	{
+		return false;
+	}
+}
+
+- (bool)showAdvertising
+{
+	if (self.videoAdvertising)
+	{
+		[self.videoAdvertising showContentFromUIViewController:UIApplication.sharedApplication.delegate.window.rootViewController];
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/** MRGSAdvertisingLoadDelegate */
+- (void)onAdvertisingLoaded:(MRGSAdvertising*)advertising
+{
+	if (self.Proxy)
+	{
+		self.Proxy->OnAdvertisingLoaded();
+	}
+}
+
+- (void)onAdvertisingLoadingError:(MRGSAdvertising*)advertising
+{
+	if (self.Proxy)
+	{
+		self.Proxy->OnAdvertisingLoadingError();
+	}
+}
+
+/** MRGSAdvertisingShowDelegate */
+- (void)onAdvertisingFinished:(MRGSAdvertising*)advertising wasSkipped:(BOOL)skipped
+{
+	if (self.Proxy)
+	{
+		self.Proxy->OnAdvertisingFinished(skipped);
+	}
+}
+
+/** MRGSShowcaseDelegate */
+- (void)didReceiveNewShowcaseContent:(NSNumber*)numberOfNewEvents
+{
+	if (self.Proxy)
+	{
+		self.Proxy->OnNewShowcaseContent();
+	}
 }
 
 @end
@@ -594,33 +674,6 @@ bool UPsMRGSProxyIOS::UserLoggedIn() const
 	return bUserLoggedin;
 }
 
-void UPsMRGSProxyIOS::OnGDPRAccepted(bool bWithAdvertising)
-{
-	AsyncTask(ENamedThreads::GameThread, [this, bWithAdvertising]() {
-		if (MRGSDelegate.IsBound())
-		{
-			if (bWithAdvertising)
-			{
-				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITH_ADS);
-			}
-			else
-			{
-				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITHOUT_ADS);
-			}
-		}
-	});
-}
-
-void UPsMRGSProxyIOS::OnGDPRError()
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
-		}
-	});
-}
-
 void UPsMRGSProxyIOS::OnInitComplete()
 {
 	if (IsReady())
@@ -632,6 +685,8 @@ void UPsMRGSProxyIOS::OnInitComplete()
 
 	[MRGSMyComSupport sharedInstance].delegate = Delegate;
 	[MRGSBank sharedInstance].delegateExtended = Delegate;
+	[Delegate initAdvertising];
+	[MRGSShowcase sharedInstance].delegate = Delegate;
 
 	AsyncTask(ENamedThreads::GameThread, [this]() {
 		if (MRGSDelegate.IsBound())
@@ -701,16 +756,6 @@ void UPsMRGSProxyIOS::OnShowCaseDataHasNoAds()
 	});
 }
 
-void UPsMRGSProxyIOS::OnSupportReceivedError(const FString& Error)
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
-		}
-	});
-}
-
 void UPsMRGSProxyIOS::InitUser(const FString& UserId)
 {
 	if (bInitComplete == false)
@@ -739,17 +784,6 @@ void UPsMRGSProxyIOS::LoadStoreProducts(const TArray<FString>& ProductsList)
 	}
 
 	[[MRGSBank sharedInstance] requestProductsInfo:request];
-}
-
-void UPsMRGSProxyIOS::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
-{
-	AsyncTask(ENamedThreads::GameThread, [this, InLoadedProducts]() {
-		LoadedProducts = InLoadedProducts;
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
-		}
-	});
 }
 
 const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxyIOS::GetProducts() const
@@ -860,40 +894,6 @@ void UPsMRGSProxyIOS::CheckSupportTickets()
 	[[MRGSMyComSupport sharedInstance] checkTickets];
 }
 
-void UPsMRGSProxyIOS::OnSupportClosed()
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
-		}
-	});
-}
-
-void UPsMRGSProxyIOS::OnUserAuthSuccess()
-{
-	bUserLoggedin = true;
-
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
-		}
-	});
-}
-
-void UPsMRGSProxyIOS::OnUserAuthError()
-{
-	bUserLoggedin = false;
-
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
-		}
-	});
-}
-
 FString UPsMRGSProxyIOS::GetDevicePlatform() const
 {
 	MRGSDevice* Device = [[MRGSDevice alloc] init];
@@ -938,6 +938,46 @@ void UPsMRGSProxyIOS::EnableNotifications()
 void UPsMRGSProxyIOS::DisableNotifications()
 {
 	[[MRGSNotificationCenter currentCenter] disableMRGSNotifications];
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Advertising
+
+void UPsMRGSProxyIOS::LoadAdvertising()
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  [Delegate loadAdvertisingContent];
+	});
+}
+
+bool UPsMRGSProxyIOS::IsAdvertisingLoaded()
+{
+	return [Delegate isAdvertisingLoaded];
+}
+
+void UPsMRGSProxyIOS::ShowAdvertising()
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  const bool bSuccess = [Delegate showAdvertising];
+	  AsyncTask(ENamedThreads::GameThread, [this, bSuccess]() {
+		  if (MRGSDelegate.IsBound())
+		  {
+			  MRGSDelegate.Broadcast(bSuccess ? EPsMRGSEventsTypes::MRGS_ADVERTISING_SHOW : EPsMRGSEventsTypes::MRGS_ADVERTISING_SHOW_ERROR);
+		  }
+	  });
+	});
+}
+
+void UPsMRGSProxyIOS::OpenShowcase()
+{
+	dispatch_async(dispatch_get_main_queue(), ^{
+	  [[MRGSShowcase sharedInstance] presentShowcaseFromViewController:UIApplication.sharedApplication.delegate.window.rootViewController
+												 withCompletionHandler:^{
+												   AsyncTask(ENamedThreads::GameThread, [this]() {
+													   OnShowcaseShowFinished();
+												   });
+												 }];
+	});
 }
 
 #endif //IOS

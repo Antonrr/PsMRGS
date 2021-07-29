@@ -1,4 +1,4 @@
-// Copyright 2015-2020 Mail.Ru Group. All Rights Reserved.
+// Copyright 2015-2021 Mail.Ru Group. All Rights Reserved.
 
 #include "PsMRGSProxyAndroid.h"
 
@@ -315,17 +315,6 @@ void UPsMRGSProxyAndroid::LoadStoreProducts(const TArray<FString>& ProductsList)
 	}
 }
 
-void UPsMRGSProxyAndroid::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
-{
-	AsyncTask(ENamedThreads::GameThread, [this, InLoadedProducts]() {
-		LoadedProducts = InLoadedProducts;
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
-		}
-	});
-}
-
 const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxyAndroid::GetProducts() const
 {
 	return LoadedProducts;
@@ -451,31 +440,80 @@ bool UPsMRGSProxyAndroid::UserLoggedIn() const
 	return bUserLoggedin;
 }
 
-void UPsMRGSProxyAndroid::OnGDPRAccepted(bool bWithAdvertising)
+void UPsMRGSProxyAndroid::LoadAdvertising()
 {
-	AsyncTask(ENamedThreads::GameThread, [this, bWithAdvertising]() {
-		if (MRGSDelegate.IsBound())
-		{
-			if (bWithAdvertising)
-			{
-				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITH_ADS);
-			}
-			else
-			{
-				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITHOUT_ADS);
-			}
-		}
-	});
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_loadAdvertisingContent", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
 }
 
-void UPsMRGSProxyAndroid::OnGDPRError()
+bool UPsMRGSProxyAndroid::IsAdvertisingLoaded()
 {
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
-		}
-	});
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return false;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_isAdvertisingLoaded", "()Z", false);
+		return FJavaWrapper::CallBooleanMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
+	else
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: invalid JNIEnv"), *PS_FUNC_LINE);
+		return false;
+	}
+}
+
+void UPsMRGSProxyAndroid::ShowAdvertising()
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_showAdvertising", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+
+		AsyncTask(ENamedThreads::GameThread, [this]() {
+			if (MRGSDelegate.IsBound())
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ADVERTISING_SHOW);
+			}
+		});
+	}
+}
+
+void UPsMRGSProxyAndroid::OpenShowcase()
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_openShowcase", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+	}
 }
 
 void UPsMRGSProxyAndroid::OnInitComplete()
@@ -564,50 +602,6 @@ void UPsMRGSProxyAndroid::OnClickOnNotification(int32 NotificationId, const FStr
 FString UPsMRGSProxyAndroid::GetNotificationDeveloperPayload() const
 {
 	return NotificationDeveloperPayload;
-}
-
-void UPsMRGSProxyAndroid::OnSupportClosed()
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
-		}
-	});
-}
-
-void UPsMRGSProxyAndroid::OnSupportReceivedError(const FString& Error)
-{
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
-		}
-	});
-}
-
-void UPsMRGSProxyAndroid::OnUserAuthSuccess()
-{
-	bUserLoggedin = true;
-
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
-		}
-	});
-}
-
-void UPsMRGSProxyAndroid::OnUserAuthError()
-{
-	bUserLoggedin = false;
-
-	AsyncTask(ENamedThreads::GameThread, [this]() {
-		if (MRGSDelegate.IsBound())
-		{
-			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
-		}
-	});
 }
 
 void UPsMRGSProxyAndroid::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
@@ -916,6 +910,65 @@ extern "C"
 			else
 			{
 				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdvertisingLoadedCallback(JNIEnv* env, jobject obj)
+	{
+		AsyncTask(ENamedThreads::GameThread, []() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnAdvertisingLoaded();
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdvertisingLoadingErrorCallback(JNIEnv* env, jobject obj)
+	{
+		AsyncTask(ENamedThreads::GameThread, []() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnAdvertisingLoadingError();
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onAdvertisingFinishedCallback(JNIEnv* env, jobject obj, jboolean bSkipped)
+	{
+		AsyncTask(ENamedThreads::GameThread, [bSkipped]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnAdvertisingFinished(bSkipped);
+			}
+			else
+			{
+				UE_LOG(LogMRGS, Error, TEXT("%s: invalid MRGSProxy"), *PS_FUNC_LINE);
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onShowcaseNewContentCallback(JNIEnv* env, jobject obj)
+	{
+		AsyncTask(ENamedThreads::GameThread, []() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnNewShowcaseContent();
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onShowcaseShowFinishedCallback(JNIEnv* env, jobject obj)
+	{
+		AsyncTask(ENamedThreads::GameThread, []() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnShowcaseShowFinished();
 			}
 		});
 	}

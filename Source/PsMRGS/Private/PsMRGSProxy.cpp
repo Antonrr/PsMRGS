@@ -10,6 +10,8 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	DebugCCPASetting = EPsMRGSCCPASetting::DontShare;
+	bInitComplete = false;
+	bUserLoggedin = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -195,12 +197,38 @@ void UPsMRGSProxy::OpenApplicationPageInSystemSettings()
 
 void UPsMRGSProxy::EnableNotifications()
 {
-	// no op
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
 void UPsMRGSProxy::DisableNotifications()
 {
-	// no op
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Advertising
+
+void UPsMRGSProxy::LoadAdvertising()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+bool UPsMRGSProxy::IsAdvertisingLoaded()
+{
+	return false;
+}
+
+void UPsMRGSProxy::ShowAdvertising()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Showcase
+
+void UPsMRGSProxy::OpenShowcase()
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -208,12 +236,29 @@ void UPsMRGSProxy::DisableNotifications()
 
 void UPsMRGSProxy::OnGDPRAccepted(bool bWithAdvertising)
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this, bWithAdvertising]() {
+		if (MRGSDelegate.IsBound())
+		{
+			if (bWithAdvertising)
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITH_ADS);
+			}
+			else
+			{
+				MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ACCEPTED_WITHOUT_ADS);
+			}
+		}
+	});
 }
 
 void UPsMRGSProxy::OnGDPRError()
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_GDPR_ERROR);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnInitComplete()
@@ -263,7 +308,12 @@ FString UPsMRGSProxy::GetNotificationDeveloperPayload() const
 
 void UPsMRGSProxy::OnSupportReceivedError(const FString& Error)
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_ERROR);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnSupportTicketsReceived()
@@ -288,12 +338,23 @@ void UPsMRGSProxy::OnSupportTicketsFailWithError(const FString& Error)
 
 void UPsMRGSProxy::OnSupportClosed()
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_CLOSED);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts)
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	AsyncTask(ENamedThreads::GameThread, [this, InLoadedProducts]() {
+		LoadedProducts = InLoadedProducts;
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_PRODUCTS_LOADED);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload)
@@ -318,10 +379,74 @@ void UPsMRGSProxy::OnPurchaseCanceled(const FString& ProductId, const FString& A
 
 void UPsMRGSProxy::OnUserAuthSuccess()
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	bUserLoggedin = true;
+
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_COMPLETE);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnUserAuthError()
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+	bUserLoggedin = false;
+
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_USERINIT_ERROR);
+		}
+	});
+}
+
+void UPsMRGSProxy::OnAdvertisingLoaded()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ADVERTISING_LOADED);
+		}
+	});
+}
+
+void UPsMRGSProxy::OnAdvertisingLoadingError()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_ADVERTISING_LOAD_ERROR);
+		}
+	});
+}
+
+void UPsMRGSProxy::OnAdvertisingFinished(bool bSkipped)
+{
+	AsyncTask(ENamedThreads::GameThread, [this, bSkipped]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(bSkipped ? EPsMRGSEventsTypes::MRGS_ADVERTISING_FINISHED_SKIPPED : EPsMRGSEventsTypes::MRGS_ADVERTISING_FINISHED);
+		}
+	});
+}
+
+void UPsMRGSProxy::OnNewShowcaseContent()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_NEW_CONTENT);
+		}
+	});
+}
+
+void UPsMRGSProxy::OnShowcaseShowFinished()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_CLOSED);
+		}
+	});
 }

@@ -41,6 +41,7 @@
 		implementation(name: 'MRGSGDPR', ext:'aar')
 		implementation(name: 'MRGSNotifications', ext:'aar')
 		implementation(name: 'MRGSSupport', ext:'aar')
+		implementation(name: 'MRGSShowcase', ext:'aar')
 
 		implementation 'com.my.tracker:mytracker-sdk:2.1.2'
 		implementation 'com.android.billingclient:billing:3.0.3'
@@ -52,6 +53,9 @@
 		implementation 'com.google.firebase:firebase-messaging:21.0.1'
 		implementation 'com.google.firebase:firebase-iid'
 		implementation 'com.appsflyer:af-android-sdk:6.2.3'
+		implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+		implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+		implementation 'androidx.recyclerview:recyclerview:1.1.0'
 	}
 
 	</insert>
@@ -156,7 +160,7 @@
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSGDPR.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSGDPR.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSNotifications.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSNotifications.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
-		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSSupport.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSSupport.aar" />
+		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/MRGSShowcase.aar" dst="$S(BuildDir)/gradle/app/libs/MRGSShowcase.aar" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/in-app-purchasing-2.0.76.jar" dst="$S(BuildDir)/gradle/app/libs/in-app-purchasing-2.0.76.jar" />
 
 		<!-- To remove proguard - uncomment -->
@@ -324,6 +328,26 @@
 		public void AndroidThunkJava_MRGService_addMetricWithCode(final String metricCode, final int value, final int level, final int objectId)
 		{
 			MRGServiceCpp.addMetric(metricCode, value, level, objectId);
+		}
+
+		public void AndroidThunkJava_MRGService_loadAdvertisingContent()
+		{
+			MRGServiceCpp.loadAdvertisingContent();
+		}
+
+		public boolean AndroidThunkJava_MRGService_isAdvertisingLoaded()
+		{
+			return MRGServiceCpp.isAdvertisingLoaded();
+		}
+
+		public void AndroidThunkJava_MRGService_showAdvertising()
+		{
+			MRGServiceCpp.showAdvertising();
+		}
+		
+		public void AndroidThunkJava_MRGService_openShowcase()
+		{
+			MRGServiceCpp.openShowcase();
 		}
 		
 		</insert>

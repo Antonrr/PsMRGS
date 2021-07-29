@@ -16,14 +16,32 @@
 #include "PsMRGSProxyIOS.generated.h"
 
 #if PLATFORM_IOS
-@interface PsMRGSDelegate : NSObject <MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegateEx, SKStoreProductViewControllerDelegate>
+@interface PsMRGSDelegate : NSObject <MRGSAdvertisingLoadDelegate, MRGSAdvertisingShowDelegate, MRGSShowcaseDelegate, MRGSGDPRDelegate, MRGSServerDataDelegate, MRGSMyComSupportDelegate, MRGSBankDelegateEx, SKStoreProductViewControllerDelegate>
 
 - (NSString*)getCurrencyCode:(MRGSBankProduct*)product;
 - (void)restorePurchase;
 - (void)registerLifeCycleListener;
 - (void)didFinishLaunching:(NSNotification*)notification;
+- (void)productViewControllerDidFinish:(SKStoreProductViewController*)viewController;
+
+// MRGS advertising
+- (void)initAdvertising;
+- (void)loadAdvertisingContent;
+- (bool)isAdvertisingLoaded;
+- (bool)showAdvertising;
+
+// MRGSAdvertisingLoadDelegate
+- (void)onAdvertisingLoaded:(MRGSAdvertising*)advertising;
+- (void)onAdvertisingLoadingError:(MRGSAdvertising*)advertising;
+
+// MRGSAdvertisingShowDelegate
+- (void)onAdvertisingFinished:(MRGSAdvertising*)advertising wasSkipped:(BOOL)skipped;
+
+// MRGSShowcaseDelegate
+- (void)didReceiveNewShowcaseContent:(NSNumber*)numberOfNewEvents;
 
 @property (nonatomic) UPsMRGSProxy* Proxy;
+@property (nonatomic, strong) MRGSAdvertising* videoAdvertising;
 
 @end
 #endif // PLATFORM_IOS
@@ -145,17 +163,29 @@ public:
 
 	/** Call DisableMRGSNotifications */
 	virtual void DisableNotifications() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Advertising
+
+	/** Load next ad */
+	virtual void LoadAdvertising() override;
+
+	/** Get whether advertising is loaded */
+	virtual bool IsAdvertisingLoaded() override;
+
+	/** Show advertising */
+	virtual void ShowAdvertising() override;
+
+	//////////////////////////////////////////////////////////////////////////
+	// Showcase
+
+	/** Open Showcase */
+	virtual void OpenShowcase() override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Callbacks
 	
 public:
-	/** GDPR agreement accepted */
-	virtual void OnGDPRAccepted(bool bWithAdvertising) override;
-	
-	/** GDPR error */
-	virtual void OnGDPRError() override;
-	
 	/** Mrgs initialization complete  */
 	virtual void OnInitComplete() override;
 	
@@ -177,15 +207,6 @@ public:
 	/** Showcase data is empty */
 	virtual void OnShowCaseDataHasNoAds() override;
 	
-	/** Support received error */
-	virtual void OnSupportReceivedError(const FString& Error) override;
-	
-	/** Support closed */
-	virtual void OnSupportClosed() override;
-	
-	/** Productrs successfully loaded from store */
-	virtual void OnStoreProductsLoaded(TArray<FPsMRGSPurchaseInfo> InLoadedProducts) override;
-	
 	/** Purchase successfully complete on store */
 	virtual void OnPurchaseComplete(const FString& PaymentId, const FString& TransactionId, const FString& Payload) override;
 	
@@ -194,12 +215,6 @@ public:
 	
 	/** Canceled while processing purchase on store */
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
-	
-	/** Dispatch success user auth */
-	virtual void OnUserAuthSuccess() override;
-	
-	/** Dispatch failed user auth */
-	virtual void OnUserAuthError() override;
 	
 protected:
 	/** Main mrgs delegate */

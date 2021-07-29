@@ -17,12 +17,12 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_SUPPORT_ERROR,
 	MRGS_SUPPORT_TICKETS_NEW,
 	MRGS_SUPPORT_TICKETS_ERROR,
-	MRGS_FULLSCREEN_CLOSED,
-	MRGS_INTERSTITIAL_SLIDER_CLOSED,
-	MRGS_INTERSTITIAL_DATA_ERROR,
-	MRGS_FULLSCREEN_DATA_ERROR,
-	MRGS_SHOWCASE_DATA_ERROR,
-	MRGS_SHOWCASE_DATA_EMPTY,
+	MRGS_FULLSCREEN_CLOSED,          // deprecated
+	MRGS_INTERSTITIAL_SLIDER_CLOSED, // deprecated
+	MRGS_INTERSTITIAL_DATA_ERROR,    // deprecated
+	MRGS_FULLSCREEN_DATA_ERROR,      // deprecated
+	MRGS_SHOWCASE_DATA_ERROR,        // deprecated
+	MRGS_SHOWCASE_DATA_EMPTY,        // deprecated
 	MRGS_USERINIT_COMPLETE,
 	MRGS_USERINIT_ERROR,
 	MRGS_GDPR_ACCEPTED_WITH_ADS,
@@ -35,6 +35,14 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_ATT_AUTHORIZED,
 	MRGS_ATT_ERROR,
 	MRGS_NOTIFICATION_CLICKED,
+	MRGS_ADVERTISING_LOADED,
+	MRGS_ADVERTISING_LOAD_ERROR,
+	MRGS_ADVERTISING_SHOW,
+	MRGS_ADVERTISING_SHOW_ERROR,
+	MRGS_ADVERTISING_FINISHED,
+	MRGS_ADVERTISING_FINISHED_SKIPPED,
+	MRGS_SHOWCASE_NEW_CONTENT,
+	MRGS_SHOWCASE_CLOSED,
 };
 
 /** CCPA setting */
@@ -250,6 +258,28 @@ public:
 	virtual void DisableNotifications();
 
 	//////////////////////////////////////////////////////////////////////////
+	// Advertising
+
+	/** Load next ad */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Advertising")
+	virtual void LoadAdvertising();
+
+	/** Get whether advertising is loaded */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Advertising")
+	virtual bool IsAdvertisingLoaded();
+
+	/** Show advertising */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Advertising")
+	virtual void ShowAdvertising();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Showcase
+
+	/** Open Showcase */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Showcase")
+	virtual void OpenShowcase();
+
+	//////////////////////////////////////////////////////////////////////////
 	// Callbacks
 
 public:
@@ -319,6 +349,21 @@ public:
 
 	/** Dispatch failed user auth */
 	virtual void OnUserAuthError();
+
+	/** Advertising loaded */
+	virtual void OnAdvertisingLoaded();
+
+	/** Advertising loading error */
+	virtual void OnAdvertisingLoadingError();
+
+	/** Advertising show finished */
+	virtual void OnAdvertisingFinished(bool bSkipped);
+
+	/** New showcase content is present */
+	virtual void OnNewShowcaseContent();
+
+	/** Showcase show finished */
+	virtual void OnShowcaseShowFinished();
 
 protected:
 	/** Loaded products from store */
