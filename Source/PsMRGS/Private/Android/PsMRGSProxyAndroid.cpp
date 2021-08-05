@@ -331,8 +331,8 @@ void UPsMRGSProxyAndroid::BuyProduct(const FString& ProductId, const FString& Pa
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
 	{
-		static jmethodID BuyItem = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_buyItem", "(Ljava/lang/String;)V", false);
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, BuyItem, Env->NewStringUTF(TCHAR_TO_UTF8(*ProductId)));
+		static jmethodID BuyItem = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_buyItem", "(Ljava/lang/String;Ljava/lang/String;)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, BuyItem, Env->NewStringUTF(TCHAR_TO_UTF8(*ProductId)), Env->NewStringUTF(TCHAR_TO_UTF8(*Payload)));
 	}
 }
 
@@ -438,6 +438,16 @@ bool UPsMRGSProxyAndroid::IsReady() const
 bool UPsMRGSProxyAndroid::UserLoggedIn() const
 {
 	return bUserLoggedin;
+}
+
+void UPsMRGSProxyAndroid::RequestOpenUDID()
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodID = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_requestOpenUDID", "()V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodID);
+	}
 }
 
 void UPsMRGSProxyAndroid::LoadAdvertising()
@@ -637,11 +647,6 @@ void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FSt
 }
 
 FString UPsMRGSProxyAndroid::GetDevicePlatform() const
-{
-	return FString();
-}
-
-FString UPsMRGSProxyAndroid::GetOpenUDID() const
 {
 	return FString();
 }
@@ -969,6 +974,18 @@ extern "C"
 			if (Proxy)
 			{
 				Proxy->OnShowcaseShowFinished();
+			}
+		});
+	}
+
+	JNIEXPORT void Java_ru_mail_mrgservice_MRGServiceCpp_onReceivedOpenUDID(JNIEnv* env, jobject obj, jstring judid)
+	{
+		FString Udid = MRGSJniHelper::JavaStringToFstring(judid);
+		AsyncTask(ENamedThreads::GameThread, [Udid]() {
+			auto* Proxy = UPsMRGSLibrary::GetMRGSProxy();
+			if (Proxy)
+			{
+				Proxy->OnReceivedOpenUDID(Udid);
 			}
 		});
 	}

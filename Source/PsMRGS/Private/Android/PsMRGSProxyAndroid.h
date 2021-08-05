@@ -88,6 +88,8 @@ public:
 
 	virtual bool UserLoggedIn() const;
 
+	virtual void RequestOpenUDID() override;
+
 	//////////////////////////////////////////////////////////////////////////
 	// Advertising
 
@@ -136,8 +138,6 @@ public:
 	virtual void OnPurchaseCanceled(const FString& ProductId, const FString& Answer) override;
 
 	virtual FString GetDevicePlatform() const override;
-
-	virtual FString GetOpenUDID() const override;
 
 protected:
 	/** Notification developer payload */

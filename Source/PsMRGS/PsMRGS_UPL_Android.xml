@@ -315,9 +315,9 @@
 			MRGServiceCpp.getProductsInfo(skuList);
 		}
 
-		public void AndroidThunkJava_MRGService_buyItem(final String sku)
+		public void AndroidThunkJava_MRGService_buyItem(final String sku, final String payload)
 		{
-			MRGServiceCpp.buyItem(sku);
+			MRGServiceCpp.buyItem(sku, payload);
 		}
 
 		public void AndroidThunkJava_MRGService_addMetricWithId(final int metricId)
@@ -348,6 +348,11 @@
 		public void AndroidThunkJava_MRGService_openShowcase()
 		{
 			MRGServiceCpp.openShowcase();
+		}
+
+		public void AndroidThunkJava_MRGService_requestOpenUDID()
+		{
+			MRGServiceCpp.requestOpenUDID();
 		}
 		
 		</insert>

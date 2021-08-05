@@ -181,10 +181,15 @@ FString UPsMRGSProxy::GetDevicePlatform() const
 	return FString();
 }
 
-FString UPsMRGSProxy::GetOpenUDID() const
+void UPsMRGSProxy::RequestOpenUDID()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
-	return FString();
+	OnReceivedOpenUDID(FString{});
+}
+
+FString UPsMRGSProxy::GetOpenUDID() const
+{
+	return OpenUDID;
 }
 
 void UPsMRGSProxy::OpenApplicationPageInSystemSettings()
@@ -448,5 +453,13 @@ void UPsMRGSProxy::OnShowcaseShowFinished()
 		{
 			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_CLOSED);
 		}
+	});
+}
+
+void UPsMRGSProxy::OnReceivedOpenUDID(const FString& UDID)
+{
+	AsyncTask(ENamedThreads::GameThread, [this, UDID]() {
+		OpenUDID = UDID;
+		MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_RECEIVED_UDID);
 	});
 }

@@ -65,6 +65,8 @@ public class MRGServiceCpp {
     private static native void onShowcaseNewContentCallback();
     private static native void onShowcaseShowFinishedCallback();
 
+    private static native void onReceivedOpenUDID(String Udid);
+
 	/**
 	 * Позволяет выполнять callback'и от MRGService в потоке, в котором требуется приложению. Например, для
 	 * Cocos2d-x это GLThread. По умолчанию все callback'и вызываются в UI-потоке.
@@ -145,7 +147,7 @@ public class MRGServiceCpp {
 	    @Override
 		public void onReceiveProductsError(final MRGSBillingEntities.MRGSBankProductsResponse productsResponce)
 	    {
-
+	    	Log.v(LOG_TAG, String.format("MRGSBillingDelegate.onReceiveProductsError(%s, error = %s, invalid items = (%s))", MRGSBilling.instance().getBillingName(), productsResponce.getError(), productsResponce.getInvalidItems()));
 	    }
 
 	    @Override
@@ -310,6 +312,20 @@ public class MRGServiceCpp {
 				@Override
 				public void run() {
 					onShowcaseShowFinishedCallback();
+				}
+			});
+		}
+	};
+
+	private final static MRGSDevice.CallbackOpenUDID mOpenUDIDListener = new MRGSDevice.CallbackOpenUDID() {
+		@Override
+		public void result(String Udid)
+		{
+			Log.v(LOG_TAG, String.format("CallbackOpenUDID %s", Udid));
+			threadHelper.runOnNecessaryThread(new Runnable() {
+				@Override
+				public void run() {
+					onReceivedOpenUDID(Udid);
 				}
 			});
 		}
@@ -509,9 +525,9 @@ public class MRGServiceCpp {
 		MRGSBilling.instance().getProductsInfoWithTypes(skuListToLoad);
 	}
 
-	public static void buyItem(final String sku) {
-		Log.v(LOG_TAG, String.format("buyItem(%s)", sku));
-		MRGSBilling.instance().buyItem(sku);
+	public static void buyItem(final String sku, final String payload) {
+		Log.v(LOG_TAG, String.format("buyItem(%s, %s)", sku, payload));
+		MRGSBilling.instance().buyItem(sku, "cons", payload);
 	}
 
 	public static void restoreTransaction() {
@@ -567,6 +583,11 @@ public class MRGServiceCpp {
 
 	public static void openShowcase() {
 		MRGSShowcase.getInstance().showContent();
+	}
+
+	public static void requestOpenUDID() {
+		Log.v(LOG_TAG, String.format("requestOpenUDID"));
+		MRGSDevice.instance().getOpenUDID(mOpenUDIDListener);
 	}
 
 	/*************************************************/

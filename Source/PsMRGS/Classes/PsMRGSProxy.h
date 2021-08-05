@@ -43,6 +43,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_ADVERTISING_FINISHED_SKIPPED,
 	MRGS_SHOWCASE_NEW_CONTENT,
 	MRGS_SHOWCASE_CLOSED,
+	MRGS_RECEIVED_UDID,
 };
 
 /** CCPA setting */
@@ -238,6 +239,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetDevicePlatform() const;
 
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual void RequestOpenUDID();
+
 	/** Get OpenUDID */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetOpenUDID() const;
@@ -365,6 +369,9 @@ public:
 	/** Showcase show finished */
 	virtual void OnShowcaseShowFinished();
 
+	/** Received OpenUDID value */
+	virtual void OnReceivedOpenUDID(const FString& UDID);
+
 protected:
 	/** Loaded products from store */
 	TArray<FPsMRGSPurchaseInfo> LoadedProducts;
@@ -374,6 +381,9 @@ protected:
 
 	/** MRGS auth complete */
 	bool bUserLoggedin;
+
+	/** OpenUDID value */
+	FString OpenUDID;
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")

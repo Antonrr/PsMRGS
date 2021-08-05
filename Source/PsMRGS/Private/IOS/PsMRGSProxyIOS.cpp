@@ -901,28 +901,9 @@ FString UPsMRGSProxyIOS::GetDevicePlatform() const
 	return Result;
 }
 
-FString UPsMRGSProxyIOS::GetOpenUDID() const
+void UPsMRGSProxyIOS::RequestOpenUDID()
 {
-	FString Result;
-	NSString* DeviceOpenUDID = [MRGSDevice openUDID];
-	if (DeviceOpenUDID)
-	{
-		Result = FString(DeviceOpenUDID);
-	}
-	else
-	{
-		MRGSDevice* Device = [[MRGSDevice alloc] init];
-		DeviceOpenUDID = [Device openUDID];
-		if (DeviceOpenUDID)
-		{
-			Result = FString(DeviceOpenUDID);
-		}
-		else
-		{
-			UE_LOG(LogMRGS, Warning, TEXT("GetOpenUDID total error"));
-		}
-	}
-	return Result;
+	OnReceivedOpenUDID(FString([MRGSDevice openUDID]));
 }
 
 void UPsMRGSProxyIOS::OpenApplicationPageInSystemSettings()

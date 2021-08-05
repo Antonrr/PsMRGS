@@ -148,9 +148,9 @@ public:
 	
 	/** Get platform */
 	virtual FString GetDevicePlatform() const override;
-	
-	/** Get OpenUDID */
-	virtual FString GetOpenUDID() const override;
+
+	/* Request OpenUDID */
+	virtual void RequestOpenUDID() override;
 
 	/** Open application page in system settings */
 	virtual void OpenApplicationPageInSystemSettings() override;
