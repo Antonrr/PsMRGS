@@ -63,4 +63,12 @@ class UPsMRGSSettings : public UObject
 	/** Android mrgs secret key */
 	UPROPERTY(Config, EditAnywhere)
 	FString AndroidMrgsSecret;
+
+	/** Android Mrgs mytracker app id */
+	UPROPERTY(Config, EditAnywhere)
+	FString AndroidMyTrackerAppId;
+
+	/** Android Mrgs appsfluer dev key */
+	UPROPERTY(Config, EditAnywhere)
+	FString AndroidAppsFlyerDevKey;
 };

@@ -149,7 +149,6 @@
  	<resourceCopies>	
 
 		<deleteFiles filespec="src/com/android/vending/billing/IInAppBillingService.aidl" />
-		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGService.xml" dst="$S(BuildDir)/assets/MRGService.xml" />
 		<copyFile src="$S(PluginDir)/../../ThirdParty/Android/assets/MRGServiceCpp.java" dst="$S(BuildDir)/src/ru/mrgservice/MRGServiceCpp.java" />
 		<copyFile src="$S(PluginDir)/../../../../Build/GDPR/gdpr.html" dst="$S(BuildDir)/assets/gdpr/gdpr.html" />
 
@@ -278,11 +277,11 @@
 			MRGServiceCpp.checkIntegration();
 		}
 
-		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret, final String SupportSecret, final boolean bDebug)
+		public void AndroidThunkJava_MRGService_initWithAppIdAndSecret(final String AppId, final String AppSecret, final String SupportSecret, final String myTrackerAppId, final String appsFlyerKey, final boolean bDebug)
 		{
 			MRGServiceCpp.appContext = getApplicationContext();
 			MRGService.setAppContext(getApplicationContext());
-			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret, SupportSecret, bDebug);
+			MRGServiceCpp.initWithAppidAndSecret(AppId, AppSecret, SupportSecret, myTrackerAppId, appsFlyerKey, bDebug);
 		}
 
 		public void AndroidThunkJava_MRGService_initUserWithId(String userId)

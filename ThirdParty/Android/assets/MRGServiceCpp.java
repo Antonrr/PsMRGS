@@ -394,7 +394,7 @@ public class MRGServiceCpp {
 	}
 
 	public static void showSupport(final String secretKey) {
-		Log.v(LOG_TAG, String.format("showSupport(%s)", secretKey));
+		Log.v(LOG_TAG, "showSupport");
 
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() {
@@ -445,9 +445,9 @@ public class MRGServiceCpp {
 		MRGService.instance().checkIntegration();
 	}
 
-	public static void initWithAppidAndSecret(final String appId, final String appSecret, final String supportSecret, final boolean bDebug) {
+	public static void initWithAppidAndSecret(final String appId, final String appSecret, final String supportSecret, final String myTrackerAppId, final String appsFlyerKey, final boolean bDebug) {
 
-		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (%s, %s, %b)", appId, appSecret, bDebug));
+		Log.v(LOG_TAG, String.format("MRGServiceCPP:init (appId %s, bDebug %b)", appId, bDebug));
 
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
@@ -456,7 +456,7 @@ public class MRGServiceCpp {
 			public void run() 
 			{
 				Log.v(LOG_TAG, String.format("MRGServiceCPP:init context (%s)", appContext.getPackageCodePath()));
-				init(appContext, appId, appSecret, supportSecret, bDebug);
+				init(appContext, appId, appSecret, supportSecret, myTrackerAppId, appsFlyerKey, bDebug);
 			}
 		});
 	}
@@ -473,7 +473,7 @@ public class MRGServiceCpp {
 		Log.v(LOG_TAG, String.format("MRGServiceCPP:autoRestoreTransactions %b", bRestore));
 	}
 
-	public static void init(final Context context,final String appId, final String appSecret, final String supportSecret, final boolean bDebug) {
+	public static void init(final Context context,final String appId, final String appSecret, final String supportSecret, final String myTrackerAppId, final String appsFlyerKey, final boolean bDebug) {
 		Log.v(LOG_TAG, String.format("init MRGS started"));
 
 		Bundle mrgsSettings = new Bundle();
@@ -484,10 +484,30 @@ public class MRGServiceCpp {
 		mrgsSettings.putBoolean("localPushNotifications", false);
 		mrgsSettings.putString("utmSource", "test-utm-source");
 
-		MRGService.service(context, mServerDataDelegate, appId, appSecret, mrgsSettings);
+		Bundle externalSdkSettings = new Bundle();
+		Bundle supportSettings = new Bundle();
+		supportSettings.putString("projectId", appId);
+		supportSettings.putString("secret", supportSecret);
+		supportSettings.putString("enable", "true");
+		externalSdkSettings.putBundle("MyComSupport", supportSettings);
+
+		Bundle myTrackerSettings = new Bundle();
+		myTrackerSettings.putString("appId", myTrackerAppId);
+		myTrackerSettings.putString("enable", "true");
+		myTrackerSettings.putString("debug", bDebug ? "true" : "false");
+		externalSdkSettings.putBundle("MyTracker", myTrackerSettings);
+
+		Bundle appsFlyerSettings = new Bundle();
+		appsFlyerSettings.putString("app_key", appsFlyerKey);
+		appsFlyerSettings.putString("debug", bDebug ? "true" : "false");
+		appsFlyerSettings.putString("enable", "true");
+		externalSdkSettings.putBundle("AppsFlyer", appsFlyerSettings);
+
+		MRGService.service(context, mServerDataDelegate, appId, appSecret, mrgsSettings, externalSdkSettings);
+
 		MRGSMyComSupport.setTicketListener(SupportTicketListener.instance());
 		MRGSMyComSupport.getMyComSupport().setWidgetTheme(MRGSMyComSupport.WidgetTheme.LIGHT);
-		MRGSMyComSupport.setSecret(supportSecret);
+
 		MRGSBilling.instance().setDelegateEx(mBillingDelegate);
 
 		MRGSLocalPushService.setDelegateEx(mNotificationDelegate);

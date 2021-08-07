@@ -240,9 +240,11 @@ void UPsMRGSProxyAndroid::InitModule()
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
 		jstring Secret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSecret));
 		jstring SupportSecret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSupportSecretKey));
-		static jmethodID InitjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initWithAppIdAndSecret", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V", false);
+		jstring MyTrackerAppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMyTrackerAppId));
+		jstring AppsFlyerKey = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidAppsFlyerDevKey));
+		static jmethodID InitjMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_initWithAppIdAndSecret", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V", false);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitjMethod, AppId, Secret, SupportSecret, bDebug);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitjMethod, AppId, Secret, SupportSecret, MyTrackerAppId, AppsFlyerKey, bDebug);
 		Env->DeleteLocalRef(AppId);
 		Env->DeleteLocalRef(Secret);
 	}

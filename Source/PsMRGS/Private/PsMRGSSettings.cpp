@@ -18,6 +18,8 @@ void UPsMRGSSettings::ReadFromConfig()
 	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsSupportSecretKey"), AndroidMrgsSupportSecretKey, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsAppId"), AndroidMrgsAppId, GEngineIni);
 	GConfig->GetString(*ConfigSection, TEXT("AndroidMrgsSecret"), AndroidMrgsSecret, GEngineIni);
+	GConfig->GetString(*ConfigSection, TEXT("AndroidMyTrackerAppId"), AndroidMyTrackerAppId, GEngineIni);
+	GConfig->GetString(*ConfigSection, TEXT("AndroidAppsFlyerDevKey"), AndroidAppsFlyerDevKey, GEngineIni);
 
 	// iOS Basic Settings
 	GConfig->GetInt(*ConfigSection, TEXT("iOsMrgsAppId"), iOSMrgsAppId, GEngineIni);
