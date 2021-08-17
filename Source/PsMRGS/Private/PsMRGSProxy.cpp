@@ -151,12 +151,7 @@ const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxy::GetProducts() const
 
 void UPsMRGSProxy::DebugSetProducts(const TArray<FPsMRGSPurchaseInfo>& InProducts)
 {
-#if !UE_BUILD_SHIPPING
-	UE_LOG(LogMRGS, Warning, TEXT("%s: setting DebugSetProducts"), *PS_FUNC_LINE);
 	LoadedProducts = InProducts;
-#else
-	UE_LOG(LogMRGS, Error, TEXT("%s: DebugSetProducts called on Shipping build; ignoring"), *PS_FUNC_LINE);
-#endif
 }
 
 //////////////////////////////////////////////////////////////////////////

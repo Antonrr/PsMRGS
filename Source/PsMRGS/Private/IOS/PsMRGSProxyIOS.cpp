@@ -202,6 +202,11 @@
 	{
 		UE_LOG(LogMRGS, Error, TEXT("%s: didReceiveProductsError: %s"), *PS_FUNC_LINE, *FString([response.requestError localizedDescription]));
 	}
+
+	if (self.Proxy)
+	{
+		self.Proxy->OnStoreProductsLoaded({});
+	}
 }
 
 - (void)didReceiveSucessfullPurchase:(MRGSBankPurchaseResult* _Nonnull)purchase
