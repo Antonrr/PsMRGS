@@ -415,7 +415,7 @@ UPsMRGSProxyIOS::UPsMRGSProxyIOS(const FObjectInitializer& ObjectInitializer)
 //////////////////////////////////////////////////////////////////////////
 // GDPR
 
-void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
@@ -429,12 +429,13 @@ void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertisi
 	  GDPRInstance.delegate = Delegate;
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
+	  GDPRInstance.localizationLanguage = LocalizationLanguage.IsEmpty() ? @"en" : LocalizationLanguage.GetNSString();
 	  [GDPRInstance showDefaultAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 												forAppId:MRGSSettings->iOSMrgsAppId];
 	});
 }
 
-void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	dispatch_async(dispatch_get_main_queue(), ^{
 	  const UPsMRGSSettings* MRGSSettings = GetDefault<UPsMRGSSettings>();
@@ -448,6 +449,7 @@ void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 	  GDPRInstance.delegate = Delegate;
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
+	  GDPRInstance.localizationLanguage = LocalizationLanguage.IsEmpty() ? @"en" : LocalizationLanguage.GetNSString();
 	  [GDPRInstance showAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 										 forAppId:MRGSSettings->iOSMrgsAppId
 										 fromFile:[[NSBundle mainBundle] URLForResource:@"gdpr"
@@ -886,6 +888,8 @@ void UPsMRGSProxyIOS::ShowSupport()
 	  MRGSMyComSupport* support = [MRGSMyComSupport sharedInstance];
 	  [support showSupportViewOnSuperview:ViewContainer];
 	});
+
+	OnSupportOpened();
 }
 
 void UPsMRGSProxyIOS::CheckSupportTickets()

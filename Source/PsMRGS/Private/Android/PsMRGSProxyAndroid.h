@@ -36,10 +36,10 @@ public:
 
 public:
 	/** Show MRGS built-in GDPR agreement */
-	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising) override;
+	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage) override;
 
 	/** Show specified GDPR agreement */
-	virtual void ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising) override;
+	virtual void ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage) override;
 
 	/** Get accepted version of the agreement */
 	virtual int32 GetGDPRAcceptedVersion() override;

@@ -17,13 +17,13 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 //////////////////////////////////////////////////////////////////////////
 // GDPR
 
-void UPsMRGSProxy::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxy::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
 }
 
-void UPsMRGSProxy::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxy::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_NOT_IMPLEMENTED);
@@ -309,6 +309,16 @@ void UPsMRGSProxy::OnClickOnNotification(int32 NotificationId, const FString& Ti
 FString UPsMRGSProxy::GetNotificationDeveloperPayload() const
 {
 	return FString{};
+}
+
+void UPsMRGSProxy::OnSupportOpened()
+{
+	AsyncTask(ENamedThreads::GameThread, [this]() {
+		if (MRGSDelegate.IsBound())
+		{
+			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SUPPORT_OPENED);
+		}
+	});
 }
 
 void UPsMRGSProxy::OnSupportReceivedError(const FString& Error)

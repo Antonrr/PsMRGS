@@ -41,7 +41,7 @@ FString MRGSJniHelper::JavaStringToFstring(jstring jstr)
 //////////////////////////////////////////////////////////////////////////
 // GDPR
 
-void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
@@ -53,11 +53,13 @@ void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdver
 			return;
 		}
 
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement", "(Ljava/lang/String;ZZ)V", false);
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement", "(Ljava/lang/String;ZZLjava/lang/String;)V", false);
 
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising);
+		jstring LocalizationLanguageJstring = Env->NewStringUTF(TCHAR_TO_UTF8(*LocalizationLanguage));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
 		Env->DeleteLocalRef(AppId);
+		Env->DeleteLocalRef(LocalizationLanguageJstring);
 	}
 	else
 	{
@@ -65,7 +67,7 @@ void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdver
 	}
 }
 
-void UPsMRGSProxyAndroid::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
+void UPsMRGSProxyAndroid::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage)
 {
 	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
 	if (Env)
@@ -77,11 +79,13 @@ void UPsMRGSProxyAndroid::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising)
 			return;
 		}
 
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;ZZ)V", false);
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;ZZLjava/lang/String;)V", false);
 
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising);
+		jstring LocalizationLanguageJstring = Env->NewStringUTF(TCHAR_TO_UTF8(*LocalizationLanguage));
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
 		Env->DeleteLocalRef(AppId);
+		Env->DeleteLocalRef(LocalizationLanguageJstring);
 	}
 	else
 	{
@@ -413,6 +417,7 @@ void UPsMRGSProxyAndroid::ShowSupport()
 	{
 		static jmethodID ShowSupport = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_showSupport", "(Ljava/lang/String;)V", false);
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, ShowSupport, Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSupportSecretKey)));
+		OnSupportOpened();
 	}
 }
 

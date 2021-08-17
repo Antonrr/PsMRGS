@@ -13,6 +13,7 @@ enum class EPsMRGSEventsTypes : uint8
 	MRGS_PURCHASE_PENDING,
 	MRGS_PURCHASE_FAILED,
 	MRGS_PURCHASE_CANCELED,
+	MRGS_SUPPORT_OPENED,
 	MRGS_SUPPORT_CLOSED,
 	MRGS_SUPPORT_ERROR,
 	MRGS_SUPPORT_TICKETS_NEW,
@@ -120,11 +121,11 @@ class PSMRGS_API UPsMRGSProxy : public UObject
 public:
 	/** Show MRGS built-in GDPR agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising);
+	virtual void ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage);
 
 	/** Show specified GDPR agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
-	virtual void ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising);
+	virtual void ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FString LocalizationLanguage);
 
 	/** Get accepted version of the agreement */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|GDPR")
@@ -320,6 +321,9 @@ public:
 	/** Get notification developer payload */
 	UFUNCTION(BlueprintCallable)
 	virtual FString GetNotificationDeveloperPayload() const;
+
+	/** Support opened */
+	virtual void OnSupportOpened();
 
 	/** Support received error */
 	virtual void OnSupportReceivedError(const FString& Error);

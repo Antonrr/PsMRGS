@@ -331,7 +331,7 @@ public class MRGServiceCpp {
 		}
 	};
 
-	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
+	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
 		{
@@ -343,12 +343,13 @@ public class MRGServiceCpp {
 				mGDPR.setDelegate(mGDPRDelegate);
 				mGDPR.onlyEU(bOnlyEU);
 				mGDPR.withAdvertising(bWithAdvertising);
+				mGDPR.setLocalizationLanguage(localizationLanguage.isEmpty() ? "en" : localizationLanguage);
 				mGDPR.showDefaultAgreementAtActivity(thisActivity, appId);
 			}
 		});
 	}
 
-	public static void ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising) {
+	public static void ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
 		{
@@ -362,6 +363,7 @@ public class MRGServiceCpp {
 				mGDPR.setDelegate(mGDPRDelegate);
 				mGDPR.onlyEU(bOnlyEU);
 				mGDPR.withAdvertising(bWithAdvertising);
+				mGDPR.setLocalizationLanguage(localizationLanguage.isEmpty() ? "en" : localizationLanguage);
 				mGDPR.showAgreementAtActivity(thisActivity,
                              appId,
                              "gdpr/gdpr.html");

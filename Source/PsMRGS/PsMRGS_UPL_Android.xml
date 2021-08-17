@@ -242,14 +242,14 @@
 			runOnUiThread(callback);
 		}
 
-		public void AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising)
+		public void AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage)
 		{
-			MRGServiceCpp.ShowDefaultGDPRAgreement(appId, bOnlyEU, bWithAdvertising);
+			MRGServiceCpp.ShowDefaultGDPRAgreement(appId, bOnlyEU, bWithAdvertising, localizationLanguage);
 		}
 
-		public void AndroidThunkJava_MRGService_ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising)
+		public void AndroidThunkJava_MRGService_ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage)
 		{
-			MRGServiceCpp.ShowGDPRAgreement(appId, bOnlyEU, bWithAdvertising);
+			MRGServiceCpp.ShowGDPRAgreement(appId, bOnlyEU, bWithAdvertising, localizationLanguage);
 		}
 
 		public int AndroidThunkJava_MRGService_GetGDPRAcceptedVersion()
