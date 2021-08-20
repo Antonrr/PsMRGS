@@ -12,6 +12,7 @@ UPsMRGSProxy::UPsMRGSProxy(const FObjectInitializer& ObjectInitializer)
 	DebugCCPASetting = EPsMRGSCCPASetting::DontShare;
 	bInitComplete = false;
 	bUserLoggedin = false;
+	bShowcaseNewContent = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -229,6 +230,16 @@ void UPsMRGSProxy::ShowAdvertising()
 void UPsMRGSProxy::OpenShowcase()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
+bool UPsMRGSProxy::GetShowcaseNewContent() const
+{
+	return bShowcaseNewContent;
+}
+
+void UPsMRGSProxy::ResetShowcaseNewContent()
+{
+	bShowcaseNewContent = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -449,6 +460,8 @@ void UPsMRGSProxy::OnNewShowcaseContent()
 			MRGSDelegate.Broadcast(EPsMRGSEventsTypes::MRGS_SHOWCASE_NEW_CONTENT);
 		}
 	});
+
+	bShowcaseNewContent = true;
 }
 
 void UPsMRGSProxy::OnShowcaseShowFinished()

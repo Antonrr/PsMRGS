@@ -284,6 +284,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Showcase")
 	virtual void OpenShowcase();
 
+	/** Get whether showcase has new content */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Showcase")
+	bool GetShowcaseNewContent() const;
+
+	/** Reset showcase has new content flag */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Showcase")
+	void ResetShowcaseNewContent();
+
 	//////////////////////////////////////////////////////////////////////////
 	// Callbacks
 
@@ -388,6 +396,9 @@ protected:
 
 	/** OpenUDID value */
 	FString OpenUDID;
+
+	/** Whether showcase has new content flag */
+	bool bShowcaseNewContent;
 
 public:
 	UPROPERTY(BlueprintAssignable, Category = "MRGS|Events")
