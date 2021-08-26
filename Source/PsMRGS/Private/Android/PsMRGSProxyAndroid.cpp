@@ -655,6 +655,18 @@ void UPsMRGSProxyAndroid::OnPurchaseCanceled(const FString& ProductId, const FSt
 
 FString UPsMRGSProxyAndroid::GetDevicePlatform() const
 {
+	return TEXT("Android");
+}
+
+FString UPsMRGSProxyAndroid::GetCountryCode() const
+{
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_getCountry", "()Ljava/lang/String;", false);
+		jstring jCountryCode = (jstring)FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis, methodId);
+		return MRGSJniHelper::JavaStringToFstring(jCountryCode);
+	}
 	return FString();
 }
 

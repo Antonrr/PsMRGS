@@ -240,6 +240,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual FString GetDevicePlatform() const;
 
+	/** Get country code */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
+	virtual FString GetCountryCode() const;
+
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Tools")
 	virtual void RequestOpenUDID();
 

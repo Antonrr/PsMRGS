@@ -177,6 +177,11 @@ FString UPsMRGSProxy::GetDevicePlatform() const
 	return FString();
 }
 
+FString UPsMRGSProxy::GetCountryCode() const
+{
+	return TEXT("editor");
+}
+
 void UPsMRGSProxy::RequestOpenUDID()
 {
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);

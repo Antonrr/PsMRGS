@@ -149,6 +149,9 @@ public:
 	/** Get platform */
 	virtual FString GetDevicePlatform() const override;
 
+	/** Get country code */
+	virtual FString GetCountryCode() const override;
+
 	/* Request OpenUDID */
 	virtual void RequestOpenUDID() override;
 

@@ -139,6 +139,8 @@ public:
 
 	virtual FString GetDevicePlatform() const override;
 
+	virtual FString GetCountryCode() const override;
+
 protected:
 	/** Notification developer payload */
 	FString NotificationDeveloperPayload;

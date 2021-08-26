@@ -353,6 +353,11 @@
 		{
 			MRGServiceCpp.requestOpenUDID();
 		}
+
+		public String AndroidThunkJava_MRGService_getCountry()
+		{
+			return MRGServiceCpp.getCountry();
+		}
 		
 		</insert>
 		

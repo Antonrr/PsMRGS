@@ -910,6 +910,11 @@ FString UPsMRGSProxyIOS::GetDevicePlatform() const
 	return Result;
 }
 
+FString UPsMRGSProxyIOS::GetCountryCode() const
+{
+	return FString([MRGSDevice country]);
+}
+
 void UPsMRGSProxyIOS::RequestOpenUDID()
 {
 	OnReceivedOpenUDID(FString([MRGSDevice openUDID]));

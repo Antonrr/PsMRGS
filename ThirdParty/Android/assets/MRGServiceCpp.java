@@ -612,6 +612,10 @@ public class MRGServiceCpp {
 		MRGSDevice.instance().getOpenUDID(mOpenUDIDListener);
 	}
 
+	public static String getCountry() {
+		return MRGSDevice.instance().getCountry();
+	}
+
 	/*************************************************/
 	/*                   AppsFlyer                   */
 	/*************************************************/
