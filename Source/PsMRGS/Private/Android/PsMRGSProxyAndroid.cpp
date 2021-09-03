@@ -390,6 +390,103 @@ void UPsMRGSProxyAndroid::AddMetricWithCode(const FString& MetricCode, int32 Val
 	}
 }
 
+/* Helper function */
+template <typename T>
+void SetEventField(JNIEnv* Env, const T& FieldValue, const char* SetFieldMethodName, const char* SetFieldMethodSignature, jclass EventJavaClass, jobject EventJavaObject, jclass FieldJavaClass, jmethodID FieldCtor)
+{
+	jobject fieldValueObject = Env->NewObject(FieldJavaClass, FieldCtor, FieldValue);
+	jmethodID setFieldMethodId = FJavaWrapper::FindMethod(Env, EventJavaClass, SetFieldMethodName, SetFieldMethodSignature, false);
+	FJavaWrapper::CallVoidMethod(Env, EventJavaObject, setFieldMethodId, fieldValueObject);
+	Env->DeleteLocalRef(fieldValueObject);
+};
+
+/* Helper function */
+void SetEventStringField(JNIEnv* Env, const FString& FieldValue, const char* SetFieldMethodName, jclass EventJavaClass, jobject EventJavaObject)
+{
+	jmethodID setFieldMethodId = FJavaWrapper::FindMethod(Env, EventJavaClass, SetFieldMethodName, "(Ljava/lang/String;)V", false);
+	jstring fieldJstringValue = Env->NewStringUTF(TCHAR_TO_UTF8(*FieldValue));
+	FJavaWrapper::CallVoidMethod(Env, EventJavaObject, setFieldMethodId, fieldJstringValue);
+	Env->DeleteLocalRef(fieldJstringValue);
+};
+
+void UPsMRGSProxyAndroid::AddTrackerEvent(const FPsMRGSTrackerEvent& Event)
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyAndroid not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	JNIEnv* Env = FAndroidApplication::GetJavaEnv(true);
+	if (Env)
+	{
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_createTrackerEvent", "(Ljava/lang/String;)Lru/mail/mrgservice/tracker/MRGSTrackerEvent;", false);
+		jstring eventNameJstring = Env->NewStringUTF(TCHAR_TO_UTF8(*Event.EventName));
+		jobject CustomEvent = FJavaWrapper::CallObjectMethod(Env, FJavaWrapper::GameActivityThis, methodId, eventNameJstring);
+		Env->DeleteLocalRef(eventNameJstring);
+
+		jclass EventClassID = FAndroidApplication::FindJavaClassGlobalRef("ru/mail/mrgservice/tracker/MRGSTrackerEvent");
+
+		jclass IntegerClassID = FJavaWrapper::FindClassGlobalRef(Env, "java/lang/Integer", false);
+		jmethodID integerInitMethodId = FJavaWrapper::FindMethod(Env, IntegerClassID, "<init>", "(I)V", false);
+		const char* SetIntMethodSignature = "(Ljava/lang/Integer;)V";
+		SetEventField(Env, Event.Level, "setLevel", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt1, "setCustomInt1", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt2, "setCustomInt2", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt3, "setCustomInt3", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt4, "setCustomInt4", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt5, "setCustomInt5", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt6, "setCustomInt6", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt7, "setCustomInt7", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt8, "setCustomInt8", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt9, "setCustomInt9", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+		SetEventField(Env, Event.customInt10, "setCustomInt10", SetIntMethodSignature, EventClassID, CustomEvent, IntegerClassID, integerInitMethodId);
+
+		jclass FloatClassID = FJavaWrapper::FindClassGlobalRef(Env, "java/lang/Float", false);
+		jmethodID floatInitMethodId = FJavaWrapper::FindMethod(Env, FloatClassID, "<init>", "(F)V", false);
+		const char* SetFloatMethodSignature = "(Ljava/lang/Float;)V";
+		SetEventField(Env, Event.customFloat1, "setCustomFloat1", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat2, "setCustomFloat2", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat3, "setCustomFloat3", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat4, "setCustomFloat4", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat5, "setCustomFloat5", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat6, "setCustomFloat6", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat7, "setCustomFloat7", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat8, "setCustomFloat8", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat9, "setCustomFloat9", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+		SetEventField(Env, Event.customFloat10, "setCustomFloat10", SetFloatMethodSignature, EventClassID, CustomEvent, FloatClassID, floatInitMethodId);
+
+		SetEventStringField(Env, Event.customString1, "setCustomString1", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString2, "setCustomString2", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString3, "setCustomString3", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString4, "setCustomString4", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString5, "setCustomString5", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString6, "setCustomString6", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString7, "setCustomString7", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString8, "setCustomString8", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString9, "setCustomString9", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString10, "setCustomString10", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString11, "setCustomString11", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString12, "setCustomString12", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString13, "setCustomString13", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString14, "setCustomString14", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString15, "setCustomString15", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString16, "setCustomString16", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString17, "setCustomString17", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString18, "setCustomString18", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString19, "setCustomString19", EventClassID, CustomEvent);
+		SetEventStringField(Env, Event.customString20, "setCustomString20", EventClassID, CustomEvent);
+
+		static jmethodID sendMethodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_sendTrackerEvent", "(Lru/mail/mrgservice/tracker/MRGSTrackerEvent;)V", false);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, sendMethodId, CustomEvent);
+
+		Env->DeleteLocalRef(CustomEvent);
+		Env->DeleteGlobalRef(EventClassID);
+		Env->DeleteGlobalRef(IntegerClassID);
+		Env->DeleteGlobalRef(FloatClassID);
+	}
+}
+
 void UPsMRGSProxyAndroid::ShowSupport()
 {
 	if (bInitComplete == false)

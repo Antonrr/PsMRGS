@@ -866,6 +866,63 @@ void UPsMRGSProxyIOS::AddMetricWithCode(const FString& MetricCode, int32 Value, 
 	[MRGSMetrics addMetricWithCode:MetricCode.GetNSString() andValue:Value andLevel:Level andObjectId:ObjectId];
 }
 
+void UPsMRGSProxyIOS::AddTrackerEvent(const FPsMRGSTrackerEvent& Event)
+{
+	if (bInitComplete == false)
+	{
+		UE_LOG(LogMRGS, Error, TEXT("%s: UPsMRGSProxyIOS not initialized"), *PS_FUNC_LINE);
+		return;
+	}
+
+	MRGSTrackerCustomEvent* CustomEvent = [MRGSTrackerEvent customEventWithName:Event.EventName.GetNSString()];
+	CustomEvent.level = Event.Level;
+
+	CustomEvent.customInt1 = Event.customInt1;
+	CustomEvent.customInt2 = Event.customInt2;
+	CustomEvent.customInt3 = Event.customInt3;
+	CustomEvent.customInt4 = Event.customInt4;
+	CustomEvent.customInt5 = Event.customInt5;
+	CustomEvent.customInt6 = Event.customInt6;
+	CustomEvent.customInt7 = Event.customInt7;
+	CustomEvent.customInt8 = Event.customInt8;
+	CustomEvent.customInt9 = Event.customInt9;
+	CustomEvent.customInt10 = Event.customInt10;
+
+	CustomEvent.customFloat1 = Event.customFloat1;
+	CustomEvent.customFloat2 = Event.customFloat2;
+	CustomEvent.customFloat3 = Event.customFloat3;
+	CustomEvent.customFloat4 = Event.customFloat4;
+	CustomEvent.customFloat5 = Event.customFloat5;
+	CustomEvent.customFloat6 = Event.customFloat6;
+	CustomEvent.customFloat7 = Event.customFloat7;
+	CustomEvent.customFloat8 = Event.customFloat8;
+	CustomEvent.customFloat9 = Event.customFloat9;
+	CustomEvent.customFloat10 = Event.customFloat10;
+
+	CustomEvent.customString1 = Event.customString1.GetNSString();
+	CustomEvent.customString2 = Event.customString2.GetNSString();
+	CustomEvent.customString3 = Event.customString3.GetNSString();
+	CustomEvent.customString4 = Event.customString4.GetNSString();
+	CustomEvent.customString5 = Event.customString5.GetNSString();
+	CustomEvent.customString6 = Event.customString6.GetNSString();
+	CustomEvent.customString7 = Event.customString7.GetNSString();
+	CustomEvent.customString8 = Event.customString8.GetNSString();
+	CustomEvent.customString9 = Event.customString9.GetNSString();
+	CustomEvent.customString10 = Event.customString10.GetNSString();
+	CustomEvent.customString11 = Event.customString11.GetNSString();
+	CustomEvent.customString12 = Event.customString12.GetNSString();
+	CustomEvent.customString13 = Event.customString13.GetNSString();
+	CustomEvent.customString14 = Event.customString14.GetNSString();
+	CustomEvent.customString15 = Event.customString15.GetNSString();
+	CustomEvent.customString16 = Event.customString16.GetNSString();
+	CustomEvent.customString17 = Event.customString17.GetNSString();
+	CustomEvent.customString18 = Event.customString18.GetNSString();
+	CustomEvent.customString19 = Event.customString19.GetNSString();
+	CustomEvent.customString20 = Event.customString20.GetNSString();
+
+	[MRGSTracker trackEvent:CustomEvent];
+}
+
 void UPsMRGSProxyIOS::ShowSupport()
 {
 	UE_LOG(LogMRGS, Log, TEXT("%s"), *PS_FUNC_LINE);

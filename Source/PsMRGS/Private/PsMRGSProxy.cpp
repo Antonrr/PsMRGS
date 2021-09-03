@@ -126,6 +126,11 @@ void UPsMRGSProxy::AddMetricWithCode(const FString& MetricCode, int32 Value, int
 	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 }
 
+void UPsMRGSProxy::AddTrackerEvent(const FPsMRGSTrackerEvent& Event)
+{
+	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
+}
+
 void UPsMRGSProxy::SetAutoRestoreTransactions(bool bRestore)
 {
 }

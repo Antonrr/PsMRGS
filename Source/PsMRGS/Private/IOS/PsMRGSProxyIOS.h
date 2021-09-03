@@ -121,6 +121,9 @@ public:
 	
 	/** Log metric on mrgs with string code */
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
+
+	/** Send tracker event */
+	virtual void AddTrackerEvent(const FPsMRGSTrackerEvent& Event) override;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Store

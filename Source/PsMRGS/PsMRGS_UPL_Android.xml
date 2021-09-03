@@ -43,7 +43,7 @@
 		implementation(name: 'MRGSSupport', ext:'aar')
 		implementation(name: 'MRGSShowcase', ext:'aar')
 
-		implementation 'com.my.tracker:mytracker-sdk:2.1.2'
+		implementation 'com.my.tracker:mytracker-sdk:3.0.0'
 		implementation 'com.android.billingclient:billing:3.0.3'
 		implementation 'com.google.android.gms:play-services-games:16.0.0'
 		implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
@@ -52,7 +52,7 @@
 		implementation 'androidx.appcompat:appcompat:1.2.0'
 		implementation 'com.google.firebase:firebase-messaging:21.0.1'
 		implementation 'com.google.firebase:firebase-iid'
-		implementation 'com.appsflyer:af-android-sdk:6.2.3'
+		implementation 'com.appsflyer:af-android-sdk:6.3.2'
 		implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 		implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
 		implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -72,6 +72,8 @@
 		-keep class android.app.** {*;}
 		-keep class ru.mail.mrgservice.MRGSMap { *; }
 		-keep class ru.mail.mrgservice.MRGSList { *; }
+		-keep public class ru.mail.mrgservice.tracker.** {*;}
+		-keep public class ru.mail.mrgservice.tracker.MRGSTrackerEvent {*;}
 		-keep class org.apache.** { *;}
 		-keep public class org.apache.http.entity.mime.** { *;}
 		-keep class com.google.ads.conversiontracking.** { *; }
@@ -188,6 +190,7 @@
 			import java.util.ArrayList;
 			import java.util.List;
 			import java.util.Map;
+			import ru.mail.mrgservice.tracker.MRGSTrackerEvent;
 			
 			import java.io.ByteArrayOutputStream;
 			import java.io.ByteArrayInputStream;
@@ -327,6 +330,16 @@
 		public void AndroidThunkJava_MRGService_addMetricWithCode(final String metricCode, final int value, final int level, final int objectId)
 		{
 			MRGServiceCpp.addMetric(metricCode, value, level, objectId);
+		}
+
+		public MRGSTrackerEvent AndroidThunkJava_MRGService_createTrackerEvent(String eventName)
+		{
+			return MRGServiceCpp.createTrackerEvent(eventName);
+		}
+
+		public void AndroidThunkJava_MRGService_sendTrackerEvent(MRGSTrackerEvent event)
+		{
+			MRGServiceCpp.sendTrackerEvent(event);
 		}
 
 		public void AndroidThunkJava_MRGService_loadAdvertisingContent()

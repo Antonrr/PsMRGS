@@ -71,7 +71,7 @@ typedef TMulticastDelegate<void(EPsMRGSEventsTypes MyEventName, FString ProductI
 USTRUCT(BlueprintType)
 struct FPsMRGSPurchaseInfo
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	/** Product bundle id */
 	UPROPERTY(BlueprintReadOnly)
@@ -108,6 +108,106 @@ struct FPsMRGSPurchaseInfo
 	/** Whether this is a debug (fake) product generated on client for testing purposes */
 	UPROPERTY(BlueprintReadOnly)
 	bool bDebug;
+};
+
+USTRUCT(BlueprintType)
+struct FPsMRGSTrackerEvent
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FString EventName;
+	UPROPERTY(BlueprintReadWrite)
+	int32 Level;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt1;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt2;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt3;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt4;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt5;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt6;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt7;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt8;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt9;
+	UPROPERTY(BlueprintReadWrite)
+	int32 customInt10;
+
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat1;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat2;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat3;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat4;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat5;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat6;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat7;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat8;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat9;
+	UPROPERTY(BlueprintReadWrite)
+	float customFloat10;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString customString1;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString2;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString3;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString4;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString5;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString6;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString7;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString8;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString9;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString10;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString11;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString12;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString13;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString14;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString15;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString16;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString17;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString18;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString19;
+	UPROPERTY(BlueprintReadWrite)
+	FString customString20;
+
+	FPsMRGSTrackerEvent() = default;
+	FPsMRGSTrackerEvent(const FString& InEventName)
+		: EventName(InEventName)
+	{
+	}
 };
 
 UCLASS()
@@ -200,6 +300,10 @@ public:
 	/** Log metric on mrgs with string code */
 	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId);
+
+	/** Send tracker event */
+	UFUNCTION(BlueprintCallable, Category = "MRGS|Events")
+	virtual void AddTrackerEvent(const FPsMRGSTrackerEvent& Event);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Store

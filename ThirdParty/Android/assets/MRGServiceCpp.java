@@ -21,6 +21,9 @@ import com.epicgames.ue4.GameActivity;
 import android.widget.Toast;
 import ru.mail.mrgservice.MRGSMyComSupportDialog;
 import ru.mail.mrgservice.MRGSMetrics;
+import ru.mail.mrgservice.tracker.MRGSTracker;
+import ru.mail.mrgservice.tracker.MRGSTrackerEvent;
+import ru.mail.mrgservice.tracker.MRGSTrackerEvents;
 
 /**
  * Вспомогательный класс для взаимодействия Java кода с C++ кодом
@@ -441,6 +444,15 @@ public class MRGServiceCpp {
 
 	public static void addMetric(String metricCode, int value, int level, int objectId){
 		MRGSMetrics.addMetric(metricCode, value, level, objectId);
+	}
+
+	public static MRGSTrackerEvent createTrackerEvent(String eventName) {
+		Log.v(LOG_TAG, String.format("createTrackerEvent"));
+		return new MRGSTrackerEvents.CustomEvent(eventName);
+	}
+
+	public static void sendTrackerEvent(MRGSTrackerEvent event) {
+		MRGSTracker.trackEvent(event);
 	}
 
 	public static void checkIntegration() {

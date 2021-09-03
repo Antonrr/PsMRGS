@@ -80,6 +80,8 @@ public:
 
 	virtual void AddMetricWithCode(const FString& MetricCode, int32 Value, int32 Level, int32 ObjectId) override;
 
+	virtual void AddTrackerEvent(const FPsMRGSTrackerEvent& Event) override;
+
 	virtual void ShowSupport() override;
 
 	virtual void CheckSupportTickets() override;
