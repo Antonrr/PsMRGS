@@ -16,6 +16,7 @@ import java.io.InputStream;
 import ru.mail.mrgservice.*;
 import ru.mail.mrgservice.advertising.*;
 import ru.mail.mrgservice.showcase.*;
+import ru.mail.mrgservice.coppa.*;
 import com.epicgames.*;
 import com.epicgames.ue4.GameActivity;
 import android.widget.Toast;
@@ -334,13 +335,15 @@ public class MRGServiceCpp {
 		}
 	};
 
-	public static void ShowDefaultGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
+	public static void ShowDefaultGDPRAgreement(final String appId, final String appSecret, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
 		{
 			@Override
 			public void run() 
 			{
+				MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR().enableAutomaticCOPPAFlow(appId, appSecret);
+
 				GameActivity thisActivity = GameActivity.Get();
 				mGDPR = MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR();
 				mGDPR.setDelegate(mGDPRDelegate);
@@ -352,13 +355,15 @@ public class MRGServiceCpp {
 		});
 	}
 
-	public static void ShowGDPRAgreement(final String appId, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
+	public static void ShowGDPRAgreement(final String appId, final String appSecret, final boolean bOnlyEU, final boolean bWithAdvertising, final String localizationLanguage) {
 		GameActivity activity = GameActivity.Get();
 		activity.runOnUiThread(new Runnable() 
 		{
 			@Override
 			public void run() 
 			{
+				MRGSGDPR.MRGSGDPRFactory.getMRGSGDPR().enableAutomaticCOPPAFlow(appId, appSecret);
+
 				GameActivity thisActivity = GameActivity.Get();
 				AssetManager AssetManagerInstance = thisActivity.getAssets();
 

@@ -435,6 +435,7 @@ void UPsMRGSProxyIOS::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdvertisi
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
 	  GDPRInstance.localizationLanguage = LocalizationLanguage.IsEmpty() ? @"en" : LocalizationLanguage.GetNSString();
+	  [GDPRInstance enableAutomaticCOPPAFlowForAppId:MRGSSettings->iOSMrgsAppId andSecret:MRGSSettings->iOSMrgsClientSecret.GetNSString()];
 	  [GDPRInstance showDefaultAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 												forAppId:MRGSSettings->iOSMrgsAppId];
 	});
@@ -455,6 +456,7 @@ void UPsMRGSProxyIOS::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising, FSt
 	  GDPRInstance.onlyEU = bOnlyEU;
 	  GDPRInstance.withAdvertising = bWithAdvertising;
 	  GDPRInstance.localizationLanguage = LocalizationLanguage.IsEmpty() ? @"en" : LocalizationLanguage.GetNSString();
+	  [GDPRInstance enableAutomaticCOPPAFlowForAppId:MRGSSettings->iOSMrgsAppId andSecret:MRGSSettings->iOSMrgsClientSecret.GetNSString()];
 	  [GDPRInstance showAgreementAtViewController:UIApplication.sharedApplication.delegate.window.rootViewController
 										 forAppId:MRGSSettings->iOSMrgsAppId
 										 fromFile:[[NSBundle mainBundle] URLForResource:@"gdpr"

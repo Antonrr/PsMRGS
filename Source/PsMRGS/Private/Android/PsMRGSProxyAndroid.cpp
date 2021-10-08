@@ -53,12 +53,14 @@ void UPsMRGSProxyAndroid::ShowDefaultGDPRAgreement(bool bOnlyEU, bool bWithAdver
 			return;
 		}
 
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement", "(Ljava/lang/String;ZZLjava/lang/String;)V", false);
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowDefaultGDPRAgreement", "(Ljava/lang/String;Ljava/lang/String;ZZLjava/lang/String;)V", false);
 
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
+		jstring Secret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSecret));
 		jstring LocalizationLanguageJstring = Env->NewStringUTF(TCHAR_TO_UTF8(*LocalizationLanguage));
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, Secret, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
 		Env->DeleteLocalRef(AppId);
+		Env->DeleteLocalRef(Secret);
 		Env->DeleteLocalRef(LocalizationLanguageJstring);
 	}
 	else
@@ -79,12 +81,14 @@ void UPsMRGSProxyAndroid::ShowGDPRAgreement(bool bOnlyEU, bool bWithAdvertising,
 			return;
 		}
 
-		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;ZZLjava/lang/String;)V", false);
+		static jmethodID methodId = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_MRGService_ShowGDPRAgreement", "(Ljava/lang/String;Ljava/lang/String;ZZLjava/lang/String;)V", false);
 
 		jstring AppId = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsAppId));
+		jstring Secret = Env->NewStringUTF(TCHAR_TO_UTF8(*MRGSSettings->AndroidMrgsSecret));
 		jstring LocalizationLanguageJstring = Env->NewStringUTF(TCHAR_TO_UTF8(*LocalizationLanguage));
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, methodId, AppId, Secret, bOnlyEU, bWithAdvertising, LocalizationLanguageJstring);
 		Env->DeleteLocalRef(AppId);
+		Env->DeleteLocalRef(Secret);
 		Env->DeleteLocalRef(LocalizationLanguageJstring);
 	}
 	else
