@@ -206,6 +206,17 @@ struct FPsMRGSTrackerEvent
 	FPsMRGSTrackerEvent() = default;
 	FPsMRGSTrackerEvent(const FString& InEventName)
 		: EventName(InEventName)
+		, Level(0)
+		, customInt1(0)
+		, customInt2(0)
+		, customInt3(0)
+		, customInt4(0)
+		, customInt5(0)
+		, customInt6(0)
+		, customInt7(0)
+		, customInt8(0)
+		, customInt9(0)
+		, customInt10(0)
 	{
 	}
 };

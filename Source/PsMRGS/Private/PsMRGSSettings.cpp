@@ -6,6 +6,7 @@
 
 UPsMRGSSettings::UPsMRGSSettings(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+	, bShowAppTrackingRequestAtStartup(true)
 {
 	iOSMrgsAppId = 0;
 }
