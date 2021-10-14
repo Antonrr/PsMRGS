@@ -151,7 +151,6 @@ void UPsMRGSProxy::BuyProduct(const FString& ProductId, const FString& Payload)
 
 const TArray<FPsMRGSPurchaseInfo>& UPsMRGSProxy::GetProducts() const
 {
-	UE_LOG(LogMRGS, Warning, TEXT("%s: Null proxy used"), *PS_FUNC_LINE);
 	return LoadedProducts;
 }
 
