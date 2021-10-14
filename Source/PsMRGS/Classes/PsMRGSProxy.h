@@ -217,6 +217,16 @@ struct FPsMRGSTrackerEvent
 		, customInt8(0)
 		, customInt9(0)
 		, customInt10(0)
+		, customFloat1(0.f)
+		, customFloat2(0.f)
+		, customFloat3(0.f)
+		, customFloat4(0.f)
+		, customFloat5(0.f)
+		, customFloat6(0.f)
+		, customFloat7(0.f)
+		, customFloat8(0.f)
+		, customFloat9(0.f)
+		, customFloat10(0.f)
 	{
 	}
 };
