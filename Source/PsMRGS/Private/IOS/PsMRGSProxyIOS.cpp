@@ -320,11 +320,7 @@
 
 - (void)initAdvertising
 {
-	if (self.videoAdvertising == nil)
-	{
-		self.videoAdvertising = [[MRGSAdvertisingManager sharedInstance] createAdvertising:YES];
-	}
-
+	self.videoAdvertising = [[MRGSAdvertisingManager sharedInstance] createAdvertising:YES];
 	[self.videoAdvertising setLoadDelegate:self];
 	[self.videoAdvertising setShowDelegate:self];
 	[self.videoAdvertising loadContent];
