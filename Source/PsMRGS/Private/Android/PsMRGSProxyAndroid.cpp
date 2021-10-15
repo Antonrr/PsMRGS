@@ -558,6 +558,16 @@ void UPsMRGSProxyAndroid::RequestOpenUDID()
 	}
 }
 
+void UPsMRGSProxyAndroid::EnableNotifications()
+{
+	// no op
+}
+
+void UPsMRGSProxyAndroid::DisableNotifications()
+{
+	// no op
+}
+
 void UPsMRGSProxyAndroid::LoadAdvertising()
 {
 	if (bInitComplete == false)

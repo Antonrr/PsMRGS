@@ -93,6 +93,15 @@ public:
 	virtual void RequestOpenUDID() override;
 
 	//////////////////////////////////////////////////////////////////////////
+	// Notifications
+
+	/** Call EnableMRGSNotifications */
+	virtual void EnableNotifications() override;
+
+	/** Call DisableMRGSNotifications */
+	virtual void DisableNotifications() override;
+
+	//////////////////////////////////////////////////////////////////////////
 	// Advertising
 
 public:
